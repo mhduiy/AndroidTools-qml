@@ -1,6 +1,7 @@
 <RCC>
-    <qresource prefix="/main">
-        <file>qml/main.qml</file>
+    <qresource prefix="/">
+        <file>qml/Main.qml</file>
+        <file>qml/components/ControlListview.qml</file>
+        <file>qml/components/DeviceListview.qml</file>
     </qresource>
-    <qresource prefix="/pages"/>
 </RCC>

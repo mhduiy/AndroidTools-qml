@@ -16,14 +16,14 @@ set(CMAKE_AUTOUIC ON)
 file(GLOB_RECURSE SRC_PATHS src/*.cpp src/*.hpp)
 
 # 遍历所有qml文件
-file(GLOB_RECURSE QML_PATHS *.qml)
+file(GLOB_RECURSE QML_PATHS src/*.qml)
 foreach(filepath ${QML_PATHS})
     string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" filename ${filepath})
     list(APPEND qml_files ${filename})
 endforeach(filepath)
 
 # 遍历所有资源文件
-file(GLOB_RECURSE RES_PATHS *.qrc)
+file(GLOB_RECURSE RES_PATHS src/*.qrc)
 foreach(filepath ${RES_PATHS})
     string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" filename ${filepath})
     list(APPEND res_files ${filename})
