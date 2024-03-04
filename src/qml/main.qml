@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import MFloat
 
 import "./components/"
+import "./pages/"
 
 ApplicationWindow {
     id: root
@@ -12,74 +13,82 @@ ApplicationWindow {
     visible: true
     title: "AndroidTools"
 
-    Rectangle {
-        id: leftSidebar
-        width: 200
-        height: parent.height
+    RowLayout {
+        anchors.fill: parent
+        Rectangle { // left
+            id: leftSidebar
+            Layout.fillHeight: true
+            width: 200
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-        RowLayout {
-            anchors.fill: parent
-            Item {
-                Layout.fillHeight: true
-                width: 5
-            }
+            RowLayout {
+                width: parent.width
+                height: parent.height
+                Item {
+                    height: parent.height
+                    width: 5
+                }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
-                ColumnLayout {
-                    anchors.fill: parent
-                    Layout.alignment: Qt.AlignCenter
-                    RowLayout {
-                        spacing: 4
-                        Layout.margins: 5
-                        Text {
-                            id: greeterText
-                            font.bold: true
-                            font.pixelSize: 20
-                            text: "下午好"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        Layout.alignment: Qt.AlignCenter
+                        RowLayout {
+                            spacing: 4
+                            Layout.margins: 5
+                            Text {
+                                id: greeterText
+                                font.bold: true
+                                font.pixelSize: 20
+                                text: "下午好"
+                            }
+
+                            Item {
+                                Layout.fillWidth: true
+                            }
+
+                            MButton {
+                                text: "无线连接"
+                                btnType: MButton.FBtnType.Ordinary
+                            }
+                        }
+
+                        DeviceListview {
+                            Layout.fillWidth: true
+                            anchors.margins: 4
+                            height: 200
                         }
 
                         Item {
                             Layout.fillWidth: true
+                            height: 20
                         }
 
-                        MButton {
-                            text: "无线连接"
-                            btnType: MButton.FBtnType.Ordinary
+                        ControlListview {
+                            Layout.fillWidth: true
+                            anchors.margins: 4
+                            height: 300
                         }
-                    }
-
-                    DeviceListview {
-                        Layout.fillWidth: true
-                        anchors.margins: 4
-                        height: 200
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                        height: 20
-                    }
-
-                    ControlListview {
-                        Layout.fillWidth: true
-                        anchors.margins: 4
-                        height: 300
                     }
                 }
-            }
 
-            Item {
-                Layout.fillHeight: true
-                width: 5
+                Rectangle {
+                    Layout.alignment: Qt.AlignTop
+                    width: 2
+                    height: parent.height
+                    color: "gray"
+                }
             }
+        }
 
-            Rectangle {
-                width: 1
-                Layout.fillHeight: true
-                color: "gray"
-            }
+        DeviceInfoPage {
+            Layout.alignment: Qt.AlignTop
+            id: rightContainer
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
 }

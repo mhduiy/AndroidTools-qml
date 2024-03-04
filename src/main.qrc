@@ -3,5 +3,6 @@
         <file>qml/Main.qml</file>
         <file>qml/components/ControlListview.qml</file>
         <file>qml/components/DeviceListview.qml</file>
+        <file>qml/pages/DeviceInfoPage.qml</file>
     </qresource>
 </RCC>
