@@ -6,6 +6,7 @@ import MFloat
 Item {
     width: 20
     height: 100
+    property int currentIndex: listView.currentIndex
     ListView {
         id: listView
         anchors.fill: parent
@@ -63,8 +64,6 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     listView.currentIndex = index
-
-                    console.log(ListView.isCurrentItem, index)
                 }
             }
         }

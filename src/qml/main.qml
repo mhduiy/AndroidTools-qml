@@ -35,10 +35,11 @@ ApplicationWindow {
 
                     ColumnLayout {
                         anchors.fill: parent
-                        Layout.alignment: Qt.AlignCenter
+                        Layout.alignment: Qt.AlignTop
                         RowLayout {
                             spacing: 4
                             Layout.margins: 5
+                            Layout.alignment: Qt.AlignTop
                             Text {
                                 id: greeterText
                                 font.bold: true
@@ -58,19 +59,45 @@ ApplicationWindow {
 
                         DeviceListview {
                             Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignTop
                             anchors.margins: 4
-                            height: 200
+                            Layout.preferredHeight: parent.height * 0.4
                         }
 
                         Item {
                             Layout.fillWidth: true
-                            height: 20
+                            Layout.fillHeight: true
                         }
 
                         ControlListview {
+                            id: controlListView
                             Layout.fillWidth: true
                             anchors.margins: 4
-                            height: 300
+                            Layout.alignment: Qt.AlignBottom
+                            Layout.preferredHeight: parent.height * 0.5
+
+                            onCurrentIndexChanged: {
+                                switch (currentIndex) {
+                                case 0:
+                                    rightContainter.replace(deviceInfoPage)
+                                    break
+                                case 1:
+                                    rightContainter.replace(deviceControlPage)
+                                    break
+                                case 2:
+                                    rightContainter.replace(deviceAppPage)
+                                    break
+                                case 3:
+                                    rightContainter.replace(deviceFlashPage)
+                                    break
+                                case 4:
+                                    rightContainter.replace(deviceImagePage)
+                                    break
+                                case 5:
+                                    rightContainter.replace(deviceTerminalPage)
+                                    break
+                                }
+                            }
                         }
                     }
                 }
@@ -84,11 +111,88 @@ ApplicationWindow {
             }
         }
 
-        DeviceInfoPage {
+        StackView {
+            id: rightContainter
             Layout.alignment: Qt.AlignTop
-            id: rightContainer
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            initialItem: deviceInfoPage
+
+            replaceExit: Transition {
+                PropertyAnimation { target: pushExit.view; property: "opacity"; to: 0; duration: 300 }
+            }
+            replaceEnter: Transition {
+                PropertyAnimation { target: pushEnter.view; property: "opacity"; to: 1; duration: 500; easing.type: Easing.OutQuart}
+                PropertyAnimation { target: pushEnter.view; property: "y"; from: 100; to: 0; duration: 500; easing.type: Easing.OutQuart}
+            }
+        }
+        Component {
+            id: deviceInfoPage
+            Page {
+                DeviceInfoPage {
+                    anchors.fill: parent
+                }
+            }
+        }
+
+        Component {
+            id: deviceControlPage
+            Page {
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: "red"
+                }
+            }
+
+        }
+
+        Component {
+            id: deviceAppPage
+            Page {
+
+                DeviceInfoPage {
+                    anchors.fill: parent
+                }
+            }
+
+        }
+
+        Component {
+            id: deviceFlashPage
+            Page {
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: "yellow"
+                }
+            }
+
+        }
+
+        Component {
+            id: deviceImagePage
+            Page {
+
+                DeviceInfoPage {
+                    anchors.fill: parent
+                }
+            }
+
+        }
+
+        Component {
+            id: deviceTerminalPage
+
+            Page {
+                Rectangle {
+                    anchors.fill: parent
+                    color: "blue"
+                }
+
+            }
+
         }
     }
 }
