@@ -13,6 +13,14 @@ ApplicationWindow {
     visible: true
     title: "AndroidTools"
 
+
+    Image {
+        id: backgroundImage
+        anchors.fill: parent
+        source: "file:///D:/myCode/AndroidTools-qml/src/res/backgroundImage.jpeg"
+        // z: 1
+    }
+
     RowLayout {
         anchors.fill: parent
         Rectangle { // left
@@ -20,13 +28,16 @@ ApplicationWindow {
             Layout.fillHeight: true
             width: 200
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            color: "transparent"
 
             RowLayout {
                 width: parent.width
                 height: parent.height
+
                 Item {
                     height: parent.height
                     width: 5
+
                 }
 
                 Item {
@@ -36,6 +47,7 @@ ApplicationWindow {
                     ColumnLayout {
                         anchors.fill: parent
                         Layout.alignment: Qt.AlignTop
+
                         RowLayout {
                             spacing: 4
                             Layout.margins: 5
@@ -130,6 +142,7 @@ ApplicationWindow {
         Component {
             id: deviceInfoPage
             Page {
+                background: {}
                 DeviceInfoPage {
                     anchors.fill: parent
                 }
@@ -139,10 +152,9 @@ ApplicationWindow {
         Component {
             id: deviceControlPage
             Page {
-
-                Rectangle {
+                background: {}
+                DeviceControlPage {
                     anchors.fill: parent
-                    color: "red"
                 }
             }
 
@@ -151,7 +163,7 @@ ApplicationWindow {
         Component {
             id: deviceAppPage
             Page {
-
+                background: {}
                 DeviceInfoPage {
                     anchors.fill: parent
                 }
@@ -162,7 +174,7 @@ ApplicationWindow {
         Component {
             id: deviceFlashPage
             Page {
-
+                background: {}
                 Rectangle {
                     anchors.fill: parent
                     color: "yellow"
@@ -174,7 +186,7 @@ ApplicationWindow {
         Component {
             id: deviceImagePage
             Page {
-
+                background: {}
                 DeviceInfoPage {
                     anchors.fill: parent
                 }
@@ -186,11 +198,11 @@ ApplicationWindow {
             id: deviceTerminalPage
 
             Page {
+                background: {}
                 Rectangle {
                     anchors.fill: parent
                     color: "blue"
                 }
-
             }
 
         }

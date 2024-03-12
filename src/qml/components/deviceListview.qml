@@ -23,7 +23,16 @@ Item {
             width: ListView.view.width
             height: 70
             radius: 10
-            color: ListView.isCurrentItem ? "#FFBCAD" : "#e4e4e4"
+            border.width: 1
+            border.color: "gray"
+            color: ListView.isCurrentItem ? Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.65) : Qt.rgba(255,255,255, 0.65)
+
+            Behavior on color {
+                PropertyAnimation {
+                    duration: 100
+                }
+            }
+
             Column {
                 anchors.fill: parent
                 padding: 5

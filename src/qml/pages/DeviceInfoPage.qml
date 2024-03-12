@@ -36,6 +36,8 @@ Item {
                 Layout.preferredWidth: parent.width * 0.48
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignLeft
+                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                opacity: 0.9
                 RowLayout {
                     anchors.centerIn: parent
                     spacing: 30
@@ -81,6 +83,7 @@ Item {
                 Layout.rightMargin: 10
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignRight
+                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                 ColumnLayout {
                     anchors.centerIn: parent
                     ColumnLayout {
@@ -123,6 +126,7 @@ Item {
                 MFrame {    // 当前活动信息
                     width: 300
                     height: 150
+                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                     ColumnLayout {
                         anchors.centerIn: parent
                         RowLayout {
@@ -167,7 +171,7 @@ Item {
                 MFrame {    // 简单设备控制
                     width: 300
                     Layout.fillHeight: true
-
+                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                     GridLayout {
                         anchors.centerIn: parent
                         columns: 2
@@ -211,6 +215,7 @@ Item {
                 MFrame {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
 
                     ScrollView {
                         anchors.fill: parent
@@ -244,6 +249,7 @@ Item {
                                         height: 100
                                         radius: 5
                                         border.width: 1
+                                        color: Qt.rgba(255, 255, 255, 0.65)
                                         border.color: "gray"
                                     }
                                 }
@@ -283,6 +289,5 @@ Item {
         ListElement { name: "电流"; info: "5A"}
         ListElement { name: "功率"; info: "19.0w"}
         ListElement { name: "温度"; info: "40℃"}
-
     }
 }
