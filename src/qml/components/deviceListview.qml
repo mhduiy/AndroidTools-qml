@@ -12,7 +12,7 @@ Item {
         id: listView
         anchors.fill: parent
         clip: true
-        model: myModel
+        model: deviceListviewModel
         delegate: lvDelegate
         spacing: 10
     }
@@ -53,7 +53,7 @@ Item {
                     }
 
                     MLabel {
-                        text: model.isconnected ? model.isWireless ?  "无线" : "有线" : "历史"
+                        text: model.isConnected ? model.isWireless ?  "无线" : "有线" : "历史"
                         textColor: "#ffffff"
                     }
                 }
@@ -71,7 +71,7 @@ Item {
                             rectColor: "#000000"
                         }
                         Label {
-                            text: model.isconnected ? model.isWireless ? model.ip : "有线连接" : "未连接"
+                            text: model.isConnected ? model.isWireless ? model.ip : "有线连接" : "未连接"
                             font.pixelSize: 10
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -84,7 +84,7 @@ Item {
                             textColor: "#ffffff"
                             rectColor: "#000000"                        }
                         Label {
-                            text: model.isconnected ? (model.ischarging ? model.battery + "% +" : model.battery + "%") : "未连接"
+                            text: model.isConnected ? (model.ischarging ? model.battery + "% +" : model.battery + "%") : "未连接"
                             font.pixelSize: 10
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -96,8 +96,8 @@ Item {
                     }
 
                     MButton {
-                        btnType: model.isconnected ? MButton.FBtnType.Warning : MButton.FBtnType.Suggest
-                        text: model.isconnected ? "断开连接" : "立即连接"
+                        btnType: model.isConnected ? MButton.FBtnType.Warning : MButton.FBtnType.Suggest
+                        text: model.isConnected ? "断开连接" : "立即连接"
                     }
                 }
             }
@@ -107,35 +107,6 @@ Item {
                     listView.currentIndex = index
                 }
             }
-        }
-    }
-
-    ListModel {
-        id: myModel
-        ListElement {
-            deviceName: "XIAOMI Mi8 Lite"
-            isconnected: true
-            isWireless: true
-            ip: "192.168.0.1"
-            battery: "50"
-            ischarging: false
-
-        }
-        ListElement {
-            deviceName: "HUAWEI nova 11pro"
-            isconnected: true
-            isWireless: false
-            ip: ""
-            battery: "50"
-            ischarging: true
-        }
-        ListElement {
-            deviceName: "OPPO R11"
-            isconnected: false
-            isWireless: false
-            ip: ""
-            battery: ""
-            ischarging: false
         }
     }
 }

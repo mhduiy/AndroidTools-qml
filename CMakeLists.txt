@@ -15,6 +15,9 @@ set(CMAKE_AUTOUIC ON)
 # 遍历所有源文件
 file(GLOB_RECURSE SRC_PATHS src/*.cpp src/*.hpp)
 
+# 遍历所有头文件
+file(GLOB_RECURSE HEAD_PATHS src/*.h)
+
 # 遍历所有qml文件
 file(GLOB_RECURSE QML_PATHS src/*.qml)
 foreach(filepath ${QML_PATHS})
@@ -35,7 +38,7 @@ cmake_path(GET QT_SDK_DIR PARENT_PATH QT_SDK_DIR)
 cmake_path(GET QT_SDK_DIR PARENT_PATH QT_SDK_DIR)
 
 qt_add_executable(${PROJECT_NAME}
-    ${SRC_PATHS} ${res_files}
+    ${SRC_PATHS} ${HEAD_PATHS} ${res_files}
 )
 
 qt_add_qml_module(${PROJECT_NAME}
