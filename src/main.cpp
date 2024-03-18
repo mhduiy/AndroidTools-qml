@@ -3,11 +3,25 @@
 #include <QTimer>
 #include "cpp/components/deivicelistviewmodel.h"
 #include <QQmlContext>
+#include "cpp/adb/adbtools.h"
+#include "cpp/adb/adbinterface.h"
+#include <QThread>
 
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+
+    ADBTools::instance(&app);
+    ADBInterface interface;
+
+    QThread *thread = new QThread();
+    interface.moveToThread(thread);
+    thread->start();
+
+    interface.startRefreshDevice();
+
+    qWarning() << "ADB: " << interface.adbVersion() << QThread::currentThreadId();
 
     DeviceListviewModel deviceListviewModel;
     deviceListviewModel.appendRow(new DeviceBaceInfo("XIAOMI 8 Lite", "", 100, true, false, true));

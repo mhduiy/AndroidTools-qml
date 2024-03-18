@@ -7,8 +7,17 @@ class ADBTools : public QObject
 {
     Q_OBJECT
 public:
-    explicit ADBTools(QObject *parent = nullptr);
+    enum APP{
+        ADB,
+        FASTBOOT
+    };
+
+    QString executeCommand(APP app = ADB, const QStringList &args = QStringList());
+
     static ADBTools *instance(QObject *parent = nullptr);
+private:
+    explicit ADBTools(QObject *parent = nullptr);
+    ADBTools() = delete;
 };
 
 #endif // ADBTOOLS_H

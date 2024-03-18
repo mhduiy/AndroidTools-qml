@@ -2,23 +2,8 @@
 #define DEIVICELISTVIEWMODEL_H
 
 #include <QAbstractListModel>
+#include "../adb/adbinterface.h"
 
-struct DeviceBaceInfo{
-    QString deviceName;
-    QString ip;
-    int battery;
-    bool isConnected;
-    bool isWireless;
-    bool isCharging;
-
-    DeviceBaceInfo(QString deviceName, QString ip, int battery, bool isConnected, bool isWireless, bool isCharging)
-        : deviceName(deviceName),
-        ip(ip),
-        battery(battery),
-        isConnected(isConnected),
-        isWireless(isWireless),
-        isCharging(isCharging){}
-};
 
 enum DeviceBaceRole {
     NameRole = Qt::UserRole + 1,
