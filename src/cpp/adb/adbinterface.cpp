@@ -73,13 +73,19 @@ void ADBInterface::refreshDeviceStatus()
         delete it.value();
     }
 
+    m_deviceBatteryInfoMap.clear();
+
     for (auto it = m_deviceCutActivityInfoMap.begin(); it != m_deviceCutActivityInfoMap.end(); ++it) {
         delete it.value();
     }
 
+    m_deviceCutActivityInfoMap.clear();
+
     for (auto it = m_deviceBaceInfoMap.begin(); it != m_deviceBaceInfoMap.end(); ++it) {
         delete it.value();
     }
+
+    m_deviceBaceInfoMap.clear();
 
     for (int i = m_deviceCodeSet.size() - 1; i >= 0; i--) {
         // 检查是否有设备断开连接
@@ -89,7 +95,7 @@ void ADBInterface::refreshDeviceStatus()
             continue;
         }
 
-        QString retStr = m_adbtools->executeCommand(ADBTools::ADB, {QString("-s %1 shell dumpsys battery").arg(m_deviceCodeSet[i])});
+        QString retStr = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell", "dumpsys battery"});
         QMap<QString, QString> retMap = serializationInformation(retStr);
         DeviceBatteryInfo *batteryInfo = new DeviceBatteryInfo();
         if (retMap["AC powered"] == "true") {
@@ -113,11 +119,14 @@ void ADBInterface::refreshDeviceStatus()
 
         m_deviceBatteryInfoMap.insert(m_deviceCodeSet[i], batteryInfo);
 
-        QStringList retStrList = m_adbtools->executeCommand(ADBTools::ADB, {QString("-s %1 adb shell 'dumpsys activity activities | grep topResumedActivity'").arg(m_deviceCodeSet[i])}).split('\n');
+        QStringList retStrList = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell", "dumpsys activity activities | grep topResumedActivity"}).split('\n');
         for (QString &lineInfo : retStrList) {
+            qWarning() << lineInfo;
             if (lineInfo.contains("topResumedActivity")) {
                 lineInfo = lineInfo.simplified();
                 int index = lineInfo.indexOf('{');
+                if (lineInfo.isEmpty() || index < 0) continue;
+                qWarning() << "*****" << index << " " << lineInfo.size() - index - 1 << " " << lineInfo.size();
                 QStringList blockInfoList = lineInfo.mid(index, lineInfo.size() - index - 1).split(' ');
                 if (blockInfoList.size() == 4) {
                     DeviceCutActivityInfo *deviceCutActivity = new DeviceCutActivityInfo();
@@ -132,7 +141,7 @@ void ADBInterface::refreshDeviceStatus()
         }
         DeviceBaceInfo *deviceBaceInfo = new DeviceBaceInfo();
 
-        retStr = m_adbtools->executeCommand(ADBTools::ADB, {QString("-s %1 shell getprop ro.product.marketname").arg(m_deviceCodeSet[i])});
+        retStr = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell",  R"(getprop ro.product.marketname)"});
         deviceBaceInfo->deviceName = retStr.simplified();
         deviceBaceInfo->battery = m_deviceBatteryInfoMap[m_deviceCodeSet[i]]->level;
         deviceBaceInfo->isConnected = true;
