@@ -84,7 +84,7 @@ Item {
                             textColor: "#ffffff"
                             rectColor: "#000000"                        }
                         Label {
-                            text: model.isConnected ? (model.ischarging ? model.battery + "% +" : model.battery + "%") : "未连接"
+                            text: model.isConnected ? (model.isCharging ? model.battery + "% +" : model.battery + "%") : "未连接"
                             font.pixelSize: 10
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter

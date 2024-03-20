@@ -5,6 +5,7 @@
 #include "adbtools.h"
 #include <QMap>
 #include <QTimer>
+#include <QSharedPointer>
 
 struct DeviceBaceInfo{
     QString deviceName;
@@ -13,19 +14,21 @@ struct DeviceBaceInfo{
     bool isConnected;
     bool isWireless;
     bool isCharging;
+    QString deviceCode;
 
-    DeviceBaceInfo(QString deviceName, QString ip, int battery, bool isConnected, bool isWireless, bool isCharging)
+    DeviceBaceInfo(QString deviceName, QString ip, int battery, bool isConnected, bool isWireless, bool isCharging, const QString &deviceCode = "")
         : deviceName(deviceName),
         ip(ip),
         battery(battery),
         isConnected(isConnected),
         isWireless(isWireless),
-        isCharging(isCharging){}
+        isCharging(isCharging),
+        deviceCode(deviceCode){}
     DeviceBaceInfo(){}
 };
 
 enum ChargingType {
-    AC, USB, Wireless, Dock
+    AC, USB, Wireless, Dock, None
 };
 
 struct DeviceBatteryInfo {
@@ -63,20 +66,24 @@ public:
     void startRefreshDevice();
     void stopRefreshDevice();
 
-    DeviceBaceInfo *getDeviceBaceInfo(const QString &code);
-    DeviceBatteryInfo *getDeviceBatteryInfo(const QString &code);
-    DeviceCutActivityInfo *getDeviceCutActivityInfo(const QString &code);
+    QSharedPointer<DeviceBaceInfo> getDeviceBaceInfo(const QString &code);
+    QSharedPointer<DeviceBatteryInfo> getDeviceBatteryInfo(const QString &code);
+    QSharedPointer<DeviceCutActivityInfo> getDeviceCutActivityInfo(const QString &code);
+
+    QVector<QString> getDeviceCodeSet();
 
 signals:
     void deviceDisconnected(QString code);
+    // 收到信号后不能马上获取设备的详细信息
     void deviceConnected(QString code);
+    void deviceStatusUpdateFinish();
 
 private:
     ADBTools *m_adbtools = ADBTools::instance();
     QVector<QString> m_deviceCodeSet;
-    QMap<QString, DeviceBaceInfo *> m_deviceBaceInfoMap;
-    QMap<QString, DeviceBatteryInfo *> m_deviceBatteryInfoMap;
-    QMap<QString, DeviceCutActivityInfo *> m_deviceCutActivityInfoMap;
+    QMap<QString, QSharedPointer<DeviceBaceInfo>> m_deviceBaceInfoMap;
+    QMap<QString, QSharedPointer<DeviceBatteryInfo>> m_deviceBatteryInfoMap;
+    QMap<QString, QSharedPointer<DeviceCutActivityInfo>> m_deviceCutActivityInfoMap;
     QTimer *m_deviceCheckTimer;
 
 };

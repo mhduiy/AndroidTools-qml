@@ -49,7 +49,6 @@ QString ADBInterface::adbVersion()
 
 void ADBInterface::refreshDeviceStatus()
 {
-    qWarning() << "检测中：" << QThread::currentThreadId();
     QVector<QString> devices;
 
     QStringList retStrList = m_adbtools->executeCommand(ADBTools::ADB, {"devices"}).split('\n');
@@ -67,24 +66,8 @@ void ADBInterface::refreshDeviceStatus()
         }
     }
 
-    // 清除原有内存
-
-    for (auto it = m_deviceBatteryInfoMap.begin(); it != m_deviceBatteryInfoMap.end(); ++it) {
-        delete it.value();
-    }
-
     m_deviceBatteryInfoMap.clear();
-
-    for (auto it = m_deviceCutActivityInfoMap.begin(); it != m_deviceCutActivityInfoMap.end(); ++it) {
-        delete it.value();
-    }
-
     m_deviceCutActivityInfoMap.clear();
-
-    for (auto it = m_deviceBaceInfoMap.begin(); it != m_deviceBaceInfoMap.end(); ++it) {
-        delete it.value();
-    }
-
     m_deviceBaceInfoMap.clear();
 
     for (int i = m_deviceCodeSet.size() - 1; i >= 0; i--) {
@@ -97,7 +80,7 @@ void ADBInterface::refreshDeviceStatus()
 
         QString retStr = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell", "dumpsys battery"});
         QMap<QString, QString> retMap = serializationInformation(retStr);
-        DeviceBatteryInfo *batteryInfo = new DeviceBatteryInfo();
+        QSharedPointer<DeviceBatteryInfo> batteryInfo(new DeviceBatteryInfo());
         if (retMap["AC powered"] == "true") {
             batteryInfo->chargingType = AC;
         } else if (retMap["USB powered"] == "true") {
@@ -106,6 +89,8 @@ void ADBInterface::refreshDeviceStatus()
             batteryInfo->chargingType = Wireless;
         } else if (retMap[" Dock powered"] == "true") {
             batteryInfo->chargingType = Dock;
+        } else {
+            batteryInfo->chargingType = None;
         }
         batteryInfo->maxChargingCut = retMap["Max charging current"].toInt() / 1000;
         batteryInfo->maxChargingVol = retMap["Max charging voltage"].toInt() / 1000;
@@ -126,10 +111,9 @@ void ADBInterface::refreshDeviceStatus()
                 lineInfo = lineInfo.simplified();
                 int index = lineInfo.indexOf('{');
                 if (lineInfo.isEmpty() || index < 0) continue;
-                qWarning() << "*****" << index << " " << lineInfo.size() - index - 1 << " " << lineInfo.size();
                 QStringList blockInfoList = lineInfo.mid(index, lineInfo.size() - index - 1).split(' ');
                 if (blockInfoList.size() == 4) {
-                    DeviceCutActivityInfo *deviceCutActivity = new DeviceCutActivityInfo();
+                    QSharedPointer<DeviceCutActivityInfo> deviceCutActivity(new DeviceCutActivityInfo());
                     deviceCutActivity->windowCode = blockInfoList.value(0);
                     deviceCutActivity->cutPackage = blockInfoList.value(2).split('/').first();
                     deviceCutActivity->cutActivity = blockInfoList.value(2).split('/').last();
@@ -139,7 +123,7 @@ void ADBInterface::refreshDeviceStatus()
                 }
             }
         }
-        DeviceBaceInfo *deviceBaceInfo = new DeviceBaceInfo();
+        QSharedPointer<DeviceBaceInfo> deviceBaceInfo(new DeviceBaceInfo());
 
         retStr = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell",  R"(getprop ro.product.marketname)"});
         deviceBaceInfo->deviceName = retStr.simplified();
@@ -147,6 +131,8 @@ void ADBInterface::refreshDeviceStatus()
         deviceBaceInfo->isConnected = true;
         deviceBaceInfo->isWireless = false;
         deviceBaceInfo->isCharging = m_deviceBatteryInfoMap[m_deviceCodeSet[i]]->status == 2 ? true : false;
+        qWarning() << "*******" << deviceBaceInfo->isCharging;
+        deviceBaceInfo->deviceCode = m_deviceCodeSet[i];
 
         m_deviceBaceInfoMap.insert(m_deviceCodeSet[i], deviceBaceInfo);
     }
@@ -162,6 +148,8 @@ void ADBInterface::refreshDeviceStatus()
     for (auto it = m_deviceBaceInfoMap.begin(); it != m_deviceBaceInfoMap.end(); ++it) {
         qWarning() << it.key() << "*3*" << it.value()->deviceName;
     }
+
+    emit deviceStatusUpdateFinish();
 }
 
 void ADBInterface::startRefreshDevice()
@@ -174,17 +162,22 @@ void ADBInterface::stopRefreshDevice()
     m_deviceCheckTimer->stop();
 }
 
-DeviceBaceInfo *ADBInterface::getDeviceBaceInfo(const QString &code)
+QSharedPointer<DeviceBaceInfo> ADBInterface::getDeviceBaceInfo(const QString &code)
 {
     return m_deviceBaceInfoMap.value(code);
 }
 
-DeviceBatteryInfo *ADBInterface::getDeviceBatteryInfo(const QString &code)
+QSharedPointer<DeviceBatteryInfo> ADBInterface::getDeviceBatteryInfo(const QString &code)
 {
     return m_deviceBatteryInfoMap.value(code);
 }
 
-DeviceCutActivityInfo *ADBInterface::getDeviceCutActivityInfo(const QString &code)
+QSharedPointer<DeviceCutActivityInfo> ADBInterface::getDeviceCutActivityInfo(const QString &code)
 {
     return m_deviceCutActivityInfoMap.value(code);
+}
+
+QVector<QString> ADBInterface::getDeviceCodeSet()
+{
+    return m_deviceCodeSet;
 }

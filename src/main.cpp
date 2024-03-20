@@ -24,10 +24,21 @@ int main(int argc, char *argv[])
     qWarning() << "ADB: " << interface.adbVersion() << QThread::currentThreadId();
 
     DeviceListviewModel deviceListviewModel;
-    deviceListviewModel.appendRow(new DeviceBaceInfo("XIAOMI 8 Lite", "", 100, true, false, true));
-    deviceListviewModel.appendRow(new DeviceBaceInfo("OPPO R11 PLUS", "192.168.0.2", 10, true, true, false));
-    deviceListviewModel.appendRow(new DeviceBaceInfo("HUAWEI Nova11SE", "", 10, false, false, false));
-    deviceListviewModel.appendRow(new DeviceBaceInfo("VIVO Y77", "", 10, false, false, false));
+
+    QObject::connect(&interface, &ADBInterface::deviceDisconnected, [&deviceListviewModel, &interface](const QString &code){
+        deviceListviewModel.removeRow(code);
+    });
+
+    QObject::connect(&interface, &ADBInterface::deviceStatusUpdateFinish, [&deviceListviewModel, &interface](){
+        auto devices = interface.getDeviceCodeSet();
+        for (const QString &deviceCode : devices) {
+            if (deviceListviewModel.hasDeviceCode(deviceCode)) {
+                deviceListviewModel.setInfo(*interface.getDeviceBaceInfo(deviceCode));
+            } else { // 是一个新设备
+                deviceListviewModel.appendRow(*interface.getDeviceBaceInfo(deviceCode));
+            }
+        }
+    });
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("deviceListviewModel", &deviceListviewModel);

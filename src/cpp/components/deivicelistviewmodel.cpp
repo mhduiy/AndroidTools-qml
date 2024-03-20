@@ -22,51 +22,80 @@ QVariant DeviceListviewModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= m_deviceInfos.size())
         return QVariant();
 
-    DeviceBaceInfo *info = m_deviceInfos[index.row()];
+    const DeviceBaceInfo &info = m_deviceInfos[index.row()];
     switch (role) {
     case NameRole:
-        return info->deviceName;
+        return info.deviceName;
     case ipRole:
-        return info->ip;
+        return info.ip;
     case batteryRole:
-        return info->battery;
+        return info.battery;
     case isConnectedRole:
-        return info->isConnected;
+        return info.isConnected;
     case isWirelessRole:
-        return info->isWireless;
+        return info.isWireless;
     case isChargingRole:
-        return info->isCharging;
+        return info.isCharging;
     default:
         return QVariant();
     }
 }
 
-void DeviceListviewModel::appendRow(DeviceBaceInfo *info)
+void DeviceListviewModel::appendRow(DeviceBaceInfo info)
 {
-    if (info) {
-        beginInsertRows(QModelIndex(), rowCount(), rowCount());
-        m_deviceInfos.append(info);
-        endInsertRows();
+    if (info.deviceCode.isEmpty()) return;
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+    m_deviceInfos.append(info);
+    endInsertRows();
+}
 
+void DeviceListviewModel::removeRow(const QString &code)
+{
+    if (code.isEmpty()) return;
+    for (int i = 0; i < m_deviceInfos.size(); i++) {
+        if (m_deviceInfos[i].deviceCode == code) {
+            beginRemoveRows(QModelIndex(), i, i);
+            m_deviceInfos.remove(i);
+            endRemoveRows();
+        }
     }
 }
 
-void DeviceListviewModel::insertRow(int row, DeviceBaceInfo *info)
+void DeviceListviewModel::setInfo(const DeviceBaceInfo &info)
 {
-    if (info && row <= m_deviceInfos.size()) {
-        beginInsertRows(QModelIndex(), rowCount(), rowCount());
-        m_deviceInfos.insert(row, info);
-        endInsertRows();
+    int _index = 0;
+    for (auto &it : m_deviceInfos) {
+        if (it.deviceCode == info.deviceCode) {
+            it.deviceName = info.deviceName;
+            it.battery = info.battery;
+            it.ip = info.ip;
+            it.isCharging = info.isCharging;
+            it.isConnected = info.isConnected;
+            it.isWireless = info.isWireless;
+            emit dataChanged(index(_index, 0), index(_index, 0));
+            break;
+        }
+        _index++;
     }
 }
 
-void DeviceListviewModel::removeRow(int row)
+QModelIndex DeviceListviewModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (row >= 0 && row < m_deviceInfos.size()) {
-        beginRemoveRows(QModelIndex(), row, row);
-        m_deviceInfos.remove(row);
-        endRemoveRows();
+    if (!hasIndex(row, column, parent))
+        return QModelIndex();
+
+    // 在这里根据行号和列号创建索引
+    return createIndex(row, column);
+}
+
+bool DeviceListviewModel::hasDeviceCode(const QString &code)
+{
+    for (const auto &info : m_deviceInfos) {
+        if (info.deviceCode == code) {
+            return true;
+        }
     }
+    return false;
 }
 
 QHash<int, QByteArray> DeviceListviewModel::roleNames() const
