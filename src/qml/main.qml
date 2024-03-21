@@ -17,8 +17,7 @@ ApplicationWindow {
     Image {
         id: backgroundImage
         anchors.fill: parent
-        source: "file:///D:/myCode/AndroidTools-qml/src/res/backgroundImage.jpeg"
-        // z: 1
+        source: "qrc:/res/backgroundImage.jpeg"
     }
 
     RowLayout {

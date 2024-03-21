@@ -125,8 +125,11 @@ void ADBInterface::refreshDeviceStatus()
         }
         QSharedPointer<DeviceBaceInfo> deviceBaceInfo(new DeviceBaceInfo());
 
-        retStr = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell",  R"(getprop ro.product.marketname)"});
-        deviceBaceInfo->deviceName = retStr.simplified();
+        retStr = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell",  R"(getprop ro.product.marketname)"}).simplified();
+        if (retStr.isEmpty()) { // 兼容部分荣耀
+            retStr = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell",  R"(getprop ro.config.marketing_name)"}).simplified();
+        }
+        deviceBaceInfo->deviceName = retStr;
         deviceBaceInfo->battery = m_deviceBatteryInfoMap[m_deviceCodeSet[i]]->level;
         deviceBaceInfo->isConnected = true;
         deviceBaceInfo->isWireless = false;

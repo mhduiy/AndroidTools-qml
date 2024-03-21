@@ -10,5 +10,6 @@
         <file>qml/pages/DeviceImagePage.qml</file>
         <file>qml/pages/DeviceTerminalPage.qml</file>
         <file>qml/components/StandardComponent.qml</file>
+        <file>res/backgroundImage.jpeg</file>
     </qresource>
 </RCC>

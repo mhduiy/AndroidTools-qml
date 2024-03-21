@@ -118,9 +118,9 @@ Item {
                         GridLayout {
                             columns: 2
                             width: parent.parent.width
-                            TextEdit {
+                            MLineEdit {
+                                placeholderText: "电量"
                                 Layout.fillWidth: true
-                                Layout.maximumWidth: parent.width / 2
                             }
 
                             MButton {
