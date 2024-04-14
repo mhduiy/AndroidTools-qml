@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import MFloat
 
 import "../components"
+import BatteryControl 1.0
 
 Item {
     id: root
@@ -86,28 +87,29 @@ Item {
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignRight
                 wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+
                 ColumnLayout {
                     anchors.centerIn: parent
                     ColumnLayout {
 
                         BatteryRect {
-
+                            level: BatteryControl.level
                         }
 
                         GridLayout {
                             columns: 4
                             Repeater {
-                                model: batteryModel.count
+                                model: batteryModel
                                 MLabel {
-                                    text: batteryModel.get(index).name
+                                    text: model.name
                                     Layout.row: index / 2
                                     Layout.column: index % 2 == 1 ? 2 : 0
                                 }
                             }
                             Repeater {
-                                model: batteryModel.count
+                                model: batteryModel
                                 Label {
-                                    text: batteryModel.get(index).info
+                                    text: model.info
                                     Layout.row: index / 2
                                     Layout.column: index % 2 == 1 ? 3 : 1
                                 }
@@ -284,11 +286,61 @@ Item {
 
     ListModel {
         id: batteryModel
-        ListElement { name: "充电模式"; info: "无线充电"}
-        ListElement { name: "健康度"; info: "98%"}
-        ListElement { name: "电压"; info: "3.8v"}
-        ListElement { name: "电流"; info: "5A"}
-        ListElement { name: "功率"; info: "19.0w"}
-        ListElement { name: "温度"; info: "40℃"}
+
+        ListElement {
+            name: "充电模式"
+            info: "-"
+        }
+        ListElement {
+            name: "健康度"
+            info: "-"
+        }
+        ListElement {
+            name: "电压"
+            info: "-"
+        }
+        ListElement {
+            name: "电流"
+            info: "-"
+        }
+        ListElement {
+            name: "功率"
+            info: "-"
+        }
+        ListElement {
+            name: "温度"
+            info: "-"
+        }
+
+        Component.onCompleted: {
+            BatteryControl.chargeModeChanged.connect(function(mode) {
+                var str = "正在放电"
+                if (mode === 0) {
+                    str = "常规充电"
+                } else if (mode === 1) {
+                    str = "USB充电"
+                } else if (mode === 2) {
+                    str = "无线充电"
+                } else if (mode === 3) {
+                    str = "Dock充电"
+                }
+                batteryModel.get(0).info = str
+            });
+            BatteryControl.healthChanged.connect(function(health) {
+                batteryModel.get(1).info = health + "%"
+            });
+            BatteryControl.voltageChanged.connect(function(voltage) {
+                batteryModel.get(2).info = voltage + "mV"
+            });
+            BatteryControl.currentChanged.connect(function(current) {
+                batteryModel.get(3).info = current + "mA"
+            });
+            BatteryControl.powerChanged.connect(function(power) {
+                batteryModel.get(4).info = power + "w"
+            });
+            BatteryControl.temperatureChanged.connect(function(temperature) {
+                batteryModel.get(5).info = parseFloat(temperature).toFixed(1) + "℃"
+            });
+        }
     }
 }

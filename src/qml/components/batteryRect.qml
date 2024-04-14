@@ -62,25 +62,4 @@ Item {
             text: (charging ? "充电中 " : "剩余电量 ") + root.level + "%"
         }
     }
-
-    Timer{
-        id: timer
-        running: true
-        interval: 1000 // 1秒
-        repeat: true
-        onTriggered: {
-            generateRandomNumber();
-        }
-    }
-    // 控件生成完成的信号处理函数
-    Component.onCompleted: {
-        timer.start()
-
-    }
-
-    // 生成随机数的函数
-    function generateRandomNumber() {
-        var randomNumber = Math.floor(Math.random() * 101); // 生成0到100之间的随机数
-        root.level = randomNumber
-    }
 }

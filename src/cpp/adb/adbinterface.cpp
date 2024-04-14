@@ -106,7 +106,6 @@ void ADBInterface::refreshDeviceStatus()
 
         QStringList retStrList = m_adbtools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell", "dumpsys activity activities | grep topResumedActivity"}).split('\n');
         for (QString &lineInfo : retStrList) {
-            qWarning() << lineInfo;
             if (lineInfo.contains("topResumedActivity")) {
                 lineInfo = lineInfo.simplified();
                 int index = lineInfo.indexOf('{');
@@ -132,14 +131,16 @@ void ADBInterface::refreshDeviceStatus()
         deviceBaceInfo->deviceName = retStr;
         deviceBaceInfo->battery = m_deviceBatteryInfoMap[m_deviceCodeSet[i]]->level;
         deviceBaceInfo->isConnected = true;
-        deviceBaceInfo->isWireless = false;
+        deviceBaceInfo->isWireless = m_deviceCodeSet[i].contains(':');
+        if (deviceBaceInfo->isWireless) {
+            deviceBaceInfo->ip = m_deviceCodeSet[i].split(':').first();
+        }
         deviceBaceInfo->isCharging = m_deviceBatteryInfoMap[m_deviceCodeSet[i]]->status == 2 ? true : false;
-        qWarning() << "*******" << deviceBaceInfo->isCharging;
         deviceBaceInfo->deviceCode = m_deviceCodeSet[i];
 
         m_deviceBaceInfoMap.insert(m_deviceCodeSet[i], deviceBaceInfo);
     }
-
+#if 0
     for (auto it = m_deviceBatteryInfoMap.begin(); it != m_deviceBatteryInfoMap.end(); ++it) {
         qWarning() << it.key() << "*1*" << it.value()->level;
     }
@@ -151,6 +152,7 @@ void ADBInterface::refreshDeviceStatus()
     for (auto it = m_deviceBaceInfoMap.begin(); it != m_deviceBaceInfoMap.end(); ++it) {
         qWarning() << it.key() << "*3*" << it.value()->deviceName;
     }
+#endif
 
     emit deviceStatusUpdateFinish();
 }
@@ -183,4 +185,16 @@ QSharedPointer<DeviceCutActivityInfo> ADBInterface::getDeviceCutActivityInfo(con
 QVector<QString> ADBInterface::getDeviceCodeSet()
 {
     return m_deviceCodeSet;
+}
+
+QString ADBInterface::getCurrentDeviceCode()
+{
+    return m_currentDeviceCode;
+}
+
+void ADBInterface::setCurrentDeviceCode(const QString &code)
+{
+    if (m_deviceCodeSet.contains(code)) {
+        m_currentDeviceCode = code;
+    }
 }

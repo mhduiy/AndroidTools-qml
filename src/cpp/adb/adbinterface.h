@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QTimer>
 #include <QSharedPointer>
+#include "../utils/singleton.hpp"
 
 struct DeviceBaceInfo{
     QString deviceName;
@@ -53,8 +54,8 @@ struct DeviceCutActivityInfo {
 class ADBInterface : public QObject
 {
     Q_OBJECT
+    SINGLETON(ADBInterface)
 public:
-    explicit ADBInterface(QObject *parent = nullptr);
 
     bool startADBService();
     bool stopADBService();
@@ -66,11 +67,15 @@ public:
     void startRefreshDevice();
     void stopRefreshDevice();
 
+    QVector<QString> getDeviceCodeSet();
+
     QSharedPointer<DeviceBaceInfo> getDeviceBaceInfo(const QString &code);
     QSharedPointer<DeviceBatteryInfo> getDeviceBatteryInfo(const QString &code);
     QSharedPointer<DeviceCutActivityInfo> getDeviceCutActivityInfo(const QString &code);
 
-    QVector<QString> getDeviceCodeSet();
+
+    QString getCurrentDeviceCode();
+    void setCurrentDeviceCode(const QString &code);
 
 signals:
     void deviceDisconnected(QString code);
@@ -85,6 +90,8 @@ private:
     QMap<QString, QSharedPointer<DeviceBatteryInfo>> m_deviceBatteryInfoMap;
     QMap<QString, QSharedPointer<DeviceCutActivityInfo>> m_deviceCutActivityInfoMap;
     QTimer *m_deviceCheckTimer;
+
+    QString m_currentDeviceCode;
 
 };
 
