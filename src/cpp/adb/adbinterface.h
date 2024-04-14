@@ -62,36 +62,13 @@ public:
     bool restartADBService();
 
     QString adbVersion();
-
-    void refreshDeviceStatus();
-    void startRefreshDevice();
-    void stopRefreshDevice();
-
-    QVector<QString> getDeviceCodeSet();
-
-    QSharedPointer<DeviceBaceInfo> getDeviceBaceInfo(const QString &code);
-    QSharedPointer<DeviceBatteryInfo> getDeviceBatteryInfo(const QString &code);
-    QSharedPointer<DeviceCutActivityInfo> getDeviceCutActivityInfo(const QString &code);
-
-
-    QString getCurrentDeviceCode();
-    void setCurrentDeviceCode(const QString &code);
-
+    QVector<QString> getDeviceCodes();
+    DeviceBatteryInfo getBatteryInfo(const QString &code);
+    DeviceCutActivityInfo getCutActivityInfo(const QString &code);
 signals:
-    void deviceDisconnected(QString code);
-    // 收到信号后不能马上获取设备的详细信息
-    void deviceConnected(QString code);
-    void deviceStatusUpdateFinish();
 
 private:
-    ADBTools *m_adbtools = ADBTools::instance();
-    QVector<QString> m_deviceCodeSet;
-    QMap<QString, QSharedPointer<DeviceBaceInfo>> m_deviceBaceInfoMap;
-    QMap<QString, QSharedPointer<DeviceBatteryInfo>> m_deviceBatteryInfoMap;
-    QMap<QString, QSharedPointer<DeviceCutActivityInfo>> m_deviceCutActivityInfoMap;
-    QTimer *m_deviceCheckTimer;
-
-    QString m_currentDeviceCode;
+    ADBTools *m_adbTools = ADBTools::instance();
 
 };
 

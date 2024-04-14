@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
-
+import DeviceListviewModel 1.0
 
 Item {
     height: 400
@@ -12,9 +12,13 @@ Item {
         id: listView
         anchors.fill: parent
         clip: true
-        model: deviceListviewModel
+        model: DeviceListviewModel
         delegate: lvDelegate
         spacing: 10
+
+        onCurrentIndexChanged: {
+            DeviceListviewModel.setCurrentIndex(currentIndex)
+        }
     }
 
     Component {

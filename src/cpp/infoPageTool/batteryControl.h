@@ -18,7 +18,7 @@ class BatteryControl : public QObject
     Q_PROPERTY(float temperature READ getLevel WRITE setLevel NOTIFY temperatureChanged)
 
 public:
-    void updateBatteryInfo(const DeviceBatteryInfo &info);
+    void updateBatteryInfo();
 
     quint8 getLevel() const {return m_level;}
     void setLevel(quint8 level) {m_level = level; emit levelChanged(level);};

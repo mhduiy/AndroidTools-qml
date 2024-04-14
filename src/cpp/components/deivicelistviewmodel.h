@@ -13,7 +13,9 @@ enum DeviceBaceRole {
     batteryRole,
     isConnectedRole,
     isWirelessRole,
-    isChargingRole
+    isChargingRole,
+
+    deviceCodeRole
 };
 
 class DeviceListviewModel : public QAbstractListModel
@@ -29,6 +31,11 @@ public:
     Q_INVOKABLE void setInfo(const DeviceBaceInfo &info);
     QModelIndex index(int row, int column = 1, const QModelIndex &parent = QModelIndex()) const override;
     bool hasDeviceCode(const QString &code);
+
+    Q_INVOKABLE void setCurrentIndex(int index);
+
+signals:
+    void currentItemChanged(const QString &code);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

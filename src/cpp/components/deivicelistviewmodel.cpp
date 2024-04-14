@@ -36,6 +36,8 @@ QVariant DeviceListviewModel::data(const QModelIndex &index, int role) const
         return info.isWireless;
     case isChargingRole:
         return info.isCharging;
+    case deviceCodeRole:
+        return info.deviceCode;
     default:
         return QVariant();
     }
@@ -98,6 +100,11 @@ bool DeviceListviewModel::hasDeviceCode(const QString &code)
     return false;
 }
 
+void DeviceListviewModel::setCurrentIndex(int index)
+{
+    emit currentItemChanged(m_deviceInfos.value(index).deviceCode);
+}
+
 QHash<int, QByteArray> DeviceListviewModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
@@ -107,5 +114,7 @@ QHash<int, QByteArray> DeviceListviewModel::roleNames() const
     roles[isConnectedRole] = "isConnected";
     roles[isWirelessRole] = "isWireless";
     roles[isChargingRole] = "isCharging";
+    roles[isChargingRole] = "isCharging";
+    roles[deviceCodeRole] = "deviceCode";
     return roles;
 }

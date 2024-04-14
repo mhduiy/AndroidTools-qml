@@ -1,14 +1,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QTimer>
-#include "cpp/components/deivicelistviewmodel.h"
 #include <QQmlContext>
-#include "cpp/adb/adbtools.h"
-#include "cpp/adb/adbinterface.h"
 #include <QThread>
-
-#include "cpp/infoPageTool/batteryControl.h"
-
+#include "cpp/adb/connectmanager.h"
+#include "cpp/infoPageTool/infopagetool.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,42 +12,25 @@ int main(int argc, char *argv[])
 
     ADBTools::instance(&app);
     ADBInterface *interface = ADBInterface::instance(&app);
-    BatteryControl::instance(&app);
 
+    // 连接管理放置到子线程
     QThread *thread = new QThread();
-    interface->moveToThread(thread);
+    ConnectManager::instance(&app)->moveToThread(thread);
     thread->start();
+    // 开始检测设备连接
+    ConnectManager::instance()->startCheckDevice();
 
-    interface->startRefreshDevice();
-
-    qWarning() << "ADB: " << interface->adbVersion() << QThread::currentThreadId();
-
-    DeviceListviewModel deviceListviewModel;
-
-    QObject::connect(interface, &ADBInterface::deviceDisconnected, [&deviceListviewModel, &interface](const QString &code){
-        deviceListviewModel.removeRow(code);
-    });
-
-    QObject::connect(interface, &ADBInterface::deviceStatusUpdateFinish, [&deviceListviewModel, &interface](){
-        auto devices = interface->getDeviceCodeSet();
-        for (const QString &deviceCode : devices) {
-            BatteryControl::instance()->updateBatteryInfo(*interface->getDeviceBatteryInfo(deviceCode).data());
-            if (deviceListviewModel.hasDeviceCode(deviceCode)) {
-                deviceListviewModel.setInfo(*interface->getDeviceBaceInfo(deviceCode));
-            } else { // 是一个新设备
-                deviceListviewModel.appendRow(*interface->getDeviceBaceInfo(deviceCode));
-            }
-        }
-    });
-
-    qmlRegisterSingletonInstance("BatteryControl", 1, 0, "BatteryControl", BatteryControl::instance());
+    // 加载InfoPage的相关逻辑
+    InfoPageTool::instance(&app);
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("deviceListviewModel", &deviceListviewModel);
     const QUrl url("qrc:/qml/Main.qml");
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
         &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.load(url);
+
+    qWarning() << engine.rootObjects();
+
     return app.exec();
 }

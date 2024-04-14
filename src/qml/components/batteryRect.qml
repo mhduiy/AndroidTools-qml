@@ -15,7 +15,7 @@ Item {
         color: Qt.lighter(indi.color, 1.8)
 
         property string warningColor: "#E74C3C"
-        property string lowColor: "#F1C40F"
+        property string lowColor: "#E67E22"
         property string midColor: "#3498DB"
         property string goodColor: "#2ECC71"
 

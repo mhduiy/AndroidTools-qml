@@ -21,7 +21,7 @@
 
 
 
-ADBTools::ADBTools(QObject *parent)
+ADBTools::ADBTools(QObject *parent) : QObject(parent)
 {
 
 }
