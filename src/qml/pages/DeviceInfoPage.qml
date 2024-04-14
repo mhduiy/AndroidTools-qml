@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
 
+import "../components"
+
 Item {
     id: root
     Layout.minimumWidth: 780
@@ -87,12 +89,11 @@ Item {
                 ColumnLayout {
                     anchors.centerIn: parent
                     ColumnLayout {
-                        Rectangle {
-                            height: 100
-                            width: 300
-                            color: "green"
-                            radius: 5 * width / 100
+
+                        BatteryRect {
+
                         }
+
                         GridLayout {
                             columns: 4
                             Repeater {

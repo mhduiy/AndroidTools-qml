@@ -11,5 +11,6 @@
         <file>qml/pages/DeviceTerminalPage.qml</file>
         <file>qml/components/StandardComponent.qml</file>
         <file>res/backgroundImage.jpeg</file>
+        <file>qml/components/BatteryRect.qml</file>
     </qresource>
 </RCC>

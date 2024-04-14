@@ -87,7 +87,7 @@ void ADBInterface::refreshDeviceStatus()
             batteryInfo->chargingType = USB;
         } else if (retMap["Wireless powered"] == "true") {
             batteryInfo->chargingType = Wireless;
-        } else if (retMap[" Dock powered"] == "true") {
+        } else if (retMap["Dock powered"] == "true") {
             batteryInfo->chargingType = Dock;
         } else {
             batteryInfo->chargingType = None;
