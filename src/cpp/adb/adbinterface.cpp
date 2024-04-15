@@ -92,7 +92,7 @@ DeviceCutActivityInfo ADBInterface::getCutActivityInfo(const QString &code)
             if (lineInfo.isEmpty() || index < 0) continue;
             QStringList blockInfoList = lineInfo.mid(index, lineInfo.size() - index - 1).split(' ');
             if (blockInfoList.size() == 4) {
-                deviceCutActivity.windowCode = blockInfoList.value(0);
+                deviceCutActivity.windowCode = blockInfoList.value(0).right(blockInfoList.value(0).size() - 1);
                 deviceCutActivity.cutPackage = blockInfoList.value(2).split('/').first();
                 deviceCutActivity.cutActivity = blockInfoList.value(2).split('/').last();
                 return deviceCutActivity;
@@ -100,4 +100,9 @@ DeviceCutActivityInfo ADBInterface::getCutActivityInfo(const QString &code)
         }
     }
     return {};
+}
+
+void ADBInterface::killActivity(const QString &packageName, const QString &deviceCode)
+{
+    m_adbTools->executeCommand(ADBTools::ADB, {"-s", deviceCode, "shell", "am", "force-stop", packageName});
 }

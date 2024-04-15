@@ -14,8 +14,8 @@ int main(int argc, char *argv[])
     ADBInterface *interface = ADBInterface::instance(&app);
 
     // 连接管理放置到子线程
-    QThread *thread = new QThread();
-    ConnectManager::instance(&app)->moveToThread(thread);
+    QThread *thread = new QThread(&app);
+    ConnectManager::instance()->moveToThread(thread);
     thread->start();
     // 开始检测设备连接
     ConnectManager::instance()->startCheckDevice();

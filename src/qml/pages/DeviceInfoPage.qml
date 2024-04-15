@@ -5,6 +5,7 @@ import MFloat
 
 import "../components"
 import BatteryControl 1.0
+import CutActivityControl 1.0
 
 Item {
     id: root
@@ -146,6 +147,9 @@ Item {
                                 text: "停止当前应用"
                                 width: 80
                                 btnType: MButton.FBtnType.Warning
+                                onClicked: {
+                                    CutActivityControl.killCutActivity()
+                                }
                             }
                         }
                         GridLayout {
@@ -154,19 +158,19 @@ Item {
                                 text: "窗口标识符"
                             }
                             Text {
-                                text: "e5d6s6s"
+                                text: CutActivityControl.identifier
                             }
                             MLabel {
                                 text: "前台包名"
                             }
                             Text {
-                                text: "com.qq.package"
+                                text: CutActivityControl.cutPackageName
                             }
                             MLabel {
                                 text: "前台活动"
                             }
                             Text {
-                                text: "com.qq.package.MainWindow"
+                                text: CutActivityControl.cutActivity
                             }
                         }
                     }

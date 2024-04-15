@@ -65,6 +65,7 @@ public:
     QVector<QString> getDeviceCodes();
     DeviceBatteryInfo getBatteryInfo(const QString &code);
     DeviceCutActivityInfo getCutActivityInfo(const QString &code);
+    void killActivity(const QString &packageName, const QString &deviceCode = "");
 signals:
 
 private:
