@@ -61,16 +61,18 @@ public:
     bool stopADBService();
     bool restartADBService();
 
-    QString adbVersion();
-    QVector<QString> getDeviceCodes();
-    DeviceBatteryInfo getBatteryInfo(const QString &code);
-    DeviceCutActivityInfo getCutActivityInfo(const QString &code);
+    QString adbVersion() const;
+    QVector<QString> getDeviceCodes() const;
+    DeviceBatteryInfo getBatteryInfo(const QString &code) const;
+    DeviceCutActivityInfo getCutActivityInfo(const QString &code) const;
     void killActivity(const QString &packageName, const QString &deviceCode = "");
 signals:
+    void adbStarted();
+    void adbKilled();
 
 private:
     ADBTools *m_adbTools = ADBTools::instance();
-
+    QString m_adbVersion = "";
 };
 
 #endif // ADBINTERFACE_H

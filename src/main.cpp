@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 
     ADBTools::instance(&app);
     ADBInterface *interface = ADBInterface::instance(&app);
+    interface->startADBService();
 
     // 连接管理放置到子线程
     QThread *thread = new QThread(&app);

@@ -6,6 +6,7 @@ import MFloat
 import "../components"
 import BatteryControl 1.0
 import CutActivityControl 1.0
+import ADBControl 1.0
 
 Item {
     id: root
@@ -128,6 +129,7 @@ Item {
 
             ColumnLayout {
                 MFrame {    // 当前活动信息
+                    id: activityRoot
                     width: 300
                     height: 150
                     wrapperColor: Qt.rgba(255, 255, 255, 0.65)
@@ -154,6 +156,8 @@ Item {
                         }
                         GridLayout {
                             columns: 2
+                            Layout.maximumWidth: activityRoot.width
+                            Layout.maximumHeight: activityRoot.height
                             MLabel {
                                 text: "窗口标识符"
                             }
@@ -183,12 +187,15 @@ Item {
                         anchors.centerIn: parent
                         columns: 2
                         MLabel {
-                            text: "ADB版本: 9.25"
+                            text: "ADB版本: " + ADBControl.adbVersion
                         }
                         MButton {
                             text: "重启ADB"
                             btnType: MButton.FBtnType.Warning
                             Layout.alignment: Qt.AlignRight
+                            onClicked: {
+                                ADBControl.restartADB();
+                            }
                         }
                         MButton {
                             text: "重启手机"

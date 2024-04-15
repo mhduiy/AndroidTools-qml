@@ -11,12 +11,20 @@ ADBInterface::ADBInterface(QObject *parent) : QObject(parent)
 bool ADBInterface::startADBService()
 {
     m_adbTools->executeCommand(ADBTools::ADB, {"start-server"});
+    QStringList retStrList = m_adbTools->executeCommand(ADBTools::ADB, {"version"}).split('\n');
+    for (QString &lineInfo : retStrList) {
+        if (lineInfo.contains("Android Debug Bridge version")) {
+            m_adbVersion = lineInfo.split(' ').last().simplified();
+        }
+    }
+    emit adbStarted();
     return true;
 }
 
 bool ADBInterface::stopADBService()
 {
     m_adbTools->executeCommand(ADBTools::ADB, {"kill-server"});
+    emit adbKilled();
     return true;
 }
 
@@ -27,18 +35,12 @@ bool ADBInterface::restartADBService()
     return true;
 }
 
-QString ADBInterface::adbVersion()
+QString ADBInterface::adbVersion() const
 {
-    QStringList retStrList = m_adbTools->executeCommand(ADBTools::ADB, {"version"}).split('\n');
-    for (QString &lineInfo : retStrList) {
-        if (lineInfo.contains("Android Debug Bridge version")) {
-            return lineInfo.split(' ').last().simplified();
-        }
-    }
-    return {};
+    return m_adbVersion;
 }
 
-QVector<QString> ADBInterface::getDeviceCodes()
+QVector<QString> ADBInterface::getDeviceCodes() const
 {
     QVector<QString> devices;
     QStringList retStrList = m_adbTools->executeCommand(ADBTools::ADB, {"devices"}).split('\n');
@@ -53,7 +55,7 @@ QVector<QString> ADBInterface::getDeviceCodes()
     return devices;
 }
 
-DeviceBatteryInfo ADBInterface::getBatteryInfo(const QString &code)
+DeviceBatteryInfo ADBInterface::getBatteryInfo(const QString &code) const
 {
     QString retStr = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "dumpsys battery"});
     QMap<QString, QString> retMap = serializationInformation(retStr);
@@ -81,7 +83,7 @@ DeviceBatteryInfo ADBInterface::getBatteryInfo(const QString &code)
     return batteryInfo;
 }
 
-DeviceCutActivityInfo ADBInterface::getCutActivityInfo(const QString &code)
+DeviceCutActivityInfo ADBInterface::getCutActivityInfo(const QString &code) const
 {
     QStringList retStrList = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "dumpsys activity activities | grep topResumedActivity"}).split('\n');
     DeviceCutActivityInfo deviceCutActivity;
