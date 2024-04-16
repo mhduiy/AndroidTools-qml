@@ -104,7 +104,51 @@ DeviceCutActivityInfo ADBInterface::getCutActivityInfo(const QString &code) cons
     return {};
 }
 
+DeviceDetailInfo ADBInterface::getDeviceDetailInfo(const QString &code)
+{
+    DeviceDetailInfo info;
+    /*厂商*/
+    QString ret;
+    info.manufacturer = getDeviceProp(code, "ro.product.manufacturer");
+    /*品牌*/
+    info.brand = getDeviceProp(code, "ro.product.brand");
+    /*型号*/
+    info.model = getDeviceProp(code, "ro.product.model");
+    /*设备名*/
+    info.deviceName = getDeviceProp(code, "ro.product.marketname");
+    /*设备代号*/
+    info.deviceCode = getDeviceProp(code, "ro.product.name");
+    /*系统信息*/
+    info.systemInfo = getDeviceProp(code, "ro.custom.version");
+    /*安卓版本*/
+    info.androidVersion = getDeviceProp(code, "ro.build.version.release");
+    /*分辨率*/
+    info.resolving = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "wm size"}).simplified();
+    /*Dpi*/
+    info.dpi = getDeviceProp(code, "ro.sf.lcd_density");
+    /*MAC地址*/
+    info.macAddr = "";
+    /*IP地址*/
+    info.ipAddr = "";
+    /*CPU*/
+    info.cpuInfo = getDeviceProp(code, "ro.product.board");
+    /*内存容量*/
+    info.memory = "";
+    /*SDK版本*/
+    info.sdkVersion = getDeviceProp(code, "ro.build.version.sdk");
+    /*序列号*/
+    ret = getDeviceProp(code, "ro.serialno").simplified();
+    info.serialNumber = ret.split(' ').value(0);
+
+    return info;
+}
+
 void ADBInterface::killActivity(const QString &packageName, const QString &deviceCode)
 {
     m_adbTools->executeCommand(ADBTools::ADB, {"-s", deviceCode, "shell", "am", "force-stop", packageName});
+}
+
+QString ADBInterface::getDeviceProp(const QString &deviceCode, const QString &prop)
+{
+    return m_adbTools->executeCommand(ADBTools::ADB, {"-s", deviceCode, "shell", "getprop", prop}).simplified();
 }

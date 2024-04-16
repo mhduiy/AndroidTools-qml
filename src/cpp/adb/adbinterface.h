@@ -51,6 +51,24 @@ struct DeviceCutActivityInfo {
     QString cutActivity;
 };
 
+struct DeviceDetailInfo {
+    QString manufacturer;   // 厂商
+    QString brand;          // 品牌
+    QString model;          // 型号
+    QString deviceName;     // 设备名
+    QString deviceCode;     // 设备代号
+    QString systemInfo;     // 系统信息
+    QString androidVersion; // 安卓版本
+    QString resolving;      //分辨率
+    QString dpi;            // dpi
+    QString macAddr;        // mac地址
+    QString ipAddr;         // ip地址
+    QString cpuInfo;        // cpu信息
+    QString memory;         // 内存容量
+    QString sdkVersion;     // sdk版本
+    QString serialNumber;   // 序列号
+};
+
 class ADBInterface : public QObject
 {
     Q_OBJECT
@@ -65,10 +83,14 @@ public:
     QVector<QString> getDeviceCodes() const;
     DeviceBatteryInfo getBatteryInfo(const QString &code) const;
     DeviceCutActivityInfo getCutActivityInfo(const QString &code) const;
+    DeviceDetailInfo getDeviceDetailInfo(const QString &code);
     void killActivity(const QString &packageName, const QString &deviceCode = "");
 signals:
     void adbStarted();
     void adbKilled();
+
+private:
+    QString getDeviceProp(const QString &deviceCode, const QString &prop);
 
 private:
     ADBTools *m_adbTools = ADBTools::instance();

@@ -7,6 +7,7 @@ import "../components"
 import BatteryControl 1.0
 import CutActivityControl 1.0
 import ADBControl 1.0
+import DetailInfoControl 1.0
 
 Item {
     id: root
@@ -64,17 +65,17 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         columns: 2
                         Repeater {
-                            model: 8
+                            model: deviceInfoModel
                             MLabel {
-                                text: deviceInfoModel.get(index).name
+                                text: model.name
                                 Layout.row: index
                                 Layout.column: 0
                             }
                         }
                         Repeater {
-                            model: 8
+                            model: deviceInfoModel
                             Label {
-                                text: deviceInfoModel.get(index).info
+                                text: model.info
                                 Layout.row: index
                                 Layout.column: 1
                             }
@@ -278,21 +279,31 @@ Item {
     // 模拟数据
     ListModel {
         id: deviceInfoModel
-        ListElement { name: "厂商"; info: "XIAOMI"}
-        ListElement { name: "型号"; info: "Mi 8Lite"}
-        ListElement { name: "设备名"; info: "小米8青春版"}
-        ListElement { name: "安卓版本"; info: "11"}
-        ListElement { name: "分辨率"; info: "1920x1080"}
-        ListElement { name: "屏幕密度"; info: "500"}
-        ListElement { name: "android_id"; info: "12234213412124"}
-        ListElement { name: "IMEI"; info: "9846687652934876528"}
-        ListElement { name: "IP地址"; info: "192.168.0.1"}
-        ListElement { name: "Mac地址"; info: "er:sd:sd:as:fd"}
-        ListElement { name: "CPU信息"; info: "高通骁龙870"}
-        ListElement { name: "内存容量"; info: "16GB"}
-        ListElement { name: "SDK版本"; info: "22"}
-        ListElement { name: "是否支持OTG"; info: "是"}
-        ListElement { name: "单应用内存上限"; info: "4GB"}
+        ListElement { name: "厂商"; info: "-"}
+        ListElement { name: "品牌"; info: "-"}
+        ListElement { name: "型号"; info: "-"}
+        ListElement { name: "设备名"; info: "-"}
+        ListElement { name: "设备代号"; info: "-"}
+        ListElement { name: "系统信息"; info: "-"}
+        ListElement { name: "安卓版本"; info: "-"}
+        ListElement { name: "分辨率"; info: "-"}
+// 暂时只显示8个数据
+//        ListElement { name: "dpi"; info: "-"}
+//        ListElement { name: "ip地址"; info: "-"}
+//        ListElement { name: "Mac地址"; info: "-"}
+//        ListElement { name: "CPU信息"; info: "-"}
+//        ListElement { name: "内存容量"; info: "-"}
+//        ListElement { name: "SDK版本"; info: "-"}
+//        ListElement { name: "序列号"; info: "-"}
+
+        Component.onCompleted: {
+            DetailInfoControl.valueChanged.connect(function() {
+                for (var i = 0; i < 8; i++) {
+                    deviceInfoModel.get(i).info = DetailInfoControl.info[i]
+                    console.log(DetailInfoControl.info[i])
+                }
+            });
+        }
     }
 
     ListModel {
