@@ -8,6 +8,7 @@ import BatteryControl 1.0
 import CutActivityControl 1.0
 import ADBControl 1.0
 import DetailInfoControl 1.0
+import NotificationControl 1.0
 
 Item {
     id: root
@@ -152,6 +153,7 @@ Item {
                                 btnType: MButton.FBtnType.Warning
                                 onClicked: {
                                     CutActivityControl.killCutActivity()
+                                    NotificationControl.send("当前应用已停止", 1, 300);
                                 }
                             }
                         }

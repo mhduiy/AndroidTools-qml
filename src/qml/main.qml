@@ -13,6 +13,9 @@ ApplicationWindow {
     visible: true
     title: "AndroidTools"
 
+    MNotificationBox {
+        id: notificationBox
+    }
 
     Image {
         id: backgroundImage

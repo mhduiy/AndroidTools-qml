@@ -3,8 +3,10 @@
 #include <QTimer>
 #include <QQmlContext>
 #include <QThread>
+#include <QQuickItem>
 #include "cpp/adb/connectmanager.h"
 #include "cpp/infoPageTool/infopagetool.h"
+#include "cpp/utils/Notification.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,6 +26,9 @@ int main(int argc, char *argv[])
     // 加载InfoPage的相关逻辑
     InfoPageTool::instance(&app);
 
+    NotificationControl::instance(&app);
+    qmlRegisterSingletonInstance("NotificationControl", 1, 0, "NotificationControl", NotificationControl::instance());
+
     QQmlApplicationEngine engine;
     const QUrl url("qrc:/qml/Main.qml");
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
@@ -31,7 +36,9 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection);
     engine.load(url);
 
-    qWarning() << engine.rootObjects();
+    // 临时解决方案
+    QObject *rootObject = engine.rootObjects().first();
+    NotificationControl::instance()->setQmlObject(rootObject->children().value(1));
 
     return app.exec();
 }
