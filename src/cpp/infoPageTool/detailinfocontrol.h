@@ -4,6 +4,19 @@
 #include <QObject>
 #include "../utils/singleton.hpp"
 
+class DetailInfoUpdateHelper : public QObject
+{
+    Q_OBJECT
+public:
+    explicit DetailInfoUpdateHelper(QObject *parent = nullptr);
+    void updateInfo();
+    friend class DetailInfoControl;
+signals:
+    void updateFinish();
+private:
+    QVariantList m_info;
+};
+
 class DetailInfoControl : public QObject
 {
     Q_OBJECT
@@ -20,6 +33,7 @@ signals:
 
 private:
     QVariantList m_info;
+    DetailInfoUpdateHelper *m_helper;
 };
 
 #endif // DETAILINFOCONTROL_H

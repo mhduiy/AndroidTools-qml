@@ -1,12 +1,29 @@
 #include "detailinfocontrol.h"
 #include "../adb/connectmanager.h"
+#include <QThread>
 
 DetailInfoControl::DetailInfoControl(QObject *parent) : QObject(parent)
 {
-    connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, this, &DetailInfoControl::updateInfo);
+    QThread *thread = new QThread(this);
+    m_helper = new DetailInfoUpdateHelper();
+    m_helper->moveToThread(thread);
+    thread->start();
+    connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, m_helper, &DetailInfoUpdateHelper::updateInfo);
+    connect(m_helper, &DetailInfoUpdateHelper::updateFinish, this, &DetailInfoControl::updateInfo);
 }
 
 void DetailInfoControl::updateInfo()
+{
+    m_info = m_helper->m_info;
+    emit valueChanged();
+}
+
+DetailInfoUpdateHelper::DetailInfoUpdateHelper(QObject *parent) : QObject(parent)
+{
+
+}
+
+void DetailInfoUpdateHelper::updateInfo()
 {
     m_info.clear();
     auto infos = ADBInterface::instance()->getDeviceDetailInfo(ConnectManager::instance()->currentDeviceCode());
@@ -25,5 +42,5 @@ void DetailInfoControl::updateInfo()
     m_info.append(infos.memory);
     m_info.append(infos.sdkVersion);
     m_info.append(infos.serialNumber);
-    emit valueChanged();
+    emit updateFinish();
 }
