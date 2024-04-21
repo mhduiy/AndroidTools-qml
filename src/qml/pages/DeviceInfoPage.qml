@@ -153,7 +153,7 @@ Item {
                                 btnType: MButton.FBtnType.Warning
                                 onClicked: {
                                     CutActivityControl.killCutActivity()
-                                    NotificationControl.send("当前应用已停止", 1, 300);
+                                    NotificationControl.send("当前应用已停止", 1, 3000);
                                 }
                             }
                         }

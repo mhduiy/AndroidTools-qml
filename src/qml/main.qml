@@ -15,6 +15,10 @@ ApplicationWindow {
 
     MNotificationBox {
         id: notificationBox
+        Component.onCompleted: {
+            console.log(MNotificationBox.Type.Waining)
+            notificationBox.send("test", MNotificationBox.Type.Waining, 3000)
+        }
     }
 
     Image {

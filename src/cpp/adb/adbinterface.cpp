@@ -2,6 +2,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QTimer>
 #include "../utils/utils.hpp"
+#include "../utils/Notification.h"
 
 ADBInterface::ADBInterface(QObject *parent) : QObject(parent)
 {
@@ -30,6 +31,7 @@ bool ADBInterface::stopADBService()
 
 bool ADBInterface::restartADBService()
 {
+    NotificationControl::instance()->send("重启中，请耐心等待", NotificationControl::Warning);
     stopADBService();
     startADBService();
     return true;

@@ -1,4 +1,5 @@
 #include "adbcontrol.h"
+#include <QtConcurrent/QtConcurrentRun>
 #include "../adb/adbinterface.h"
 
 ADBControl::ADBControl(QObject *parent) : QObject(parent)
@@ -9,7 +10,9 @@ ADBControl::ADBControl(QObject *parent) : QObject(parent)
 
 void ADBControl::restartADB()
 {
-    ADBInterface::instance()->restartADBService();
+    (void)QtConcurrent::run([](){
+        ADBInterface::instance()->restartADBService();
+    });
 }
 
 void ADBControl::updateADBVersion()

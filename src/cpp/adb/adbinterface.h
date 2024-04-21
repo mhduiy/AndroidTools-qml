@@ -73,11 +73,11 @@ class ADBInterface : public QObject
 {
     Q_OBJECT
     SINGLETON(ADBInterface)
-public:
-
+public slots:
     bool startADBService();
     bool stopADBService();
     bool restartADBService();
+public:
 
     QString adbVersion() const;
     QVector<QString> getDeviceCodes() const;

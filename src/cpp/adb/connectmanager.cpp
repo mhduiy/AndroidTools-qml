@@ -80,9 +80,9 @@ void ConnectManager::refreshDevice()
     for (int i = m_deviceCodeSet.size() - 1; i >= 0; i--) {
         // 检查是否有设备断开连接
         if (!devices.contains(m_deviceCodeSet[i])) {
+            m_deviceListviewModel->removeRow(m_deviceCodeSet[i]);
             emit deviceDisconnected(m_deviceCodeSet[i]);
             m_deviceCodeSet.remove(i);
-            m_deviceListviewModel->removeRow(m_deviceCodeSet[i]);
             continue;
         }
 
