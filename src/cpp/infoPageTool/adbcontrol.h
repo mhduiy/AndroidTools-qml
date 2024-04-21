@@ -16,6 +16,8 @@ signals:
 public:
     QString getADBVersion() const {return m_adbVersion;};
     Q_INVOKABLE void restartADB();
+    Q_INVOKABLE void pairDevice(const QString ipAndPort, const QString &pairCode);
+    Q_INVOKABLE void connectDevice(const QString ipAndPort);
 
 private:
     void updateADBVersion();

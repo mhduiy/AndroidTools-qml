@@ -12,7 +12,7 @@ public:
         FASTBOOT
     };
 
-    QString executeCommand(APP app = ADB, const QStringList &args = QStringList());
+    QString executeCommand(APP app = ADB, const QStringList &args = QStringList(), const QString &writeStr = "");
 
     static ADBTools *instance(QObject *parent = nullptr);
 private:
