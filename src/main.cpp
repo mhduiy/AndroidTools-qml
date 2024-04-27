@@ -37,8 +37,11 @@ int main(int argc, char *argv[])
     engine.load(url);
 
     // 临时解决方案
-    QObject *rootObject = engine.rootObjects().first();
-    NotificationControl::instance()->setQmlObject(rootObject->children().value(1));
+    auto objects = engine.rootObjects();
+    if (!objects.isEmpty()) {
+        QObject *rootObject = objects.first();
+        NotificationControl::instance()->setQmlObject(rootObject->children().value(1));
+    }
 
     return app.exec();
 }

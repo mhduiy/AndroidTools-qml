@@ -79,7 +79,7 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignTop
                             anchors.margins: 4
-                            Layout.preferredHeight: parent.height * 0.4
+                            Layout.preferredHeight: parent.height * 0.33
                         }
 
                         Item {
@@ -92,27 +92,30 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             anchors.margins: 4
                             Layout.alignment: Qt.AlignBottom
-                            Layout.preferredHeight: parent.height * 0.5
+                            Layout.preferredHeight: parent.height * 0.65
 
                             onCurrentIndexChanged: {
                                 switch (currentIndex) {
                                 case 0:
-                                    rightContainter.replace(deviceInfoPage)
+                                    rightContainter.push(deviceInfoPage)
                                     break
                                 case 1:
-                                    rightContainter.replace(deviceControlPage)
+                                    rightContainter.push(deviceControlPage)
                                     break
                                 case 2:
-                                    rightContainter.replace(deviceAppPage)
+                                    rightContainter.push(deviceAppPage)
                                     break
                                 case 3:
-                                    rightContainter.replace(deviceFlashPage)
+                                    rightContainter.push(deviceFlashPage)
                                     break
                                 case 4:
-                                    rightContainter.replace(deviceImagePage)
+                                    rightContainter.push(deviceImagePage)
                                     break
                                 case 5:
-                                    rightContainter.replace(deviceTerminalPage)
+                                    rightContainter.push(deviceTerminalPage)
+                                    break
+                                case 6:
+                                    rightContainter.push(settingPage)
                                     break
                                 }
                             }
@@ -137,10 +140,10 @@ ApplicationWindow {
 
             initialItem: deviceInfoPage
 
-            replaceExit: Transition {
+            pushExit: Transition {
                 PropertyAnimation { target: pushExit.view; property: "opacity"; to: 0; duration: 300 }
             }
-            replaceEnter: Transition {
+            pushEnter: Transition {
                 PropertyAnimation { target: pushEnter.view; property: "opacity"; to: 1; duration: 500; easing.type: Easing.OutQuart}
                 PropertyAnimation { target: pushEnter.view; property: "y"; from: 100; to: 0; duration: 500; easing.type: Easing.OutQuart}
             }
@@ -208,6 +211,16 @@ ApplicationWindow {
                 Rectangle {
                     anchors.fill: parent
                     color: "blue"
+                }
+            }
+        }
+
+        Component {
+            id: settingPage
+            Page {
+                background: {}
+                SettingPage {
+                    anchors.fill: parent
                 }
             }
 

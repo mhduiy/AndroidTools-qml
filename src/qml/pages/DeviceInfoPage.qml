@@ -27,6 +27,7 @@ Item {
     property var monitorItems: [0, 1]
     ColumnLayout { // 主界面
         anchors.fill: parent
+        anchors.topMargin: 10
         RowLayout {  //  上方区域
             spacing: 10
             Layout.preferredWidth: parent.width
@@ -52,7 +53,7 @@ Item {
                         height: 200
                         width: 120
                         radius: 5 * width / 100
-                        color: "#000000"
+                        color: "#008c8c"
                         Text {
                             anchors.fill: parent
                             text: "XIAOMI"

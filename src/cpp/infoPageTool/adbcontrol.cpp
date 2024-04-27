@@ -38,7 +38,7 @@ void ADBControl::pairDevice(const QString ipAndPort, const QString &pairCode)
 void ADBControl::connectDevice(const QString ipAndPort)
 {
     if (ipAndPort.isEmpty()) {
-        NotificationControl::instance()->send("ip和端口不能为空");
+        NotificationControl::instance()->send("ip和端口不能为空", NotificationControl::Warning);
         return;
     }
     auto retStr = ADBTools::instance()->executeCommand(ADBTools::ADB, {"connect", ipAndPort}).simplified();

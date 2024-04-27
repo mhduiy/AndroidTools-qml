@@ -12,5 +12,7 @@
         <file>qml/components/StandardComponent.qml</file>
         <file>res/backgroundImage.jpeg</file>
         <file>qml/components/BatteryRect.qml</file>
+        <file>qml/pages/SettingPage.qml</file>
+        <file>qml/components/SettingItem.qml</file>
     </qresource>
 </RCC>
