@@ -14,5 +14,9 @@
         <file>qml/components/BatteryRect.qml</file>
         <file>qml/pages/SettingPage.qml</file>
         <file>qml/components/SettingItem.qml</file>
+        <file>res/closeIcon.png</file>
+        <file>res/errorIcon.png</file>
+        <file>res/successIcon.png</file>
+        <file>res/warningIcon.png</file>
     </qresource>
 </RCC>

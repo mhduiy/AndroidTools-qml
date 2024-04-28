@@ -21,6 +21,7 @@ ApplicationWindow {
     Image {
         id: backgroundImage
         anchors.fill: parent
+        fillMode: Image.PreserveAspectCrop
         source: "qrc:/res/backgroundImage.jpeg"
     }
 
