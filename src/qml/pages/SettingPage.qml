@@ -67,7 +67,10 @@ Item {
                         orientation: ListView.Horizontal
                         clip: true
                         focus: true
-                        currentIndex: 0
+                        currentIndex: WallPaperModel.currentIndex
+                        onCurrentIndexChanged: {
+                            WallPaperModel.setCurrentIndex(currentIndex)
+                        }
                         delegate: Component {
                             Item {
                                 id: wrapper

@@ -4,8 +4,12 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QList>
+#include <QNetworkAccessManager>
+#include <QPointer>
 
 #include "../utils/singleton.hpp"
+
+#include "bingwallpaperhander.h"
 
 enum WallPaperModelRoles {
     UrlRole = Qt::UserRole + 1,
@@ -18,7 +22,7 @@ struct WallPaperInfo
     QString url;
     QString title;
     bool isLoading = true;
-    WallPaperInfo(const QString &_url, const QString &_title, const bool _loading)
+    WallPaperInfo(const QString &_url = "", const QString &_title = "", const bool _loading = false)
         : url(_url), title(_title), isLoading(_loading) {}
 };
 
@@ -38,7 +42,7 @@ public:
     Q_INVOKABLE void setCurrentIndex(int index);
 
 signals:
-    void currentItemChanged(const QString &code);
+    void currentItemChanged(const QString &url);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -51,9 +55,14 @@ class SettingPageTools : public QObject
 {
     Q_OBJECT
     SINGLETON(SettingPageTools)
+    ~SettingPageTools();
+
+private slots:
+    void onBingWallPaperWorkFinish(const QString &url);
 
 private:
     WallPaperModel *m_wallpaperModel;
+    BingWallPaperHander *m_bingWallpaperHander;
 };
 
 #endif

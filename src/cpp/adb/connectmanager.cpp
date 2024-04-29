@@ -13,11 +13,11 @@ ConnectManager::ConnectManager(QObject *parent) : QObject(parent)
     connect(m_deviceCheckTimer, &QTimer::timeout, this, &ConnectManager::refreshDevice);
 
     connect(this, &ConnectManager::deviceConnected, [](QString code){
-        qWarning() << code << " 已连接";
+        qInfo() << code << " connected";
         NotificationControl::instance()->send(QString(code + "已连接"));
     });
     connect(this, &ConnectManager::deviceDisconnected, [](QString code){
-        qWarning() << code << " 已断开";
+        qInfo() << code << " disconnected";
         NotificationControl::instance()->send(QString(code + "已断开"), NotificationControl::Warning);
     });
 
@@ -34,10 +34,10 @@ bool ConnectManager::setCurrentDeviceCode(const QString &code)
     if (m_deviceCodeSet.contains(code) && m_currentDeviceCode != code) {
         m_currentDeviceCode = code;
         emit currentDeviceChanged(code);
-        qWarning() << "设置当前设备为: " << code;
+        qWarning() << "set current device: " << code;
         return true;
     }
-    qWarning() << "当前设备设置失败，已经是这个设备了: " << code;
+    qWarning() << "set current failed: " << code;
     return false;
 }
 

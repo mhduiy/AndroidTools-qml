@@ -11,6 +11,8 @@
 
 ![alt text](doc/image1.png)
 
+![alt text](doc/image2.png)
+
 目前还在开发过程中，还有诸多不完善的地方
 
 ## 编译步骤

@@ -1,11 +1,15 @@
 #include "settingPageTools.h"
 #include <QtQml>
+#include <QtConcurrent/QtConcurrentRun>
+#include <QNetworkAccessManager>
+#include <QThread>
+#include "src/cpp/utils/Notification.h"
+#include "wallpaperhelper.h"
+#include "../utils/globalsetting.h"
 
 WallPaperModel::WallPaperModel(QObject *parent)
     : QAbstractListModel(parent)
 {
-    appendRow(WallPaperInfo("qrc:/res/backgroundImage.jpeg", "默认壁纸", false));
-    appendRow(WallPaperInfo("https://cn.bing.com/th?id=OHR.GuadalupeTexas_ZH-CN3911419948_UHD.jpg&rf=LaDigue_UHD.jpg&pid=hp&w=3840&h=2160&rs=1&c=4", "Bing 每日壁纸", false));
 }
 
 int WallPaperModel::rowCount(const QModelIndex &parent) const
@@ -73,7 +77,14 @@ QModelIndex WallPaperModel::index(int row, int column, const QModelIndex &parent
 
 void WallPaperModel::setCurrentIndex(int index)
 {
-    return;
+    const QString url = m_wallPaperInfo.value(index).url;
+    if (url.isEmpty()) {
+        NotificationControl::instance()->send("设置失败了", NotificationControl::Error);
+    }
+    emit currentItemChanged(url);
+    WallpaperHelper::instance()->setWallPaper(url);
+    GlobalSetting::instance()->writeConfig("wallpaper", "url", url);
+    GlobalSetting::instance()->writeConfig("wallpaper", "index", QString::number(index));
 }
 
 QHash<int, QByteArray> WallPaperModel::roleNames() const
@@ -85,8 +96,37 @@ QHash<int, QByteArray> WallPaperModel::roleNames() const
     return roles;
 }
 
-SettingPageTools::SettingPageTools(QObject *parent) : QObject(parent)
+SettingPageTools::SettingPageTools(QObject *parent)
+    : QObject(parent)
+    , m_wallpaperModel(new WallPaperModel)
+    , m_bingWallpaperHander(new BingWallPaperHander)
 {
-    m_wallpaperModel = new WallPaperModel();
     qmlRegisterSingletonInstance("WallPaperModel", 1, 0, "WallPaperModel", m_wallpaperModel);
+    qmlRegisterSingletonInstance("WallpaperHelper", 1, 0, "WallpaperHelper", WallpaperHelper::instance(this));
+
+    m_wallpaperModel->appendRow(WallPaperInfo("qrc:/res/backgroundImage.jpeg", "默认壁纸", false));
+    // 设置默认壁纸
+
+    // TODO 临时方案
+    QString cutWallpaperUrl = GlobalSetting::instance()->readConfig("wallpaper", "url");
+    WallpaperHelper::instance()->setWallPaper(cutWallpaperUrl);
+//    GlobalSetting::instance()->readConfig("wallpaper", "index");
+//    m_wallpaperModel->setCurrentIndex(0);
+
+    connect(m_bingWallpaperHander, &BingWallPaperHander::workFinish, this, &SettingPageTools::onBingWallPaperWorkFinish);
+    m_bingWallpaperHander->doWork();
+}
+
+SettingPageTools::~SettingPageTools()
+{
+
+}
+
+void SettingPageTools::onBingWallPaperWorkFinish(const QString &url)
+{
+    if (url.isEmpty()) {
+        qWarning() << "bing wallpaper url is empty, skiping ...";
+        return;
+    }
+    m_wallpaperModel->appendRow(WallPaperInfo(url, "Bing 每日壁纸", false));
 }

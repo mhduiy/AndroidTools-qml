@@ -6,6 +6,7 @@ import MFloat
 import "./components/"
 import "./pages/"
 import ADBControl 1.0
+import WallpaperHelper 1.0
 
 ApplicationWindow {
     id: root
@@ -22,7 +23,7 @@ ApplicationWindow {
         id: backgroundImage
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
-        source: "qrc:/res/backgroundImage.jpeg"
+        source: WallpaperHelper.wallpaper
     }
 
     RowLayout {
