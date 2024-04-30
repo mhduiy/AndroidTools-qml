@@ -68,9 +68,6 @@ Item {
                         clip: true
                         focus: true
                         currentIndex: WallPaperModel.currentIndex
-                        onCurrentIndexChanged: {
-                            WallPaperModel.setCurrentIndex(currentIndex)
-                        }
                         delegate: Component {
                             Item {
                                 id: wrapper
@@ -142,7 +139,7 @@ Item {
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            wallpaperListView.currentIndex = index
+                                            WallPaperModel.setCurrentIndex(index)
                                         }
                                     }
                                 }

@@ -8,7 +8,7 @@
 GlobalSetting* GlobalSetting::_instance = nullptr;
 
 GlobalSetting::GlobalSetting(QObject *parent) : QObject(parent) {
-    QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
     // 创建目录
     QDir dir(cacheDir);
     if(!dir.exists(cacheDir)) {

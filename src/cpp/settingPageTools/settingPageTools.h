@@ -29,6 +29,7 @@ struct WallPaperInfo
 class WallPaperModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
 public:
     explicit WallPaperModel(QObject *parent = nullptr);
 
@@ -40,15 +41,18 @@ public:
     QModelIndex index(int row, int column = 1, const QModelIndex &parent = QModelIndex()) const override;
 
     Q_INVOKABLE void setCurrentIndex(int index);
+    int currentIndex() {return m_currentIndex;}
 
 signals:
     void currentItemChanged(const QString &url);
+    void currentIndexChanged(int index);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
     QList<WallPaperInfo> m_wallPaperInfo;
+    int m_currentIndex = -1;
 };
 
 class SettingPageTools : public QObject
