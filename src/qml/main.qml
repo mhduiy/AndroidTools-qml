@@ -14,6 +14,7 @@ ApplicationWindow {
     height: 600
     visible: true
     title: "AndroidTools"
+    flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
 
     MNotificationBox {
         id: notificationBox
@@ -26,208 +27,263 @@ ApplicationWindow {
         source: WallpaperHelper.wallpaper
     }
 
-    RowLayout {
+    ColumnLayout {
         anchors.fill: parent
-        Rectangle { // left
-            id: leftSidebar
-            Layout.fillHeight: true
-            width: 200
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+        Rectangle {
+            id: titleBar
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            Layout.minimumHeight: 30
+            Layout.maximumHeight: 30
             color: "transparent"
 
             RowLayout {
-                width: parent.width
-                height: parent.height
-
-                Item {
-                    height: parent.height
-                    width: 5
-
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                Text {
+                    text: "AndroidTools"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 14
                 }
 
                 Item {
                     Layout.fillWidth: true
+                }
+
+                Rectangle {
+                    Layout.preferredWidth: 30
                     Layout.fillHeight: true
-
-                    ColumnLayout {
+                    color: "transparent"
+                    Text {
                         anchors.fill: parent
-                        Layout.alignment: Qt.AlignTop
+                        text: "-"
+                        font.pixelSize: 14
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
+                Rectangle {
+                    Layout.preferredWidth: 30
+                    Layout.fillHeight: true
+                    color: "transparent"
+                    Text {
+                        anchors.fill: parent
+                        text: "x"
+                        font.pixelSize: 14
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
+            }
+        }
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Rectangle { // left
+                id: leftSidebar
+                Layout.fillHeight: true
+                width: 200
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                color: "transparent"
 
-                        RowLayout {
-                            spacing: 4
-                            Layout.margins: 5
+                RowLayout {
+                    width: parent.width
+                    height: parent.height
+
+                    Item {
+                        height: parent.height
+                        width: 5
+
+                    }
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        ColumnLayout {
+                            anchors.fill: parent
                             Layout.alignment: Qt.AlignTop
-                            Text {
-                                id: greeterText
-                                font.bold: true
-                                font.pixelSize: 20
-                                text: "下午好"
+
+                            RowLayout {
+                                spacing: 4
+                                Layout.margins: 5
+                                Layout.alignment: Qt.AlignTop
+                                Text {
+                                    id: greeterText
+                                    font.bold: true
+                                    font.pixelSize: 20
+                                    text: "下午好"
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                MButton {
+                                    text: "无线连接"
+                                    btnType: MButton.FBtnType.Ordinary
+                                    onClicked: {
+                                        wirelessConnectDialog.open()
+                                    }
+                                }
+                            }
+
+                            DeviceListview {
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignTop
+                                anchors.margins: 4
+                                Layout.preferredHeight: parent.height * 0.30
                             }
 
                             Item {
                                 Layout.fillWidth: true
+                                Layout.fillHeight: true
                             }
 
-                            MButton {
-                                text: "无线连接"
-                                btnType: MButton.FBtnType.Ordinary
-                                onClicked: {
-                                    wirelessConnectDialog.open()
-                                }
-                            }
-                        }
+                            ControlListview {
+                                id: controlListView
+                                Layout.fillWidth: true
+                                anchors.margins: 4
+                                Layout.alignment: Qt.AlignBottom
+                                Layout.preferredHeight: parent.height * 0.65
 
-                        DeviceListview {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignTop
-                            anchors.margins: 4
-                            Layout.preferredHeight: parent.height * 0.33
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                        }
-
-                        ControlListview {
-                            id: controlListView
-                            Layout.fillWidth: true
-                            anchors.margins: 4
-                            Layout.alignment: Qt.AlignBottom
-                            Layout.preferredHeight: parent.height * 0.65
-
-                            onCurrentIndexChanged: {
-                                switch (currentIndex) {
-                                case 0:
-                                    rightContainter.push(deviceInfoPage)
-                                    break
-                                case 1:
-                                    rightContainter.push(deviceControlPage)
-                                    break
-                                case 2:
-                                    rightContainter.push(deviceAppPage)
-                                    break
-                                case 3:
-                                    rightContainter.push(deviceFlashPage)
-                                    break
-                                case 4:
-                                    rightContainter.push(deviceImagePage)
-                                    break
-                                case 5:
-                                    rightContainter.push(deviceTerminalPage)
-                                    break
-                                case 6:
-                                    rightContainter.push(settingPage)
-                                    break
+                                onCurrentIndexChanged: {
+                                    switch (currentIndex) {
+                                    case 0:
+                                        rightContainter.push(deviceInfoPage)
+                                        break
+                                    case 1:
+                                        rightContainter.push(deviceControlPage)
+                                        break
+                                    case 2:
+                                        rightContainter.push(deviceAppPage)
+                                        break
+                                    case 3:
+                                        rightContainter.push(deviceFlashPage)
+                                        break
+                                    case 4:
+                                        rightContainter.push(deviceImagePage)
+                                        break
+                                    case 5:
+                                        rightContainter.push(deviceTerminalPage)
+                                        break
+                                    case 6:
+                                        rightContainter.push(settingPage)
+                                        break
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                Rectangle {
-                    Layout.alignment: Qt.AlignTop
-                    width: 2
-                    height: parent.height
-                    color: "gray"
-                }
-            }
-        }
-
-        StackView {
-            id: rightContainter
-            Layout.alignment: Qt.AlignTop
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            initialItem: deviceInfoPage
-
-            pushExit: Transition {
-                PropertyAnimation { target: pushExit.view; property: "opacity"; to: 0; duration: 300 }
-            }
-            pushEnter: Transition {
-                PropertyAnimation { target: pushEnter.view; property: "opacity"; to: 1; duration: 500; easing.type: Easing.OutQuart}
-                PropertyAnimation { target: pushEnter.view; property: "y"; from: 100; to: 0; duration: 500; easing.type: Easing.OutQuart}
-            }
-        }
-        Component {
-            id: deviceInfoPage
-            Page {
-                background: {}
-                DeviceInfoPage {
-                    anchors.fill: parent
-                }
-            }
-        }
-
-        Component {
-            id: deviceControlPage
-            Page {
-                background: {}
-                DeviceControlPage {
-                    anchors.fill: parent
+                    Rectangle {
+                        Layout.alignment: Qt.AlignTop
+                        width: 2
+                        height: parent.height
+                        color: "gray"
+                    }
                 }
             }
 
-        }
+            StackView {
+                id: rightContainter
+                Layout.alignment: Qt.AlignTop
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-        Component {
-            id: deviceAppPage
-            Page {
-                background: {}
-                DeviceAppPage {
-                    anchors.fill: parent
+                initialItem: deviceInfoPage
+
+                pushExit: Transition {
+                    PropertyAnimation { target: pushExit.view; property: "opacity"; to: 0; duration: 300 }
+                }
+                pushEnter: Transition {
+                    PropertyAnimation { target: pushEnter.view; property: "opacity"; to: 1; duration: 600;}
+                    PropertyAnimation { target: pushEnter.view; property: "y"; from: 200; to: 0; duration: 600; easing.type: Easing.OutQuart}
+                }
+            }
+            Component {
+                id: deviceInfoPage
+                Page {
+                    background: {}
+                    DeviceInfoPage {
+                        anchors.fill: parent
+                    }
                 }
             }
 
-        }
+            Component {
+                id: deviceControlPage
+                Page {
+                    background: {}
+                    DeviceControlPage {
+                        anchors.fill: parent
+                    }
+                }
 
-        Component {
-            id: deviceFlashPage
-            Page {
-                background: {}
-                Rectangle {
-                    anchors.fill: parent
-                    color: "yellow"
+            }
+
+            Component {
+                id: deviceAppPage
+                Page {
+                    background: {}
+                    DeviceAppPage {
+                        anchors.fill: parent
+                    }
+                }
+
+            }
+
+            Component {
+                id: deviceFlashPage
+                Page {
+                    background: {}
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "yellow"
+                    }
+                }
+
+            }
+
+            Component {
+                id: deviceImagePage
+                Page {
+                    background: {}
+                    DeviceInfoPage {
+                        anchors.fill: parent
+                    }
+                }
+
+            }
+
+            Component {
+                id: deviceTerminalPage
+
+                Page {
+                    background: {}
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "blue"
+                    }
                 }
             }
 
-        }
-
-        Component {
-            id: deviceImagePage
-            Page {
-                background: {}
-                DeviceInfoPage {
-                    anchors.fill: parent
+            Component {
+                id: settingPage
+                Page {
+                    background: {}
+                    SettingPage {
+                        anchors.fill: parent
+                    }
                 }
-            }
 
-        }
-
-        Component {
-            id: deviceTerminalPage
-
-            Page {
-                background: {}
-                Rectangle {
-                    anchors.fill: parent
-                    color: "blue"
-                }
             }
         }
 
-        Component {
-            id: settingPage
-            Page {
-                background: {}
-                SettingPage {
-                    anchors.fill: parent
-                }
-            }
-
-        }
     }
+
     Dialog {
         id: wirelessConnectDialog
         title: "开始无线连接"
