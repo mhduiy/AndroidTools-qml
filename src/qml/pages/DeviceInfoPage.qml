@@ -24,6 +24,10 @@ Item {
         {"name": "FPS"},
     ]
 
+    ColorConstants {
+        id: colorConstants
+    }
+
     property var monitorItems: [0, 1]
     ColumnLayout { // 主界面
         anchors.fill: parent
@@ -47,31 +51,37 @@ Item {
                 wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                 opacity: 0.9
                 RowLayout {
-                    anchors.centerIn: parent
+                    anchors.fill: parent
+                    anchors.margins: 20
                     spacing: 30
                     Rectangle {
-                        height: 200
-                        width: 120
+                        Layout.preferredHeight: 200
+                        Layout.preferredWidth: 120
                         radius: 5 * width / 100
-                        color: "#008c8c"
+                        color: colorConstants.suggestClickedColor
                         Text {
                             anchors.fill: parent
                             text: "XIAOMI"
                             font.pixelSize: 20
-                            color: "#ffffff"
+                            color: "white"
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                         }
                     }
                     GridLayout {
-                        Layout.alignment: Qt.AlignTop
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.alignment: Qt.AlignVCenter
                         columns: 2
                         Repeater {
                             model: deviceInfoModel
                             MLabel {
+                                rectColor: colorConstants.suggestClickedColor
                                 text: model.name
                                 Layout.row: index
                                 Layout.column: 0
+                                Layout.preferredWidth: 60
+                                Layout.alignment: Qt.AlignLeft
                             }
                         }
                         Repeater {
@@ -79,6 +89,7 @@ Item {
                             Label {
                                 text: model.info
                                 Layout.row: index
+                                Layout.fillWidth: true
                                 Layout.column: 1
                             }
                         }
@@ -106,6 +117,7 @@ Item {
                             Repeater {
                                 model: batteryModel
                                 MLabel {
+                                    rectColor: colorConstants.suggestClickedColor
                                     text: model.name
                                     Layout.row: index / 2
                                     Layout.column: index % 2 == 1 ? 2 : 0
@@ -131,26 +143,33 @@ Item {
             Layout.bottomMargin: 10
 
             ColumnLayout {
+                Layout.preferredWidth: 300
+                Layout.maximumWidth: 300
+                Layout.fillHeight: true
                 MFrame {    // 当前活动信息
                     id: activityRoot
-                    width: 300
-                    height: 150
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 150
                     wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                     ColumnLayout {
-                        anchors.centerIn: parent
+                        anchors.fill: parent
+                        anchors.margins: 20
                         RowLayout {
                             Layout.fillWidth: true
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredHeight: 30
                             Text {
                                 font.bold: true
                                 font.family: "黑体"
                                 font.pixelSize: 20
                                 text: "当前前台应用"
                             }
+                            Item {
+                                Layout.fillWidth: true
+                            }
+
                             MButton {
-                                Layout.alignment: Qt.AlignRight
+                                Layout.preferredWidth: 80
                                 text: "停止当前应用"
-                                width: 80
                                 btnType: MButton.FBtnType.Warning
                                 onClicked: {
                                     CutActivityControl.killCutActivity()
@@ -160,31 +179,40 @@ Item {
                         }
                         GridLayout {
                             columns: 2
-                            Layout.maximumWidth: activityRoot.width
-                            Layout.maximumHeight: activityRoot.height
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
                             MLabel {
+                                Layout.preferredWidth: 100
+                                rectColor: colorConstants.suggestClickedColor
                                 text: "窗口标识符"
                             }
                             Text {
+                                Layout.fillWidth: true
                                 text: CutActivityControl.identifier
                             }
                             MLabel {
+                                Layout.preferredWidth: 100
+                                rectColor: colorConstants.suggestClickedColor
                                 text: "前台包名"
                             }
                             Text {
+                                Layout.fillWidth: true
                                 text: CutActivityControl.cutPackageName
                             }
                             MLabel {
+                                Layout.preferredWidth: 100
+                                rectColor: colorConstants.suggestClickedColor
                                 text: "前台活动"
                             }
                             Text {
+                                Layout.fillWidth: true
                                 text: CutActivityControl.cutActivity
                             }
                         }
                     }
                 }
                 MFrame {    // 简单设备控制
-                    width: 300
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
                     wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                     GridLayout {

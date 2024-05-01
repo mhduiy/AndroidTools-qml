@@ -175,7 +175,7 @@ ApplicationWindow {
             id: deviceAppPage
             Page {
                 background: {}
-                DeviceInfoPage {
+                DeviceAppPage {
                     anchors.fill: parent
                 }
             }
