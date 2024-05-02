@@ -18,5 +18,6 @@
         <file>res/errorIcon.png</file>
         <file>res/successIcon.png</file>
         <file>res/warningIcon.png</file>
+        <file>qml/components/TitleBar.qml</file>
     </qresource>
 </RCC>

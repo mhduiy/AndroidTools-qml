@@ -11,7 +11,6 @@ Item {
     Layout.minimumWidth: 780
     ScrollView {
         anchors.fill: parent
-        anchors.topMargin: 10
         anchors.rightMargin: 10
         ScrollBar.vertical: ScrollBar {
             policy: ScrollBar.AlwaysOff

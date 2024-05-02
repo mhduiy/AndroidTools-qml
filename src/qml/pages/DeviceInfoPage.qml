@@ -31,7 +31,6 @@ Item {
     property var monitorItems: [0, 1]
     ColumnLayout { // 主界面
         anchors.fill: parent
-        anchors.topMargin: 10
         RowLayout {  //  上方区域
             spacing: 10
             Layout.preferredWidth: parent.width
