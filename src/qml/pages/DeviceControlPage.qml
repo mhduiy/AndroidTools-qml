@@ -13,86 +13,92 @@ Item {
         anchors.bottomMargin: 10
         ColumnLayout {
             Layout.fillHeight: true
-            Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.preferredWidth: 300
+            Layout.maximumWidth: 300
             StandardComponent {
-                height: 130
-                width: 300
+                Layout.preferredHeight: 130
+                Layout.fillWidth: true
                 title: "音乐控制"
                 description: "控制设备音乐状态"
-                contentItem:  Component {
-                    GridLayout {
-                        columns: 4
-                        Repeater {
-                            model: 4
-                            MButton {
-                                text: musicControlModel.get(index).name
-                                btnType: MButton.FBtnType.Ordinary
-                            }
+                GridLayout {
+                    anchors.fill: parent
+                    anchors.topMargin: parent.titleSpace + 10
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    anchors.bottomMargin: 10
+                    columns: 4
+                    Repeater {
+                        model: 4
+                        MButton {
+                            text: musicControlModel.get(index).name
+                            btnType: MButton.FBtnType.Ordinary
                         }
-                        Repeater {
-                            model: 2
-                            // 我想每一个model占表格的两格，怎么做
-                            MButton {
-                                text: musicControlModel.get(index + 4).name
-                                Layout.columnSpan: 2
-                                Layout.fillWidth: true
-                                btnType: MButton.FBtnType. Suggest
-                            }
+                    }
+                    Repeater {
+                        model: 2
+                        // 我想每一个model占表格的两格，怎么做
+                        MButton {
+                            text: musicControlModel.get(index + 4).name
+                            Layout.columnSpan: 2
+                            Layout.fillWidth: true
+                            btnType: MButton.FBtnType. Suggest
                         }
                     }
                 }
             }
             StandardComponent {
-                height: 240
-                width: 300
+                Layout.preferredHeight: 240
+                Layout.fillWidth: true
                 title: "按键模拟"
                 description: "模拟设备按下某个按键，或执行一个操作"
-                contentItem:  Component {
-                    GridLayout {
-                        Layout.preferredWidth: parent.parent.parent.width
-                        Layout.preferredHeight: parent.parent.parent.height
-
-                        columns: 3
-                        Repeater {
-                            model: buttonControlModel.count
-                            MButton {
-                                text: buttonControlModel.get(index).name
-                                btnType: MButton.FBtnType.Ordinary
-                                width: parent.Layout.preferredWidth / 3 - 5
-                            }
+                GridLayout {
+                    anchors.fill: parent
+                    anchors.topMargin: parent.titleSpace + 10
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    anchors.bottomMargin: 10
+                    columns: 3
+                    Repeater {
+                        model: buttonControlModel.count
+                        MButton {
+                            text: buttonControlModel.get(index).name
+                            btnType: MButton.FBtnType.Ordinary
+                            Layout.fillWidth: true
                         }
                     }
                 }
+
             }
             StandardComponent {
                 Layout.fillHeight: true
-                width: 300
+                Layout.fillWidth: true
                 title: "广播控制"
                 description: "模拟发出一个全局广播，可以模拟设备的某一状态"
-                contentItem:  Component {
+                ScrollView {
+                    anchors.fill: parent
+                    anchors.topMargin: parent.titleSpace + 10
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    anchors.bottomMargin: 10
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOff
+                    }
 
-                    ScrollView {
-                        width: 300
-                        height: parent.parent.height
-                        ScrollBar.vertical: ScrollBar {
-                            policy: ScrollBar.AlwaysOff
-                        }
-
-                        GridLayout {
-                            width: parent.parent.width
-                            columns: 2
-                            Repeater {
-                                model: broadcastControlModel.count
-                                MButton {
-                                    text: broadcastControlModel.get(index).name
-                                    btnType: MButton.FBtnType.Ordinary
-                                    width: 130
-                                }
+                    GridLayout {
+                        width: parent.parent.width
+                        columns: 2
+                        Repeater {
+                            model: broadcastControlModel.count
+                            MButton {
+                                text: broadcastControlModel.get(index).name
+                                btnType: MButton.FBtnType.Ordinary
+                                Layout.fillWidth: true
                             }
                         }
                     }
                 }
+
             }
         }
 

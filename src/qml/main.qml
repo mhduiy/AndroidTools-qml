@@ -12,7 +12,7 @@ import WallpaperHelper 1.0
 ApplicationWindow {
     id: root
     width: 1000
-    height: 600
+    height: 610
     visible: true
     title: "AndroidTools"
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
@@ -293,9 +293,8 @@ ApplicationWindow {
                     id: deviceFlashPage
                     Page {
                         background: {}
-                        Rectangle {
+                        DeviceFlashPage {
                             anchors.fill: parent
-                            color: "yellow"
                         }
                     }
 
@@ -305,7 +304,7 @@ ApplicationWindow {
                     id: deviceImagePage
                     Page {
                         background: {}
-                        DeviceInfoPage {
+                        DeviceImagePage {
                             anchors.fill: parent
                         }
                     }
@@ -317,9 +316,8 @@ ApplicationWindow {
 
                     Page {
                         background: {}
-                        Rectangle {
+                        DeviceTerminalPage {
                             anchors.fill: parent
-                            color: "blue"
                         }
                     }
                 }

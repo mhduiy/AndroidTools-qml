@@ -9,9 +9,13 @@
 
 ![alt text](doc/image.png)
 
-![alt text](doc/image1.png)
+![alt text](doc/image-1.png)
 
-![alt text](doc/image2.png)
+![alt text](doc/image-2.png)
+
+![alt text](doc/image-3.png)
+
+![alt text](doc/image-4.png)
 
 目前还在开发过程中，还有诸多不完善的地方
 
