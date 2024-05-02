@@ -105,63 +105,202 @@ Item {
         ScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.rightMargin: 10
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AlwaysOff
             }
 
             ColumnLayout {
-                Layout.preferredWidth: parent.width
-                width: parent.width
+                width: parent.parent.width - 10
                 StandardComponent {
-                    width: parent.width
-                    height: 170
-
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 170
                     title: "电量伪装"
                     description: "控制手机的充电状态，模拟一个虚假的手机电量"
+                    GridLayout {
+                        anchors.fill: parent
+                        anchors.topMargin: parent.titleSpace + 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        anchors.bottomMargin: 10
+                        columns: 2
+                        MLineEdit {
+                            placeholderText: "电量"
+                            Layout.fillWidth: true
+                        }
 
-                    contentItem: Component {
-                        GridLayout {
-                            columns: 2
-                            width: parent.parent.width
+                        MButton {
+                            text: "设置电量"
+                            btnType: MButton.FBtnType.Suggest
+                            Layout.fillWidth: true
+                        }
+                        MButton {
+                            text: "停止充电"
+                            btnType: MButton.FBtnType.Ordinary
+                            Layout.fillWidth: true
+                        }
+                        MButton {
+                            text: "恢复充电"
+                            btnType: MButton.FBtnType.Ordinary
+                            Layout.fillWidth: true
+                        }
+                        MButton {
+                            text: "模拟插电不充电"
+                            btnType: MButton.FBtnType.Ordinary
+                            Layout.fillWidth: true
+                        }
+                        MButton {
+                            text: "恢复所有状态"
+                            btnType: MButton.FBtnType.Ordinary
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                }
+
+                StandardComponent {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 170
+                    title: "分辨率&DPI修改"
+                    description: "修改设备的分辨率和显示缩放，可能导致显示异常"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.topMargin: parent.titleSpace + 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        anchors.bottomMargin: 10
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text {
+                                text: "分辨率"
+                            }
+                            Item {
+                                Layout.fillWidth: true
+                            }
                             MLineEdit {
-                                placeholderText: "电量"
+                                Layout.preferredWidth: 60
+                                placeholderText: "x"
+                            }
+                            Text {
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                Layout.preferredWidth: 20
+                                text: "x"
+                            }
+                            MLineEdit {
+                                Layout.preferredWidth: 60
+                                placeholderText: "y"
+                            }
+                        }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text {
+                                text: "DPI"
+                            }
+                            Item {
                                 Layout.fillWidth: true
                             }
-
+                            MLineEdit {
+                                Layout.preferredWidth: 60
+                                placeholderText: "dpi"
+                            }
+                        }
+                        RowLayout {
+                            Layout.fillWidth: true
                             MButton {
-                                text: "设置电量"
+                                Layout.fillWidth: true
+                                text: "恢复"
+                            }
+                            MButton {
+                                Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Suggest
-                                Layout.fillWidth: true
-                            }
-                            MButton {
-                                text: "停止充电"
-                                btnType: MButton.FBtnType.Ordinary
-                                Layout.fillWidth: true
-                            }
-                            MButton {
-                                text: "恢复充电"
-                                btnType: MButton.FBtnType.Ordinary
-                                Layout.fillWidth: true
-                            }
-                            MButton {
-                                text: "模拟插电不充电"
-                                btnType: MButton.FBtnType.Ordinary
-                                Layout.fillWidth: true
-                            }
-                            MButton {
-                                text: "恢复所有状态"
-                                btnType: MButton.FBtnType.Ordinary
-                                Layout.fillWidth: true
+                                text: "设置"
                             }
                         }
                     }
                 }
-                Repeater {
-                    model: 20
-                    StandardComponent {
-                        width: parent.width
-                        height: 200
+
+                StandardComponent {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 120
+                    title: "文件传输"
+                    description: "支持AndroidTools到设备的文件传输"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.topMargin: parent.titleSpace + 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        anchors.bottomMargin: 10
+                        RowLayout {
+                            Layout.fillWidth: true
+                            MLineEdit {
+                                Layout.fillWidth: true
+                                placeholderText: "待传输文件路径"
+                            }
+                            MButton {
+                                Layout.preferredWidth: 60
+                                text: "选择文件"
+                            }
+                        }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            MLineEdit {
+                                Layout.fillWidth: true
+                                placeholderText: "目标路径"
+                            }
+                            MButton {
+                                Layout.preferredWidth: 60
+                                btnType: MButton.FBtnType.Suggest
+                                text: "开始传输"
+                            }
+                        }
+                    }
+                }
+                StandardComponent {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 130
+                    title: "文本输入"
+                    description: "当设备光标在输入框时，可以通过这里传输文本到设备"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.topMargin: parent.titleSpace + 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        anchors.bottomMargin: 10
+                        MLineEdit {
+                            Layout.fillWidth: true
+                            placeholderText: "文本"
+                        }
+                        MButton {
+                            Layout.fillWidth: true
+                            btnType: MButton.FBtnType.Suggest
+                            text: "写入文本"
+                        }
+                    }
+                }
+                StandardComponent {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 160
+                    title: "启动activity"
+                    description: "手动启动某个活动"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.topMargin: parent.titleSpace + 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        anchors.bottomMargin: 10
+                        MLineEdit {
+                            Layout.fillWidth: true
+                            placeholderText: "activity名"
+                        }
+                        MLineEdit {
+                            Layout.fillWidth: true
+                            placeholderText: "启动参数"
+                        }
+                        MButton {
+                            Layout.fillWidth: true
+                            btnType: MButton.FBtnType.Suggest
+                            text: "启动"
+                        }
                     }
                 }
             }

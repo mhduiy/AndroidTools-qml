@@ -21,47 +21,54 @@ Item {
             color: "red"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 16
+            font.pixelSize: 14
+            font.bold: true
         }
 
-        RowLayout {
+        MFrame {
+            Layout.preferredHeight: 30
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            Text {
-                text: "请将设备重启到FASTBOOT模式，当前设备: "
-            }
-            Text {
-                text: "无设备连接"
-            }
+            wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 5
+                anchors.rightMargin: 5
+                Text {
+                    text: "请将设备重启到FASTBOOT模式，当前设备: "
+                }
+                Text {
+                    text: "无设备连接"
+                }
 
-            Item {
-                Layout.fillWidth: true
-            }
+                Item {
+                    Layout.fillWidth: true
+                }
 
-            MButton {
-                btnType: MButton.FBtnType.Suggest
-                text: "刷新设备"
-                Layout.preferredWidth: 80
-            }
-            MButton {
-                btnType: MButton.FBtnType.Warning
-                text: "重启FASTBOOT"
-                Layout.preferredWidth: 80
-            }
-            MButton {
-                btnType: MButton.FBtnType.Warning
-                text: "重启到系统"
-                Layout.preferredWidth: 80
-            }
-            MButton {
-                btnType: MButton.FBtnType.Warning
-                text: "重启到REC"
-                Layout.preferredWidth: 80
-            }
-            MButton {
-                btnType: MButton.FBtnType.Warning
-                text: "关机"
-                Layout.preferredWidth: 80
+                MButton {
+                    btnType: MButton.FBtnType.Suggest
+                    text: "刷新设备"
+                    Layout.preferredWidth: 80
+                }
+                MButton {
+                    btnType: MButton.FBtnType.Warning
+                    text: "重启FASTBOOT"
+                    Layout.preferredWidth: 80
+                }
+                MButton {
+                    btnType: MButton.FBtnType.Warning
+                    text: "重启到系统"
+                    Layout.preferredWidth: 80
+                }
+                MButton {
+                    btnType: MButton.FBtnType.Warning
+                    text: "重启到REC"
+                    Layout.preferredWidth: 80
+                }
+                MButton {
+                    btnType: MButton.FBtnType.Warning
+                    text: "关机"
+                    Layout.preferredWidth: 80
+                }
             }
         }
 
