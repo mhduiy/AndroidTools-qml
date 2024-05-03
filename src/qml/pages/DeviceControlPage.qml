@@ -1,11 +1,13 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import MFloat
 import "../components"
 import DeviceControl 1.0
 import BatteryDisguise 1.0
 import ResolutionControl 1.0
+import FileTransfer 1.0
 
 Item {
     id: root
@@ -284,24 +286,33 @@ Item {
                         RowLayout {
                             Layout.fillWidth: true
                             MLineEdit {
+                                id: sourceFileEdit
                                 Layout.fillWidth: true
                                 placeholderText: "待传输文件路径"
                             }
                             MButton {
                                 Layout.preferredWidth: 60
                                 text: "选择文件"
+                                onClicked: {
+                                    tranSourceFileDialog.open()
+                                }
                             }
                         }
                         RowLayout {
                             Layout.fillWidth: true
                             MLineEdit {
+                                id: targetDirEdit
                                 Layout.fillWidth: true
                                 placeholderText: "目标路径"
+                                editItem.text: "/sdcard/"
                             }
                             MButton {
                                 Layout.preferredWidth: 60
                                 btnType: MButton.FBtnType.Suggest
                                 text: "开始传输"
+                                onClicked: {
+                                    FileTransfer.transmission(sourceFileEdit.editItem.text, targetDirEdit.editItem.text)
+                                }
                             }
                         }
                     }
@@ -410,5 +421,13 @@ Item {
         ListElement { name: "卸载外部介质";}
         ListElement { name: "挂载外部介质";}
         ListElement { name: "省电模式开启";}
+    }
+    FileDialog {
+        id: tranSourceFileDialog
+        title: "Select a File"
+        fileMode: FileDialog.OpenFile
+        onAccepted: {
+            sourceFileEdit.editItem.text = tranSourceFileDialog.currentFile
+        }
     }
 }

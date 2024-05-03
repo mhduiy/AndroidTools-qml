@@ -27,7 +27,7 @@ ADBTools::ADBTools(QObject *parent) : QObject(parent)
 
 }
 
-QString ADBTools::executeCommand(APP app, const QStringList &args, const QString &writeStr)
+QString ADBTools::executeCommand(APP app, const QStringList &args, const QString &writeStr, const int timeout)
 {
     QProcess pro;
     if (app == APP::ADB) {
@@ -46,7 +46,7 @@ QString ADBTools::executeCommand(APP app, const QStringList &args, const QString
         pro.closeWriteChannel(); // 关闭写入通道，表示数据写入完毕
     }
 
-    pro.waitForFinished(3000);    //命令执行超过3秒强制提出
+    pro.waitForFinished(timeout);    //命令执行超过3秒强制提出
 
     QString ret = pro.readAllStandardOutput();
     if(ret.isEmpty()) {
