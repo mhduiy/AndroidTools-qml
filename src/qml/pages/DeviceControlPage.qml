@@ -4,6 +4,8 @@ import QtQuick.Layouts
 import MFloat
 import "../components"
 import DeviceControl 1.0
+import BatteryDisguise 1.0
+import ResolutionControl 1.0
 
 Item {
     id: root
@@ -136,6 +138,8 @@ Item {
                         anchors.bottomMargin: 10
                         columns: 2
                         MLineEdit {
+                            id: batteryLevelEdit
+                            editItem.text: "100"
                             placeholderText: "电量"
                             Layout.fillWidth: true
                         }
@@ -144,26 +148,44 @@ Item {
                             text: "设置电量"
                             btnType: MButton.FBtnType.Suggest
                             Layout.fillWidth: true
+                            onClicked: {
+                                var level = parseInt(batteryLevelEdit.editItem.text)
+                                if (level >=0 || level <= 100) {
+                                    BatteryDisguise.setBatteryLevel(level);
+                                }
+                            }
                         }
                         MButton {
                             text: "停止充电"
                             btnType: MButton.FBtnType.Ordinary
                             Layout.fillWidth: true
+                            onClicked: {
+                                BatteryDisguise.stopCharge();
+                            }
                         }
                         MButton {
                             text: "恢复充电"
                             btnType: MButton.FBtnType.Ordinary
                             Layout.fillWidth: true
+                            onClicked: {
+                                BatteryDisguise.restoreCharge();
+                            }
                         }
                         MButton {
                             text: "模拟插电不充电"
                             btnType: MButton.FBtnType.Ordinary
                             Layout.fillWidth: true
+                            onClicked: {
+                                BatteryDisguise.connectButNoCharge();
+                            }
                         }
                         MButton {
                             text: "恢复所有状态"
                             btnType: MButton.FBtnType.Ordinary
                             Layout.fillWidth: true
+                            onClicked: {
+                                BatteryDisguise.restoreAll();
+                            }
                         }
                     }
 
@@ -189,8 +211,10 @@ Item {
                                 Layout.fillWidth: true
                             }
                             MLineEdit {
+                                id: reWidthEdit
                                 Layout.preferredWidth: 60
-                                placeholderText: "x"
+                                placeholderText: "width"
+                                editItem.text: ResolutionControl.screenWidth
                             }
                             Text {
                                 horizontalAlignment: Text.AlignHCenter
@@ -199,8 +223,10 @@ Item {
                                 text: "x"
                             }
                             MLineEdit {
+                                id: reHeightEdit
                                 Layout.preferredWidth: 60
-                                placeholderText: "y"
+                                placeholderText: "height"
+                                editItem.text: ResolutionControl.screenHeight
                             }
                         }
                         RowLayout {
@@ -212,8 +238,10 @@ Item {
                                 Layout.fillWidth: true
                             }
                             MLineEdit {
+                                id: dpiEdit
                                 Layout.preferredWidth: 60
                                 placeholderText: "dpi"
+                                editItem.text: ResolutionControl.dpi
                             }
                         }
                         RowLayout {
@@ -221,11 +249,22 @@ Item {
                             MButton {
                                 Layout.fillWidth: true
                                 text: "恢复"
+                                onClicked: {
+                                    ResolutionControl.restore()
+                                }
                             }
                             MButton {
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Suggest
                                 text: "设置"
+                                onClicked: {
+                                    var width = parseInt(reWidthEdit.editItem.text)
+                                    var height = parseInt(reHeightEdit.editItem.text)
+                                    var dpi = parseInt(dpiEdit.editItem.text)
+                                    if (width > 0 && height > 0 && dpi > 0) {
+                                        ResolutionControl.set(width, height, dpi)
+                                    }
+                                }
                             }
                         }
                     }

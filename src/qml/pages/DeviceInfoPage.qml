@@ -327,10 +327,12 @@ Item {
 //        ListElement { name: "序列号"; info: "-"}
 
         Component.onCompleted: {
+            for (var i = 0; i < 8; i++) {
+                deviceInfoModel.get(i).info = DetailInfoControl.info[i]
+            }
             DetailInfoControl.valueChanged.connect(function() {
                 for (var i = 0; i < 8; i++) {
                     deviceInfoModel.get(i).info = DetailInfoControl.info[i]
-                    console.log(DetailInfoControl.info[i])
                 }
             });
         }

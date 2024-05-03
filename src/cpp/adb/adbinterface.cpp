@@ -125,7 +125,7 @@ DeviceDetailInfo ADBInterface::getDeviceDetailInfo(const QString &code)
     /*安卓版本*/
     info.androidVersion = getDeviceProp(code, "ro.build.version.release");
     /*分辨率*/
-    info.resolving = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "wm size"}).simplified();
+    info.resolving = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "wm size"}).simplified().split(' ').last();
     /*Dpi*/
     info.dpi = getDeviceProp(code, "ro.sf.lcd_density");
     /*MAC地址*/

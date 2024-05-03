@@ -2,6 +2,8 @@
 #include <QtQml>
 #include <QtConcurrent/QtConcurrentRun>
 #include "../adb/connectmanager.h"
+#include "../utils/Notification.h"
+#include "../utils/utils.hpp"
 
 const QHash<int, QString> DeviceControl::MusicControlArgsMap
 {
@@ -20,7 +22,7 @@ const QHash<int, QString> DeviceControl::KeyControlArgsMap
     { Back               , "shell input keyevent 4" },
     { Power              , "shell input keyevent 26" },
     { AddBrightness      , "shell input keyevent 221" },
-    { ReduceBrightness   , "shell input keyevent 222" },
+    { ReduceBrightness   , "shell input keyevent 220" },
     { Poweroff           , "shutdown" },
     { Reboot             , "reboot" },
     { RebootToRec        , "reboot recovery" },
@@ -35,27 +37,27 @@ const QHash<int, QString> DeviceControl::KeyControlArgsMap
 const QHash<int, QString> DeviceControl::BoardControlArgsMap
 {
     { NetWorkChanged        , "shell am broadcast -a android.net.conn.CONNECTIVITY_CHANGE" },
-    { ScrennOpened          , "am broadcast -a android.intent.action.SCREEN_ON" },
-    { ScrennOffed           , "am broadcast -a android.intent.action.SCREEN_OFF" },
-    { LowPower              , "am broadcast -a android.intent.action.BATTERY_LOW" },
-    { PowerRec              , "am broadcast -a android.intent.action.BATTERY_OKAY" },
-    { BootFinish            , "am broadcast -a android.intent.action.BOOT_COMPLETED" },
-    { StorageLow            , "am broadcast -a android.intent.action.DEVICE_STORAGE_LOW" },
-    { StorageRec            , "am broadcast -a android.intent.action.DEVICE_STORAGE_OK" },
-    { InstallApp            , "am broadcast -a android.intent.action.PACKAGE_ADDED" },
-    { WifiChanged1          , "am broadcast -a android.net.wifi.STATE_CHANGE" },
-    { WifiChanged2          , "am broadcast -a android.net.wifi.WIFI_STATE_CHANGED" },
-    { BatteryLevelChanged   , "am broadcast -a android.intent.action.BATTERY_CHANGED" },
-    { InputMethodChanged    , "am broadcast -a android.intent.action.INPUT_METHOD_CHANGED" },
-    { PowerConnected        , "am broadcast -a android.intent.action.ACTION_POWER_CONNECTED" },
-    { PowerDisConnected     , "am broadcast -a android.intent.action.ACTION_POWER_DISCONNECTED" },
-    { SystemSleep           , "am broadcast -a android.intent.action.DREAMING_STARTED" },
-    { StopSleep             , "am broadcast -a android.intent.action.DREAMING_STOPPED" },
-    { WallpaperChanged      , "am broadcast -a android.intent.action.WALLPAPER_CHANGED" },
-    { EarphoneConnected     , "am broadcast -a android.intent.action.HEADSET_PLUG" },
-    { UninstallMedia        , "am broadcast -a android.intent.action.MEDIA_UNMOUNTED" },
-    { InstallMedia          , "am broadcast -a android.intent.action.MEDIA_MOUNTED" },
-    { EnablePowerSave       , "am broadcast -a android.os.action.POWER_SAVE_MODE_CHANGED" }
+    { ScrennOpened          , "shell am broadcast -a android.intent.action.SCREEN_ON" },
+    { ScrennOffed           , "shell am broadcast -a android.intent.action.SCREEN_OFF" },
+    { LowPower              , "shell am broadcast -a android.intent.action.BATTERY_LOW" },
+    { PowerRec              , "shell am broadcast -a android.intent.action.BATTERY_OKAY" },
+    { BootFinish            , "shell am broadcast -a android.intent.action.BOOT_COMPLETED" },
+    { StorageLow            , "shell am broadcast -a android.intent.action.DEVICE_STORAGE_LOW" },
+    { StorageRec            , "shell am broadcast -a android.intent.action.DEVICE_STORAGE_OK" },
+    { InstallApp            , "shell am broadcast -a android.intent.action.PACKAGE_ADDED" },
+    { WifiChanged1          , "shell am broadcast -a android.net.wifi.STATE_CHANGE" },
+    { WifiChanged2          , "shell am broadcast -a android.net.wifi.WIFI_STATE_CHANGED" },
+    { BatteryLevelChanged   , "shell am broadcast -a android.intent.action.BATTERY_CHANGED" },
+    { InputMethodChanged    , "shell am broadcast -a android.intent.action.INPUT_METHOD_CHANGED" },
+    { PowerConnected        , "shell am broadcast -a android.intent.action.ACTION_POWER_CONNECTED" },
+    { PowerDisConnected     , "shell am broadcast -a android.intent.action.ACTION_POWER_DISCONNECTED" },
+    { SystemSleep           , "shell am broadcast -a android.intent.action.DREAMING_STARTED" },
+    { StopSleep             , "shell am broadcast -a android.intent.action.DREAMING_STOPPED" },
+    { WallpaperChanged      , "shell am broadcast -a android.intent.action.WALLPAPER_CHANGED" },
+    { EarphoneConnected     , "shell am broadcast -a android.intent.action.HEADSET_PLUG" },
+    { UninstallMedia        , "shell am broadcast -a android.intent.action.MEDIA_UNMOUNTED" },
+    { InstallMedia          , "shell am broadcast -a android.intent.action.MEDIA_MOUNTED" },
+    { EnablePowerSave       , "shell am broadcast -a android.os.action.POWER_SAVE_MODE_CHANGED" }
 };
 
 DeviceControl::DeviceControl(QObject *parent) : QObject(parent)
@@ -78,10 +80,11 @@ void DeviceControl::control(ControlType controlType, int controlItem)
             return;
         }
         if (args.size() <= 2) {
+            NotificationControl::instance()->send("索引错误，请联系开发者", NotificationControl::Error);
             return;
         }
         m_adbtools->executeCommand(ADBTools::ADB, args);
     };
 
-    (void)QtConcurrent::run(controlFunc);
+    asyncOperator(controlFunc);
 }

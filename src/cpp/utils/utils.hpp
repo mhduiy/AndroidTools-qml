@@ -2,8 +2,9 @@
 #define UTILS_HPP
 
 #include <QMap>
+#include <QtConcurrent/QtConcurrentRun>
 
-QMap<QString, QString> serializationInformation(const QString &info)
+static QMap<QString, QString> serializationInformation(const QString &info)
 {
     QMap<QString, QString> res;
     QStringList l = info.split('\n');
@@ -16,6 +17,11 @@ QMap<QString, QString> serializationInformation(const QString &info)
         res.insert(ll.value(0).simplified(), ll.value(1).simplified());
     }
     return res;
+}
+
+static void asyncOperator(std::function<void ()> function)
+{
+    (void)QtConcurrent::run(function);
 }
 
 #endif

@@ -10,6 +10,7 @@ class DetailInfoUpdateHelper : public QObject
 public:
     explicit DetailInfoUpdateHelper(QObject *parent = nullptr);
     void updateInfo();
+    QVariantList getInfo() {return m_info;}
     friend class DetailInfoControl;
 signals:
     void updateFinish();
@@ -26,7 +27,6 @@ class DetailInfoControl : public QObject
 public:
     void updateInfo();
     QVariantList getInfo() const { return m_info; };
-    QString get();
 
 signals:
     void valueChanged();
