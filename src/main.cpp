@@ -6,6 +6,7 @@
 #include <QQuickItem>
 #include "cpp/adb/connectmanager.h"
 #include "cpp/infoPageTool/infopagetool.h"
+#include "cpp/controlPageTool/controlPageTool.h"
 #include "cpp/settingPageTools/settingPageTools.h"
 #include "cpp/utils/Notification.h"
 
@@ -26,6 +27,8 @@ int main(int argc, char *argv[])
 
     // 加载InfoPage的相关逻辑
     InfoPageTool::instance(&app);
+    // 加载ControlPage相关逻辑
+    ControlPageTool::instance(&app);
     // 加载SettingPage的相关逻辑
     SettingPageTools::instance(&app);
 

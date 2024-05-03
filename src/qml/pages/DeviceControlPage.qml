@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
 import "../components"
+import DeviceControl 1.0
 
 Item {
     id: root
@@ -33,16 +34,21 @@ Item {
                         MButton {
                             text: musicControlModel.get(index).name
                             btnType: MButton.FBtnType.Ordinary
+                            onClicked: {
+                                DeviceControl.control(DeviceControl.CTRL_Music, index)
+                            }
                         }
                     }
                     Repeater {
                         model: 2
-                        // 我想每一个model占表格的两格，怎么做
                         MButton {
                             text: musicControlModel.get(index + 4).name
                             Layout.columnSpan: 2
                             Layout.fillWidth: true
                             btnType: MButton.FBtnType. Suggest
+                            onClicked: {
+                                DeviceControl.control(DeviceControl.CTRL_Music, index + 4)
+                            }
                         }
                     }
                 }
@@ -65,6 +71,9 @@ Item {
                             text: buttonControlModel.get(index).name
                             btnType: MButton.FBtnType.Ordinary
                             Layout.fillWidth: true
+                            onClicked: {
+                                DeviceControl.control(DeviceControl.CTRL_Key, index)
+                            }
                         }
                     }
                 }
@@ -94,6 +103,9 @@ Item {
                                 text: broadcastControlModel.get(index).name
                                 btnType: MButton.FBtnType.Ordinary
                                 Layout.fillWidth: true
+                                onClicked: {
+                                    DeviceControl.control(DeviceControl.CTRL_BoardCast, index)
+                                }
                             }
                         }
                     }
