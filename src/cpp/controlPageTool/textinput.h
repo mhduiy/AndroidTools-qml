@@ -2,12 +2,15 @@
 #define TEXTINPUT_H
 
 #include <QObject>
+#include "../utils/singleton.hpp"
 
-class TextInput : public QObject
+class InputText : public QObject
 {
     Q_OBJECT
+    SINGLETON(InputText)
+
 public:
-    TextInput();
+    Q_INVOKABLE void pushKey(Qt::Key);
 };
 
 #endif // TEXTINPUT_H

@@ -8,10 +8,15 @@ import DeviceControl 1.0
 import BatteryDisguise 1.0
 import ResolutionControl 1.0
 import FileTransfer 1.0
+import InputText 1.0
 
 Item {
     id: root
     Layout.minimumWidth: 780
+
+    ColorConstants {
+        id: colorConstants
+    }
 
     RowLayout {
         anchors.fill: parent
@@ -320,22 +325,58 @@ Item {
                 StandardComponent {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
-                    title: "文本输入"
-                    description: "当设备光标在输入框时，可以通过这里传输文本到设备"
+                    title: "键盘共享"
+                    description: "当设备光标在输入框时，可以在PC上使用键盘控制手机"
                     ColumnLayout {
                         anchors.fill: parent
                         anchors.topMargin: parent.titleSpace + 10
                         anchors.leftMargin: 10
                         anchors.rightMargin: 10
                         anchors.bottomMargin: 10
-                        MLineEdit {
+                        Rectangle {
+                            id: textInputEdit
                             Layout.fillWidth: true
-                            placeholderText: "文本"
+                            Layout.preferredHeight: 30
+                            radius: 10
+                            color: colorConstants.ordinaryClickedColor
+
+                            Text {
+                                anchors.centerIn: parent
+                                color: "white"
+                                id: textIndicator
+                                text: "点击开始输入文本"
+                            }
+
+                            Keys.onPressed: (event)=> {
+                                InputText.pushKey(event.key)
+                                event.accepted = true
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    textInputEdit.forceActiveFocus()
+                                }
+                            }
+
+                            onActiveFocusChanged: {
+                                if (focus) {
+                                    textIndicator.text = "请按键盘，输入会同步到设备"
+                                    textInputEdit.color = colorConstants.suggestClickedColor
+                                } else {
+                                    textIndicator.text = "点击开始输入文本"
+                                    textInputEdit.color = colorConstants.ordinaryClickedColor
+                                }
+                            }
                         }
                         MButton {
                             Layout.fillWidth: true
                             btnType: MButton.FBtnType.Suggest
                             text: "写入文本"
+                            onClicked: {
+//                                var text = textInputEdit.editItem.text
+//                                InputText.pushText(text)
+                            }
                         }
                     }
                 }

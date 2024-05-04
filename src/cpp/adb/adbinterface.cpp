@@ -154,3 +154,9 @@ QString ADBInterface::getDeviceProp(const QString &deviceCode, const QString &pr
 {
     return m_adbTools->executeCommand(ADBTools::ADB, {"-s", deviceCode, "shell", "getprop", prop}).simplified();
 }
+
+void ADBInterface::pushKey(const QString &key, const QString &deviceCode)
+{
+    qWarning() << key;
+    m_adbTools->executeCommand(ADBTools::ADB, {"-s", deviceCode, "shell", "input", "keyevent", key});
+}

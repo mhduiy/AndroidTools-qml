@@ -85,6 +85,7 @@ public:
     DeviceCutActivityInfo getCutActivityInfo(const QString &code) const;
     DeviceDetailInfo getDeviceDetailInfo(const QString &code);
     void killActivity(const QString &packageName, const QString &deviceCode = "");
+    void pushKey(const QString &key, const QString &deviceCode);
 signals:
     void adbStarted();
     void adbKilled();
