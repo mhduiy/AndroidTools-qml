@@ -5,6 +5,7 @@
 #include "resolutioncontrol.h"
 #include "filetransfer.h"
 #include "textinput.h"
+#include "startactivity.h"
 
 ControlPageTool::ControlPageTool(QObject *parent) : QObject(parent)
 {
@@ -13,5 +14,6 @@ ControlPageTool::ControlPageTool(QObject *parent) : QObject(parent)
     qmlRegisterSingletonInstance("ResolutionControl", 1, 0, "ResolutionControl", ResolutionControl::instance(this));
     qmlRegisterSingletonInstance("FileTransfer", 1, 0, "FileTransfer", FileTransfer::instance(this));
     qmlRegisterSingletonInstance("InputText", 1, 0, "InputText", InputText::instance(this));
+    qmlRegisterSingletonInstance("StartActivity", 1, 0, "StartActivity", StartActivity::instance(this));
 }
 

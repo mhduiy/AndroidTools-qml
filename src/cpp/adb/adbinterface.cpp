@@ -157,6 +157,13 @@ QString ADBInterface::getDeviceProp(const QString &deviceCode, const QString &pr
 
 void ADBInterface::pushKey(const QString &key, const QString &deviceCode)
 {
-    qWarning() << key;
     m_adbTools->executeCommand(ADBTools::ADB, {"-s", deviceCode, "shell", "input", "keyevent", key});
+}
+
+void ADBInterface::startActivity(const QString &deviceCode, const QString &activity, const QStringList &args)
+{
+    QStringList adbArgs;
+    adbArgs << "-s" << deviceCode << "shell" << "am" << "start" << "-n" << activity << args;
+    QString ret = m_adbTools->executeCommand(ADBTools::ADB, adbArgs);
+    NotificationControl::instance()->send("命令已执行，可能没有成功，请确认", NotificationControl::Info);
 }

@@ -9,6 +9,7 @@ import BatteryDisguise 1.0
 import ResolutionControl 1.0
 import FileTransfer 1.0
 import InputText 1.0
+import StartActivity 1.0
 
 Item {
     id: root
@@ -336,15 +337,22 @@ Item {
                         Rectangle {
                             id: textInputEdit
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 30
+                            Layout.preferredHeight: 60
                             radius: 10
                             color: colorConstants.ordinaryClickedColor
+
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: 300
+                                }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
                                 color: "white"
                                 id: textIndicator
-                                text: "点击开始输入文本"
+                                font.pixelSize: 14
+                                text: "点击这里开始输入"
                             }
 
                             Keys.onPressed: (event)=> {
@@ -361,21 +369,12 @@ Item {
 
                             onActiveFocusChanged: {
                                 if (focus) {
-                                    textIndicator.text = "请按键盘，输入会同步到设备"
+                                    textIndicator.text = "监听键盘中，输入会同步到设备"
                                     textInputEdit.color = colorConstants.suggestClickedColor
                                 } else {
-                                    textIndicator.text = "点击开始输入文本"
+                                    textIndicator.text = "点击这里开始输入"
                                     textInputEdit.color = colorConstants.ordinaryClickedColor
                                 }
-                            }
-                        }
-                        MButton {
-                            Layout.fillWidth: true
-                            btnType: MButton.FBtnType.Suggest
-                            text: "写入文本"
-                            onClicked: {
-//                                var text = textInputEdit.editItem.text
-//                                InputText.pushText(text)
                             }
                         }
                     }
@@ -392,10 +391,12 @@ Item {
                         anchors.rightMargin: 10
                         anchors.bottomMargin: 10
                         MLineEdit {
+                            id: activityNameEdit
                             Layout.fillWidth: true
                             placeholderText: "activity名"
                         }
                         MLineEdit {
+                            id: activityArgsEdit
                             Layout.fillWidth: true
                             placeholderText: "启动参数"
                         }
@@ -403,6 +404,9 @@ Item {
                             Layout.fillWidth: true
                             btnType: MButton.FBtnType.Suggest
                             text: "启动"
+                            onClicked: {
+                                StartActivity.start(activityNameEdit.editItem.text, activityArgsEdit.editItem.text)
+                            }
                         }
                     }
                 }
