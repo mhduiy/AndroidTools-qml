@@ -21,7 +21,8 @@ ConnectManager::ConnectManager(QObject *parent) : QObject(parent)
         NotificationControl::instance()->send(QString(code + "已断开"), NotificationControl::Warning);
     });
 
-    connect(m_deviceListviewModel, &DeviceListviewModel::currentItemChanged, this, &ConnectManager::setCurrentDeviceCode);
+    // TODO 可能导致异常
+    connect(m_deviceListviewModel, &DeviceListviewModel::currentItemChanged, this, &ConnectManager::setCurrentDeviceCode, Qt::DirectConnection);
 }
 
 QString ConnectManager::currentDeviceCode()

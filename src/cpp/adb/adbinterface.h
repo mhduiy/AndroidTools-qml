@@ -69,6 +69,24 @@ struct DeviceDetailInfo {
     QString serialNumber;   // 序列号
 };
 
+enum AppState
+{
+    APP_Enable, APP_Disable, APP_Unkown
+};
+
+struct AppListInfo
+{
+    QString packageName;
+    AppState state;
+    QString versionCode;
+    AppListInfo(const QString &_name = "", AppState _state = APP_Unkown, const QString &_versionCode = "000000")
+    {
+        packageName = _name;
+        state = _state;
+        versionCode = _versionCode;
+    };
+};
+
 class ADBInterface : public QObject
 {
     Q_OBJECT
@@ -87,6 +105,7 @@ public:
     void killActivity(const QString &packageName, const QString &deviceCode = "");
     void pushKey(const QString &key, const QString &deviceCode);
     void startActivity(const QString &deviceCode, const QString &activity, const QStringList &args);
+    QList<AppListInfo> getSoftListInfo(const QString &deviceCode);
 signals:
     void adbStarted();
     void adbKilled();

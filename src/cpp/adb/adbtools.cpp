@@ -2,6 +2,7 @@
 #include <QMutex>
 #include <QProcess>
 #include <QDebug>
+#include <QMutexLocker>
 
 #define PREFIX ""
 
@@ -22,13 +23,16 @@
 
 
 
-ADBTools::ADBTools(QObject *parent) : QObject(parent)
+ADBTools::ADBTools(QObject *parent)
+: QObject(parent)
+, m_mutex(new QMutex)
 {
 
 }
 
 QString ADBTools::executeCommand(APP app, const QStringList &args, const QString &writeStr, const int timeout)
 {
+    QMutexLocker locker(m_mutex);
     QProcess pro;
     if (app == APP::ADB) {
         pro.start(ADBPATH, args);

@@ -2,6 +2,7 @@
 #define ADBTOOLS_H
 
 #include <QObject>
+#include <QMutex>
 
 class ADBTools : public QObject
 {
@@ -18,6 +19,7 @@ public:
 private:
     explicit ADBTools(QObject *parent = nullptr);
     ADBTools() = delete;
+    QMutex *m_mutex;
 };
 
 #endif // ADBTOOLS_H

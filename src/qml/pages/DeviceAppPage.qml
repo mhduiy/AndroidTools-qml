@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
+import SoftListModel 1.0
 
 Item {
     id: root
@@ -51,18 +52,101 @@ Item {
                     id: softListView
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    model: 100
+                    model: SoftListModel
                     spacing: 2
                     clip: true
-                    delegate: Component{
-                        Rectangle {
-                            width: ListView.view.width
-                            height: 40
-                            border.width: 1
-                            color: "transparent"
-                            border.color: "gray"
-                            radius: 10
+                    focus: true
+                    delegate: softListDelegate
+                }
+            }
+        }
+        Component{
+            id: softListDelegate
+            Rectangle {
+                id: wrapper
+                width: ListView.view.width
+                height: 40
+                border.width: 1
+                color: {
+                    if (ListView.isCurrentItem) {
+                        return Qt.rgba(0, 0, 0, 0.3);
+                    } else if (listMouseArea.containsMouse) {
+                        return Qt.rgba(0, 0, 0, 0.15);
+                    } else {
+                        return "transparent"
+                    }
+                }
+                border.color: {
+                    if (model.state === 1) {
+                        return "red"
+                    } else {
+                        return "gray"
+                    }
+                }
+
+                radius: 6
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 200
+                    }
+                }
+
+                Image {
+                    id: softListImage
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 5
+                    width: 30
+                    height: 30
+                    source: "qrc:/res/successIcon.png"
+                    sourceSize: Qt.size(2 * width, 2 * height)
+                    asynchronous: true
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 40
+                    text: model.packageName
+                    font.pixelSize: 14
+                }
+
+                ColumnLayout {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 5
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: parent.height - 4
+                    spacing: 1
+                    MLabel {
+                        rectColor: colorConstants.suggestClickedColor
+                        vMargin: 1
+                        hMargin: 4
+                        text: {
+                            if (model.state === 0) {
+                                return "启用"
+                            } else if (model.state === 1) {
+                                return "禁用"
+                            } else {
+                                return "未知"
+                            }
                         }
+                        Layout.alignment: Qt.AlignRight
+                    }
+                    MLabel {
+                        rectColor: colorConstants.warningClickedColor
+                        hMargin: 4
+                        vMargin: 1
+                        text: model.versionCode
+                        Layout.alignment: Qt.AlignRight
+                    }
+                }
+                MouseArea {
+                    id: listMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: {
+                        softListView.currentIndex = index
                     }
                 }
             }
@@ -73,7 +157,7 @@ Item {
             Layout.preferredWidth: parent.width * 0.5
             MFrame {
                 Layout.fillWidth: true
-                Layout.preferredHeight: parent.height * 0.6
+                Layout.preferredHeight: parent.height * 0.5
                 wrapperColor: Qt.rgba(255, 255, 255, 0.65)
 
                 GridLayout {
@@ -123,6 +207,27 @@ Item {
                             Layout.fillWidth: true
                         }
                     }
+                    MLineEdit {
+                        Layout.columnSpan: 2
+                        placeholderText: "启动activty"
+                        Layout.fillWidth: true
+                    }
+                    MLineEdit {
+                        Layout.columnSpan: 2
+                        placeholderText: "启动参数"
+                        Layout.fillWidth: true
+                    }
+                    MButton{
+                        text: "示例"
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 40
+                    }
+                    MButton{
+                        text: "启动"
+                        btnType: MButton.FBtnType.Suggest
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 40
+                    }
                 }
             }
 
@@ -135,7 +240,7 @@ Item {
                     anchors.fill: parent
                     anchors.margins: 10
                     Text {
-                        text: "安装软件"
+                        text: "安装软件到设备"
                         font.pixelSize: 18
                         font.family: "黑体"
                     }
@@ -148,14 +253,17 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.preferredWidth: 30
                                 spacing: 10
-                                MCheckBox {
-
-                                }
                                 Text {
                                     text: model.name
                                     font.pixelSize: 12
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
+                                }
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+                                MSwitchButton {
+                                    Layout.preferredWidth: 50
                                 }
                             }
                         }

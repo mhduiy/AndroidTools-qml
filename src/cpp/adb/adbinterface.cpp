@@ -167,3 +167,47 @@ void ADBInterface::startActivity(const QString &deviceCode, const QString &activ
     QString ret = m_adbTools->executeCommand(ADBTools::ADB, adbArgs);
     NotificationControl::instance()->send("命令已执行，可能没有成功，请确认", NotificationControl::Info);
 }
+
+QList<AppListInfo> ADBInterface::getSoftListInfo(const QString &deviceCode)
+{
+    QStringList args;
+    QList<AppListInfo> res;
+    args << "-s" << deviceCode << "shell" << "pm" << "list" << "packages" <<  "--show-versioncode";
+    QStringList retList = m_adbTools->executeCommand(ADBTools::ADB, args).split('\n');
+    int packageLen = QString("package:").length();
+    int versionCodeLen = QString("versionCode:").length();
+    for (const QString &lineInfo : retList) {
+        QStringList &&infos = lineInfo.simplified().split(' ');
+        if (infos.size() == 2) {
+            AppListInfo appInfo;
+            if (auto &packageNameInfo = infos.first(); packageNameInfo.size() > packageLen) {
+                appInfo.packageName = packageNameInfo.remove(0, packageLen);
+            }
+            if (auto &versionCodeInfo = infos.last(); versionCodeInfo.size() > versionCodeLen) {
+                appInfo.versionCode = versionCodeInfo.remove(0, versionCodeLen);
+            }
+            appInfo.state = AppState::APP_Enable;
+            res.append(appInfo);
+        }
+    }
+
+    args.clear();
+    args << "-s" << deviceCode << "shell" << "pm" << "list" << "packages" <<  "-d";
+    retList = m_adbTools->executeCommand(ADBTools::ADB, args).split('\n');
+    for (const QString &lineInfo : retList) {
+        QString &&info = lineInfo.simplified();
+        QString disablePackageName;
+        if (auto &packageNameInfo = info; packageNameInfo.size() > packageLen) {
+            disablePackageName = packageNameInfo.remove(0, packageLen);
+        }
+        if (!disablePackageName.isEmpty()) {
+            auto findIt = std::find_if(res.begin(), res.end(), [&disablePackageName](const AppListInfo &info){
+                return info.packageName == disablePackageName;
+            });
+            if(findIt != res.end()) {
+                (*findIt).state = AppState::APP_Disable;
+            }
+        }
+    }
+    return res;
+}

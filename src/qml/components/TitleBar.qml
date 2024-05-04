@@ -13,10 +13,99 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         Text {
+            property int leftMargin: 0
             text: "AndroidTools"
+            Layout.leftMargin: leftMargin
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.pixelSize: 14
+
+            Behavior on scale {
+                PropertyAnimation {
+                    duration: 1500
+                    easing.type: Easing.OutBack
+                }
+            }
+            Behavior on leftMargin {
+                PropertyAnimation {
+                    duration: 800
+                    easing.type: Easing.OutQuart
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: {
+                    parent.scale = 1.6
+                    parent.leftMargin = 30
+                    eggTip.showTipTip()
+                }
+                onExited: {
+                    parent.scale = 1.0
+                    parent.leftMargin = 0
+                }
+                onClicked: {
+                    eggTip.showTip()
+                }
+            }
+        }
+
+        Text {
+            id: eggTip
+            font.bold: true
+            font.pixelSize: 14
+            property int gongde: 0
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            Layout.leftMargin: 50
+            color: "#E67E22"
+            opacity: 0
+
+            Behavior on opacity {
+                PropertyAnimation {
+                    duration: 1000
+                    easing.type: Easing.InQuart
+                }
+            }
+
+            function showTip() {
+                if (!eggTipTimer.running) {
+                    gongde = 0
+                }
+
+                gongde++
+                opacity = 1.0
+                text = "功德 +" + gongde
+                eggTipTimer.restart()
+            }
+            function hideTip() {
+                if (gongde < 10 && gongde !== 0) {
+                    text = "功德不足  (¬_¬)"
+                } else if (gongde >= 10){
+                    text = "功德满满  Ψ(￣∀￣)Ψ"
+                }
+
+                gongde = 0
+                opacity = 0
+            }
+            function showTipTip() {
+                if (gongde !== 0) {
+                    return
+                }
+
+                opacity = 1.0
+                text = "<----点它点它  (￣m￣）"
+                eggTipTimer.start()
+            }
+        }
+
+        Timer {
+            id: eggTipTimer
+            interval: 1500
+            repeat: false
+            onTriggered: {
+                eggTip.hideTip()
+            }
         }
 
         Item {

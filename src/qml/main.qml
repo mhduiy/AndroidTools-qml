@@ -167,8 +167,28 @@ ApplicationWindow {
                                     Text {
                                         id: greeterText
                                         font.bold: true
-                                        font.pixelSize: 20
-                                        text: "下午好"
+                                        font.pixelSize: 18
+                                        color: "#E67E22"
+                                        text: "Hi! 下午好"
+                                        scale: 0.4
+                                        opacity: 0
+
+                                        Behavior on scale {
+                                            PropertyAnimation {
+                                                duration: 2000
+                                                easing.type: Easing.OutBack
+                                            }
+                                        }
+                                        Behavior on opacity {
+                                            PropertyAnimation {
+                                                duration: 2000
+                                            }
+                                        }
+
+                                        Component.onCompleted: {
+                                            scale = 1.0
+                                            opacity = 1.0
+                                        }
                                     }
 
                                     Item {
