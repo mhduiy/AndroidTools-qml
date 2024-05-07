@@ -1,5 +1,6 @@
 #include "appPagetool.h"
 #include "../adb/connectmanager.h"
+#include "appDetailControl.h"
 #include <QtQml>
 
 AppPageTool::AppPageTool(QObject *parent)
@@ -9,6 +10,7 @@ AppPageTool::AppPageTool(QObject *parent)
 , m_appHandleThread(new QThread(this))
 {
     qmlRegisterSingletonInstance("SoftListModel", 1, 0, "SoftListModel", m_softListModel);
+    qmlRegisterSingletonInstance("AppDetailControl", 1, 0, "AppDetailControl", AppDetailControl::instance(this));
 
     m_appHandle->moveToThread(m_appHandleThread);
     m_appHandleThread->start();

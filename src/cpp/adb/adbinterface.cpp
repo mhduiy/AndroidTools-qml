@@ -211,3 +211,85 @@ QList<AppListInfo> ADBInterface::getSoftListInfo(const QString &deviceCode)
     }
     return res;
 }
+
+AppDetailInfo ADBInterface::getAppDetailInfo(const QString &deviceCode, const QString &packageName)
+{
+    QStringList args;
+    args << "-s" << deviceCode << "shell" << "dumpsys" << "package" << packageName;
+    const QStringList retInfo = m_adbTools->executeCommand(ADBTools::ADB, args).split('\n');
+    AppDetailInfo resInfo;
+    for (QString lineInfo : retInfo) {
+        lineInfo = lineInfo.simplified();
+        if (lineInfo.startsWith("firstInstallTime", Qt::CaseInsensitive)) {
+            resInfo.installDate = lineInfo.split('=').last();
+            continue;
+        } else if (lineInfo.startsWith("resourcePath", Qt::CaseInsensitive)) {
+            resInfo.path = lineInfo.split('=').last();
+            continue;
+        } else if (lineInfo.startsWith("versionName", Qt::CaseInsensitive)) {
+            resInfo.versioName = lineInfo.split('=').last();
+            continue;
+        } else if (lineInfo.startsWith("installerPackageName", Qt::CaseInsensitive)) {
+            resInfo.versioName = lineInfo.split('=').last();
+            continue;
+        } else if (lineInfo.startsWith("appId", Qt::CaseInsensitive)) {
+            resInfo.appid = lineInfo.split('=').last();
+            continue;
+        } else if (lineInfo.startsWith("versionCode", Qt::CaseInsensitive)) {
+            const QStringList infoList = lineInfo.split(' ');
+            resInfo.minsdk = infoList.value(1).split('=').last();
+            resInfo.targetsdk = infoList.value(2).split('=').last();
+            continue;
+        }
+    }
+    return resInfo;
+}
+
+
+bool ADBInterface::installApp(const QString &deviceCode, const QString &path)
+{
+    QStringList args;
+    args << "-s" << deviceCode << "install" << path;
+    m_adbTools->executeCommand(ADBTools::ADB, args);
+    return true;
+}
+
+bool ADBInterface::clearData(const QString &deviceCode, const QString &packageName)
+{
+    QStringList args;
+    args << "-s" << deviceCode << "shell" << "pm" << "clear" << packageName;
+    m_adbTools->executeCommand(ADBTools::ADB, args);
+    return true;
+}
+
+bool ADBInterface::unfreezeApp(const QString &deviceCode, const QString &packageName)
+{
+    QStringList args;
+    args << "-s" << deviceCode << "shell" << "pm" << "enable" << packageName;
+    m_adbTools->executeCommand(ADBTools::ADB, args);
+    return true;
+}
+
+bool ADBInterface::freezeApp(const QString &deviceCode, const QString &packageName)
+{
+    QStringList args;
+    args << "-s" << deviceCode << "shell" << "pm" << "disable-user" << packageName;
+    m_adbTools->executeCommand(ADBTools::ADB, args);
+    return true;
+}
+
+bool ADBInterface::uninstallApp(const QString &deviceCode, const QString &packageName)
+{
+    QStringList args;
+    args << "-s" << deviceCode << "uninstall" << packageName;
+    m_adbTools->executeCommand(ADBTools::ADB, args);
+    return true;
+}
+
+bool ADBInterface::extractApp(const QString &deviceCode, const QString &packagePath, const QString &targetPath)
+{
+    QStringList args;
+    args << "-s" << deviceCode << "pull" << packagePath << targetPath;
+    m_adbTools->executeCommand(ADBTools::ADB, args);
+    return true;
+}

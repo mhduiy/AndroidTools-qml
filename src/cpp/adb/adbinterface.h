@@ -87,6 +87,29 @@ struct AppListInfo
     };
 };
 
+struct AppDetailInfo {
+    QString packageName;
+    QString versioName;
+    QString installDate;
+    QString installUser;
+    QString targetsdk;
+    QString minsdk;
+    QString appid;
+    QString path;
+    AppDetailInfo(const QString &_packageName = "", const QString &_versioncode = "", const QString &_installDate = "", const QString &_installUser = "", const QString &_targetsdk = "", const QString &_minsdk = "", const QString _appid = "", const QString &_path = "")
+    : packageName(_packageName)
+    , versioName(_versioncode)
+    , installDate(_installDate)
+    , installUser(_installUser)
+    , targetsdk(_targetsdk)
+    , minsdk(_minsdk)
+    , appid(_appid)
+    , path(_path)
+    {
+
+    }
+};
+
 class ADBInterface : public QObject
 {
     Q_OBJECT
@@ -106,6 +129,14 @@ public:
     void pushKey(const QString &key, const QString &deviceCode);
     void startActivity(const QString &deviceCode, const QString &activity, const QStringList &args);
     QList<AppListInfo> getSoftListInfo(const QString &deviceCode);
+    AppDetailInfo getAppDetailInfo(const QString &deviceCode, const QString &packageName);
+
+    bool installApp(const QString &deviceCode, const QString &path);                                   //安装软件
+    bool clearData(const QString &deviceCode, const QString &packageName);                             //清除数据
+    bool unfreezeApp(const QString &deviceCode, const QString &packageName);                           //解冻软件
+    bool freezeApp(const QString &deviceCode, const QString &packageName);                             //冻结软件
+    bool uninstallApp(const QString &deviceCode, const QString &packageName);                          //卸载软件
+    bool extractApp(const QString &deviceCode, const QString &packagePath, const QString &targetPath); //提取软件
 signals:
     void adbStarted();
     void adbKilled();

@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
 import SoftListModel 1.0
+import AppDetailControl 1.0
 
 Item {
     id: root
@@ -147,6 +148,7 @@ Item {
                     hoverEnabled: true
                     onClicked: {
                         softListView.currentIndex = index
+                        AppDetailControl.updateInfo(model.packageName)
                     }
                 }
             }
@@ -317,6 +319,24 @@ Item {
         ListElement {
             name: "APPID"
             info: "-"
+        }
+
+        Component.onCompleted: {
+            softDetailInfoModel.get(0).info = AppDetailControl.versionCode
+            softDetailInfoModel.get(1).info = AppDetailControl.installDate
+            softDetailInfoModel.get(2).info = AppDetailControl.installUser
+            softDetailInfoModel.get(3).info = AppDetailControl.targetSdk
+            softDetailInfoModel.get(4).info = AppDetailControl.minSdk
+            softDetailInfoModel.get(5).info = AppDetailControl.appId
+            AppDetailControl.valueChanged.connect(function() {
+                console.log("88888888888", AppDetailControl.appId)
+                softDetailInfoModel.get(0).info = AppDetailControl.versionCode
+                softDetailInfoModel.get(1).info = AppDetailControl.installDate
+                softDetailInfoModel.get(2).info = AppDetailControl.installUser
+                softDetailInfoModel.get(3).info = AppDetailControl.targetSdk
+                softDetailInfoModel.get(4).info = AppDetailControl.minSdk
+                softDetailInfoModel.get(5).info = AppDetailControl.appId
+            });
         }
     }
     ListModel {
