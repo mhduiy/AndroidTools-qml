@@ -223,14 +223,12 @@ AppDetailInfo ADBInterface::getAppDetailInfo(const QString &deviceCode, const QS
         if (lineInfo.startsWith("firstInstallTime", Qt::CaseInsensitive)) {
             resInfo.installDate = lineInfo.split('=').last();
             continue;
-        } else if (lineInfo.startsWith("resourcePath", Qt::CaseInsensitive)) {
-            resInfo.path = lineInfo.split('=').last();
-            continue;
         } else if (lineInfo.startsWith("versionName", Qt::CaseInsensitive)) {
-            resInfo.versioName = lineInfo.split('=').last();
+            resInfo.versionName = lineInfo.split('=').last();
+            qWarning() << resInfo.versionName << lineInfo;
             continue;
         } else if (lineInfo.startsWith("installerPackageName", Qt::CaseInsensitive)) {
-            resInfo.versioName = lineInfo.split('=').last();
+            resInfo.installUser = lineInfo.split('=').last();
             continue;
         } else if (lineInfo.startsWith("appId", Qt::CaseInsensitive)) {
             resInfo.appid = lineInfo.split('=').last();
@@ -242,6 +240,13 @@ AppDetailInfo ADBInterface::getAppDetailInfo(const QString &deviceCode, const QS
             continue;
         }
     }
+
+    args.clear();
+    args << "-s" << deviceCode << "shell" << "pm" << "path" << packageName;
+    auto apkPathInfo = m_adbTools->executeCommand(ADBTools::ADB, args).simplified().split(':');
+    resInfo.path = apkPathInfo.value(1);
+
+    resInfo.packageName = packageName;
     return resInfo;
 }
 
@@ -250,7 +255,7 @@ bool ADBInterface::installApp(const QString &deviceCode, const QString &path)
 {
     QStringList args;
     args << "-s" << deviceCode << "install" << path;
-    m_adbTools->executeCommand(ADBTools::ADB, args);
+    m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
     return true;
 }
 
@@ -258,7 +263,7 @@ bool ADBInterface::clearData(const QString &deviceCode, const QString &packageNa
 {
     QStringList args;
     args << "-s" << deviceCode << "shell" << "pm" << "clear" << packageName;
-    m_adbTools->executeCommand(ADBTools::ADB, args);
+    m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
     return true;
 }
 
@@ -266,7 +271,7 @@ bool ADBInterface::unfreezeApp(const QString &deviceCode, const QString &package
 {
     QStringList args;
     args << "-s" << deviceCode << "shell" << "pm" << "enable" << packageName;
-    m_adbTools->executeCommand(ADBTools::ADB, args);
+    m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
     return true;
 }
 
@@ -274,7 +279,7 @@ bool ADBInterface::freezeApp(const QString &deviceCode, const QString &packageNa
 {
     QStringList args;
     args << "-s" << deviceCode << "shell" << "pm" << "disable-user" << packageName;
-    m_adbTools->executeCommand(ADBTools::ADB, args);
+    m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
     return true;
 }
 
@@ -282,7 +287,7 @@ bool ADBInterface::uninstallApp(const QString &deviceCode, const QString &packag
 {
     QStringList args;
     args << "-s" << deviceCode << "uninstall" << packageName;
-    m_adbTools->executeCommand(ADBTools::ADB, args);
+    m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
     return true;
 }
 
@@ -290,6 +295,6 @@ bool ADBInterface::extractApp(const QString &deviceCode, const QString &packageP
 {
     QStringList args;
     args << "-s" << deviceCode << "pull" << packagePath << targetPath;
-    m_adbTools->executeCommand(ADBTools::ADB, args);
+    m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
     return true;
 }

@@ -32,7 +32,7 @@ ADBTools::ADBTools(QObject *parent)
 
 QString ADBTools::executeCommand(APP app, const QStringList &args, const QString &writeStr, const int timeout)
 {
-    QMutexLocker locker(m_mutex);
+//    QMutexLocker locker(m_mutex);
     QProcess pro;
     if (app == APP::ADB) {
         pro.start(ADBPATH, args);

@@ -20,7 +20,7 @@ class AppDetailControl : public QObject
 public:
 
     QVariant getPackageName() { return m_info.packageName; };
-    QVariant getVersionCode() { return m_info.versioName; } ;
+    QVariant getVersionCode() { return m_info.versionName; } ;
     QVariant getInstallDate()  { return m_info.installDate; };
     QVariant getInstallUser() { return m_info.installUser; } ;
     QVariant getTargetSdk() { return m_info.targetsdk; } ;
@@ -34,6 +34,7 @@ public:
     Q_INVOKABLE void freezeApp(const QString &packageName);
     Q_INVOKABLE void unfreezeApp(const QString &packageName);
     Q_INVOKABLE void extractApp(const QString &packageName, const QString &targetPath);
+    Q_INVOKABLE void stopApp(const QString &packageName);
 signals:
     void valueChanged(const AppDetailInfo &info);
 

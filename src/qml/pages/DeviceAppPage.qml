@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import MFloat
 import SoftListModel 1.0
 import AppDetailControl 1.0
@@ -172,7 +173,7 @@ Item {
                         Layout.preferredWidth: 80
                     }
                     Text {
-                        text: "com.test.test.test.test"
+                        text: AppDetailControl.packageName
                         font.pixelSize: 16
                         Layout.columnSpan: 5
                         Layout.fillWidth: true
@@ -200,15 +201,66 @@ Item {
                         }
                     }
 
-                    Repeater {
-                        model: softDetailBtnModel
-                        MButton {
-                            text: model.name
-                            btnType: index < 3 ? MButton.FBtnType.Ordinary : MButton.FBtnType.Warning
-                            Layout.columnSpan: 2
-                            Layout.fillWidth: true
+                    MButton {
+                        text: "提取软件"
+                        btnType: MButton.FBtnType.Ordinary
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true
+                        onClicked: {
+                            AppDetailControl.extractApp(AppDetailControl.packageName, "")
                         }
                     }
+
+                    MButton {
+                        text: "冻结软件"
+                        btnType: MButton.FBtnType.Ordinary
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true
+                        onClicked: {
+                            AppDetailControl.freezeApp(AppDetailControl.packageName)
+                        }
+                    }
+
+                    MButton {
+                        text: "解冻软件"
+                        btnType: MButton.FBtnType.Ordinary
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true
+                        onClicked: {
+                            AppDetailControl.unfreezeApp(AppDetailControl.packageName)
+                        }
+                    }
+
+                    MButton {
+                        text: "卸载软件"
+                        btnType: MButton.FBtnType.Warning
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true
+                        onClicked: {
+                            AppDetailControl.uninstallApp(AppDetailControl.packageName)
+                        }
+                    }
+
+                    MButton {
+                        text: "清除数据"
+                        btnType: MButton.FBtnType.Warning
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true
+                        onClicked: {
+                            AppDetailControl.clearData(AppDetailControl.packageName)
+                        }
+                    }
+
+                    MButton {
+                        text: "强行停止"
+                        btnType: MButton.FBtnType.Warning
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true
+                        onClicked: {
+                            AppDetailControl.stopApp(AppDetailControl.packageName)
+                        }
+                    }
+
                     MLineEdit {
                         Layout.columnSpan: 2
                         placeholderText: "启动activty"
@@ -274,12 +326,16 @@ Item {
                     RowLayout {
                         Layout.fillWidth: true
                         MLineEdit {
+                            id: appPackagePathEdit
                             Layout.fillWidth: true
                             placeholderText: "安装包路径"
                         }
                         MButton {
                             text: "选择路径"
                             btnType: MButton.FBtnType.Ordinary
+                            onClicked: {
+                                installAppSelectAppDialog.open()
+                            }
                         }
                     }
 
@@ -287,6 +343,9 @@ Item {
                         Layout.fillWidth: true
                         text: "开始安装"
                         btnType: MButton.FBtnType.Suggest
+                        onClicked: {
+                            AppDetailControl.installApp(appPackagePathEdit.editItem.text)
+                        }
                     }
                 }
             }
@@ -355,5 +414,13 @@ Item {
         ListElement { name: "安装到sdcard" }
         ListElement { name: "允许降级安装" }
         ListElement { name: "授予所有运行时权限" }
+    }
+    FileDialog {
+        id: installAppSelectAppDialog
+        title: "Select a File"
+        fileMode: FileDialog.OpenFile
+        onAccepted: {
+            appPackagePathEdit.editItem.text = installAppSelectAppDialog.currentFile
+        }
     }
 }

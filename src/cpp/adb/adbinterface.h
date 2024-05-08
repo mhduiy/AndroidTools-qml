@@ -89,7 +89,7 @@ struct AppListInfo
 
 struct AppDetailInfo {
     QString packageName;
-    QString versioName;
+    QString versionName;
     QString installDate;
     QString installUser;
     QString targetsdk;
@@ -98,7 +98,7 @@ struct AppDetailInfo {
     QString path;
     AppDetailInfo(const QString &_packageName = "", const QString &_versioncode = "", const QString &_installDate = "", const QString &_installUser = "", const QString &_targetsdk = "", const QString &_minsdk = "", const QString _appid = "", const QString &_path = "")
     : packageName(_packageName)
-    , versioName(_versioncode)
+    , versionName(_versioncode)
     , installDate(_installDate)
     , installUser(_installUser)
     , targetsdk(_targetsdk)
