@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QThread>
+#include "appHelper.h"
 #include "../adb/adbinterface.h"
 #include "../utils/singleton.hpp"
 
@@ -40,6 +42,8 @@ signals:
 
 private:
     AppDetailInfo m_info;
+    QThread *m_appHelperThread;
+    AppHelper *m_appHelper;
 };
 
 #endif
