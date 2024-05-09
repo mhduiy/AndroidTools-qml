@@ -14,11 +14,13 @@ Rectangle {
         anchors.rightMargin: 10
         Text {
             property int leftMargin: 0
+            property real lettleSpace: 0
             text: "AndroidTools"
             Layout.leftMargin: leftMargin
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.pixelSize: 14
+            font.letterSpacing: lettleSpace
 
             Behavior on scale {
                 PropertyAnimation {
@@ -32,17 +34,25 @@ Rectangle {
                     easing.type: Easing.OutQuart
                 }
             }
+            Behavior on lettleSpace {
+                PropertyAnimation {
+                    duration: 800
+                    easing.type: Easing.OutQuart
+                }
+            }
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
                 onEntered: {
                     parent.scale = 1.6
                     parent.leftMargin = 30
+                    parent.lettleSpace = 2
                     eggTip.showTipTip()
                 }
                 onExited: {
                     parent.scale = 1.0
                     parent.leftMargin = 0
+                    parent.lettleSpace = 0
                 }
                 onClicked: {
                     eggTip.showTip()

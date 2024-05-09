@@ -8,6 +8,7 @@
 #include "cpp/infoPageTool/infopagetool.h"
 #include "cpp/controlPageTool/controlPageTool.h"
 #include "cpp/appPageTools/appPagetool.h"
+#include "cpp/flashPageTools/flashPageTool.h"
 #include "cpp/settingPageTools/settingPageTools.h"
 #include "cpp/utils/Notification.h"
 
@@ -30,10 +31,13 @@ int main(int argc, char *argv[])
     InfoPageTool::instance(&app);
     // 加载ControlPage相关逻辑
     ControlPageTool::instance(&app);
-    // 加载SettingPage的相关逻辑
-    SettingPageTools::instance(&app);
     // 加载AppPage的相关逻辑
     AppPageTool::instance(&app);
+    // 加载FlashPage相关逻辑
+    FlashPageTool::instance(&app);
+
+    // 加载SettingPage的相关逻辑
+    SettingPageTools::instance(&app);
 
     NotificationControl::instance(&app);
     qmlRegisterSingletonInstance("NotificationControl", 1, 0, "NotificationControl", NotificationControl::instance());

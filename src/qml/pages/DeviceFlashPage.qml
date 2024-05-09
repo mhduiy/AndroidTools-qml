@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
 import "../components"
+import FastBootDeviceManager 1.0
+import FlashLinkModel 1.0
 
 Item {
     id: root
@@ -37,7 +39,7 @@ Item {
                     text: "请将设备重启到FASTBOOT模式，当前设备: "
                 }
                 Text {
-                    text: "无设备连接"
+                    text: FastBootDeviceManager.currentDeviceCode === "" ? "无设备连接" : FastBootDeviceManager.currentDeviceCode
                 }
 
                 Item {
@@ -48,26 +50,42 @@ Item {
                     btnType: MButton.FBtnType.Suggest
                     text: "刷新设备"
                     Layout.preferredWidth: 80
+                    onClicked: {
+                        console.log("刷新设备")
+                        FastBootDeviceManager.sdsd
+                    }
                 }
                 MButton {
                     btnType: MButton.FBtnType.Warning
                     text: "重启FASTBOOT"
                     Layout.preferredWidth: 80
+                    onClicked: {
+                        FastBootDeviceManager.rebootToFastBoot
+                    }
                 }
                 MButton {
                     btnType: MButton.FBtnType.Warning
                     text: "重启到系统"
                     Layout.preferredWidth: 80
+                    onClicked: {
+                        FastBootDeviceManager.rebootToSystem
+                    }
                 }
                 MButton {
                     btnType: MButton.FBtnType.Warning
                     text: "重启到REC"
                     Layout.preferredWidth: 80
+                    onClicked: {
+                        FastBootDeviceManager.rebootToRecovery
+                    }
                 }
                 MButton {
                     btnType: MButton.FBtnType.Warning
                     text: "关机"
                     Layout.preferredWidth: 80
+                    onClicked: {
+                        FastBootDeviceManager.powerOff
+                    }
                 }
             }
         }
@@ -328,9 +346,9 @@ Item {
                         }
 
                         ListView {
-                            model: 16
                             spacing: 2
                             clip: true
+                            model: FlashLinkModel
 
                             delegate: Component{
                                 Rectangle {
@@ -342,7 +360,7 @@ Item {
                                     radius: 10
                                     Text {
                                         anchors.fill: parent
-                                        text: "TEST"
+                                        text: model.url
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
                                     }
