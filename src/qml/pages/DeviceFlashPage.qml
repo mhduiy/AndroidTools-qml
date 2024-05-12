@@ -51,8 +51,8 @@ Item {
                     text: "刷新设备"
                     Layout.preferredWidth: 80
                     onClicked: {
+                        FastBootDeviceManager.updateDevices()
                         console.log("刷新设备")
-                        FastBootDeviceManager.sdsd
                     }
                 }
                 MButton {
@@ -60,7 +60,8 @@ Item {
                     text: "重启FASTBOOT"
                     Layout.preferredWidth: 80
                     onClicked: {
-                        FastBootDeviceManager.rebootToFastBoot
+                        FastBootDeviceManager.rebootToFastBoot(""
+                                                               )
                     }
                 }
                 MButton {
@@ -68,7 +69,7 @@ Item {
                     text: "重启到系统"
                     Layout.preferredWidth: 80
                     onClicked: {
-                        FastBootDeviceManager.rebootToSystem
+                        FastBootDeviceManager.rebootToSystem("")
                     }
                 }
                 MButton {
@@ -76,7 +77,7 @@ Item {
                     text: "重启到REC"
                     Layout.preferredWidth: 80
                     onClicked: {
-                        FastBootDeviceManager.rebootToRecovery
+                        FastBootDeviceManager.rebootToRecovery("")
                     }
                 }
                 MButton {
@@ -84,7 +85,7 @@ Item {
                     text: "关机"
                     Layout.preferredWidth: 80
                     onClicked: {
-                        FastBootDeviceManager.powerOff
+                        FastBootDeviceManager.powerOff("")
                     }
                 }
             }

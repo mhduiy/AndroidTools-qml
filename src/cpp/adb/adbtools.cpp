@@ -37,7 +37,7 @@ QString ADBTools::executeCommand(APP app, const QStringList &args, const QString
     if (app == APP::ADB) {
         pro.start(ADBPATH, args);
     } else if (app == APP::FASTBOOT){
-        pro.start(ADBPATH, args);
+        pro.start(FASTBOOTPATH, args);
     }
 
     if (!pro.waitForStarted()) {

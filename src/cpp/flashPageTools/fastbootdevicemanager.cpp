@@ -37,7 +37,7 @@ void DeviceCheckTool::checkDevice()
     qWarning() << retInfos;
     for (QString &lineInfo : retInfos) {
         lineInfo = lineInfo.simplified();
-        if (const QStringList &deviceInfoList = lineInfo.split(' '); deviceInfoList.last() == "device") {
+        if (const QStringList &deviceInfoList = lineInfo.split(' '); deviceInfoList.last() == "fastboot") {
             m_devices.append(deviceInfoList.first());
             // 暂时仅支持单设备
             break;
@@ -96,7 +96,7 @@ void FastBootDeviceManager::rebootToFastBoot(const QString &deviceCode)
     }
 
     QStringList args;
-    args << "reboot" << "fastboot";
+    args << "-s"  << tarDevice << "reboot" << "fastboot";
 
     auto operatorFunc = [&tarDevice, &args](){
         ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
@@ -113,7 +113,7 @@ void FastBootDeviceManager::rebootToSystem(const QString &deviceCode)
     }
 
     QStringList args;
-    args << "reboot";
+    args << "-s" << tarDevice << "reboot";
 
     auto operatorFunc = [&tarDevice, &args](){
         ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
@@ -130,7 +130,7 @@ void FastBootDeviceManager::rebootToRecovery(const QString &deviceCode)
     }
 
     QStringList args;
-    args << "reboot" << "recovery";
+    args << "-s" << tarDevice << "reboot" << "recovery";
 
     auto operatorFunc = [&tarDevice, &args](){
         ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
@@ -147,7 +147,8 @@ void FastBootDeviceManager::powerOff(const QString &deviceCode)
     }
 
     QStringList args;
-    args << "poweroff";
+    args << "-s" << tarDevice << "poweroff";
+
 
     auto operatorFunc = [&tarDevice, &args](){
         ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
