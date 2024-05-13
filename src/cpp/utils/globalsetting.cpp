@@ -1,6 +1,6 @@
 #include <QStandardPaths>
 #include <QDir>
-#include "globalSetting.h"
+#include "globalsetting.h"
 #include <QMutex>
 #include <QMutexLocker>
 #include <QDebug>
