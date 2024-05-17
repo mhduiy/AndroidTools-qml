@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
+import QMLTermWidget 1.0
 
 Item {
     id: root
@@ -18,7 +19,71 @@ Item {
         MFrame {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            wrapperColor: Qt.rgba(0, 0, 0, 0.80)
+            wrapperColor: Qt.rgba(255, 255, 255, 0.80)
+            Action{
+                onTriggered: terminal.copyClipboard();
+                shortcut: "Ctrl+Shift+C"
+            }
+
+            Action{
+                onTriggered: terminal.pasteClipboard();
+                shortcut: "Ctrl+Shift+V"
+            }
+
+            Action{
+                onTriggered: searchButton.visible = !searchButton.visible
+                shortcut: "Ctrl+F"
+            }
+
+            Action{
+                onTriggered:{
+                    console.log('open new terminal window in:'+mainsession.currentDir)
+                }
+                shortcut: "Ctrl+Shift+T"
+            }
+
+            QMLTermWidget {
+                id: terminal
+                anchors.fill: parent
+                anchors.margins: 10
+                font.family: 'Source Code Pro'
+                font.pointSize: 12
+                colorScheme: "BlackOnWhite"
+                terminalOpacity: 1
+                session: QMLTermSession{
+                    id: mainsession
+                    initialWorkingDirectory: "$HOME"
+                    onMatchFound: {
+                        console.log("found at: %1 %2 %3 %4".arg(startColumn).arg(startLine).arg(endColumn).arg(endLine));
+                    }
+                    onNoMatchFound: {
+                        console.log("not found");
+                    }
+                }
+                onTerminalUsesMouseChanged: console.log(terminalUsesMouse);
+                onTerminalSizeChanged: console.log(terminalSize);
+                Component.onCompleted: {
+                    mainsession.setShellProgram("/usr/bin/zsh")
+                    mainsession.startShellProgram();
+                    forceActiveFocus();
+                    terminalOpacity = 0
+                    setOpacity(0)
+                }
+
+                QMLTermScrollbar {
+                    terminal: terminal
+                    width: 20
+                    Rectangle {
+                        opacity: 0.4
+                        color: "#008c8c"
+                        anchors.margins: 5
+                        radius: width * 0.5
+                        anchors.fill: parent
+                    }
+                }
+
+            }
+
         }
 
         MFrame {

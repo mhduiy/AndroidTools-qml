@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QTimer>
 #include <QQmlContext>
@@ -9,12 +9,13 @@
 #include "cpp/controlPageTool/controlPageTool.h"
 #include "cpp/appPageTools/appPagetool.h"
 #include "cpp/flashPageTools/flashPageTool.h"
+#include "cpp/TerminalPageTool/terminalTools.h"
 #include "cpp/settingPageTools/settingPageTools.h"
 #include "cpp/utils/Notification.h"
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     ADBTools::instance(&app);
     ADBInterface *interface = ADBInterface::instance(&app);
@@ -35,6 +36,8 @@ int main(int argc, char *argv[])
     AppPageTool::instance(&app);
     // 加载FlashPage相关逻辑
     FlashPageTool::instance(&app);
+    // 加载TerminalPage相关逻辑
+    TerminalPageTools::instance(&app);
 
     // 加载SettingPage的相关逻辑
     SettingPageTools::instance(&app);
