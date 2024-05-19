@@ -37,12 +37,14 @@ Item {
                 }
             }
 
-            Column {
+            ColumnLayout {
                 anchors.fill: parent
-                padding: 5
                 spacing: 2
                 RowLayout {
-                    width: parent.width - 10
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 5
+                    Layout.rightMargin: 5
+                    Layout.topMargin: 2
                     Text {
                         id: deviceName
                         text: model.deviceName
@@ -63,8 +65,14 @@ Item {
                 }
 
                 RowLayout {
-                    width: parent.width - 10
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 5
+                    Layout.bottomMargin: 5
+                    Layout.rightMargin: 5
+                    Layout.fillHeight: true
                     GridLayout {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
                         columns: 2
 
                         MLabel {
@@ -76,7 +84,7 @@ Item {
                         }
                         Label {
                             text: model.isConnected ? model.isWireless ? model.ip : "有线连接" : "未连接"
-                            font.pixelSize: 10
+                            font.pixelSize: 12
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                         }
@@ -89,7 +97,7 @@ Item {
                             rectColor: "#000000"                        }
                         Label {
                             text: model.isConnected ? (model.isCharging ? model.battery + "% +" : model.battery + "%") : "未连接"
-                            font.pixelSize: 10
+                            font.pixelSize: 12
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                         }

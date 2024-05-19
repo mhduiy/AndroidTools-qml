@@ -19,7 +19,7 @@ Item {
         MFrame {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            wrapperColor: Qt.rgba(255, 255, 255, 0.80)
+            wrapperColor: Qt.rgba(255, 255, 255, 0.65)
             Action{
                 onTriggered: terminal.copyClipboard();
                 shortcut: "Ctrl+Shift+C"
@@ -49,14 +49,18 @@ Item {
                 font.family: 'Source Code Pro'
                 font.pointSize: 12
                 colorScheme: "BlackOnWhite"
-                terminalOpacity: 1
+                terminalOpacity: 0
                 session: QMLTermSession{
                     id: mainsession
                     initialWorkingDirectory: "$HOME"
                     onMatchFound: {
                         console.log("found at: %1 %2 %3 %4".arg(startColumn).arg(startLine).arg(endColumn).arg(endLine));
                     }
-                    onNoMatchFound: {
+                    onNoMatchFound: {   
+
+
+
+                        
                         console.log("not found");
                     }
                 }
@@ -66,8 +70,6 @@ Item {
                     mainsession.setShellProgram("/usr/bin/zsh")
                     mainsession.startShellProgram();
                     forceActiveFocus();
-                    terminalOpacity = 0
-                    setOpacity(0)
                 }
 
                 QMLTermScrollbar {

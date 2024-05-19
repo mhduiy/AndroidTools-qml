@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
+import App 1.0
+import Resource 1.0
 
 Item {
     id: root
@@ -20,6 +22,52 @@ Item {
             Layout.minimumWidth: 300
             radius: 10
             color: "black"
+
+            property int enum_WINDOW_HOME: 0
+            property int enum_WINDOW_MIRROR_PORTRATE: 1
+            property int enum_WINDOW_MIRROR_LANDSCAPE: 2
+            property int enum_WINDOW_MIRROR_FULLSCREEN: 3
+            property int enum_WINDOW_MIRROR_MUSIC: 4
+            property int enum_WINDOW_MIRROR_SMALL: 5
+
+
+            MirrorScene {
+                id: video
+                width: 300
+                height: 600
+
+                onCppGenerateEvents: {
+                    console.log(request)
+
+                    switch (request) {
+                    case "MIRROR_START":
+                        console.log("startstart yeyyye")
+                        mirrorApp.close()
+                        Resource.mirror = 1
+                        Resource.scene = enum_WINDOW_MIRROR_PORTRATE
+                        break
+                    case "MIRROR_FINISHED":
+                        Resource.mirror = 0
+                        break
+                    case "FRAME_SIZE_CHANGED":
+                        break
+                    case "DISPLAY_ORIENTATION_CHANGED":
+
+                        if (Resource.orientation == 0) {
+                            // Portrait orientation is vertical
+                            Resource.scene = enum_WINDOW_MIRROR_PORTRATE
+                        } else if (Resource.orientation == 1) {
+                            //Landscape orientation is horizontal
+                            console.log("enum_WINDOW_MIRROR_LANDSCAPE")
+                            Resource.scene = enum_WINDOW_MIRROR_LANDSCAPE
+                        }
+                        break
+                    case "USB_DEVICE_NAME":
+                        mirrorApp.setUsbDevice(data)
+                        break
+                    }
+                }
+            }
         }
         ColumnLayout {
             Layout.fillHeight: true
@@ -119,6 +167,9 @@ Item {
                     MButton {
                         Layout.fillWidth: true
                         text: "Back"
+                        onClicked:  {
+                            Resource.qmlRequest("REQUEST_MIRROR_START", "c358fecd")
+                        }
                     }
                 }
             }
