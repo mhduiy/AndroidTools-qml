@@ -106,7 +106,7 @@ SettingPageTools::SettingPageTools(QObject *parent)
     qmlRegisterSingletonInstance("WallPaperModel", 1, 0, "WallPaperModel", m_wallpaperModel);
     qmlRegisterSingletonInstance("WallpaperHelper", 1, 0, "WallpaperHelper", WallpaperHelper::instance(this));
     // 获取壁纸配置
-    QString cutWallpaperUrl = GlobalSetting::instance()->readConfig("wallpaper", "url");
+    QString cutWallpaperUrl = GlobalSetting::instance()->readConfig("wallpaper", "url").toString();
     int configWallpaperIndex = GlobalSetting::instance()->readConfig("wallpaper", "index").toInt();
     m_wallpaperModel->setCurrentIndex(configWallpaperIndex);
     if (cutWallpaperUrl.isEmpty()) {

@@ -133,7 +133,7 @@ void ResourceService::setLandscapeSize(QSize size) {
 void ResourceService::setUsbMirrorParametre() const {
     mirror->username = "USB Mirror";
     mirror->title = "screen is mirroring by USB";
-    mirror->bitrate = 2;
+    mirror->bitrate = 5;
     mirror->resolution = 1080;
     mirror->connectionType = "USB";
 }
@@ -142,7 +142,7 @@ void ResourceService::clearMirrorCash() {
     mirror->wifiIp = "";
     mirror->username = "";
     mirror->title = "";
-    mirror->bitrate = 2;
+    mirror->bitrate = 5;
     mirror->resolution = 1080;
     mirror->connectionType = "";
 }

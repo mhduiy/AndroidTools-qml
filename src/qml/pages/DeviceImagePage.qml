@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import MFloat
 import App 1.0
 import Resource 1.0
+import ScrcpyConfig 1.0
 
 Item {
     id: root
@@ -17,9 +18,9 @@ Item {
         anchors.bottomMargin: 10
         Rectangle {
             Layout.fillHeight: true
-            Layout.preferredWidth: 300
-            Layout.maximumWidth: 300
-            Layout.minimumWidth: 300
+            Layout.preferredWidth: 260
+            Layout.maximumWidth: 260
+            Layout.minimumWidth: 260
             radius: 10
             color: "black"
 
@@ -33,15 +34,14 @@ Item {
 
             MirrorScene {
                 id: video
-                width: 300
-                height: 600
+                anchors.fill: parent
+                anchors.margins: 5
 
                 onCppGenerateEvents: {
                     console.log(request)
 
                     switch (request) {
                     case "MIRROR_START":
-                        console.log("startstart yeyyye")
                         mirrorApp.close()
                         Resource.mirror = 1
                         Resource.scene = enum_WINDOW_MIRROR_PORTRATE
@@ -168,7 +168,7 @@ Item {
                         Layout.fillWidth: true
                         text: "Back"
                         onClicked:  {
-                            Resource.qmlRequest("REQUEST_MIRROR_START", "c358fecd")
+                            Resource.qmlRequest("REQUEST_MIRROR_START", "")
                         }
                     }
                 }
@@ -192,14 +192,19 @@ Item {
                         }
 
                         MLineEdit {
+                            id: fpsEdit
                             Layout.preferredWidth: 140
                             placeholderText: "帧率(fps)"
+                            editItem.text: ScrcpyConfig.maxFps
                         }
 
                         MButton {
                             Layout.preferredWidth: 80
                             text: "设置"
                             btnType: MButton.FBtnType.Suggest
+                            onClicked: {
+                                ScrcpyConfig.maxFps = parseInt(fpsEdit.editItem.text)
+                            }
                         }
                     }
                     RowLayout {
@@ -213,14 +218,19 @@ Item {
                         }
 
                         MLineEdit {
+                            id: rateEdit
                             Layout.preferredWidth: 140
-                            placeholderText: "码率(Mbps)"
+                            placeholderText: "码率(Kbps)"
+                            editItem.text: ScrcpyConfig.kBitRate
                         }
 
                         MButton {
                             Layout.preferredWidth: 80
                             text: "设置"
                             btnType: MButton.FBtnType.Suggest
+                            onClicked: {
+                                ScrcpyConfig.kBitRate = parseInt(rateEdit.editItem.text)
+                            }
                         }
                     }
                     RowLayout {

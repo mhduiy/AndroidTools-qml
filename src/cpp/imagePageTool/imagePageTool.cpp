@@ -24,6 +24,7 @@ ImagePageTool::ImagePageTool(QObject *parent)
 
     ResourceService::declareQml();
     MirrorScene::declareQml();
+    Config::declareQml();
 
     qmlRegisterSingletonInstance("Resource", 1, 0, "Resource", resourceService);
 }

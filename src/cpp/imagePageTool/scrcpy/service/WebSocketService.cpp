@@ -1,6 +1,7 @@
 #include "WebSocketService.h"
 #include "service/include/server.h"
 #include "ui/util/config.h"
+#include "src/cpp/adb/connectmanager.h"
 
 WebSocketService::WebSocketService(quint16 port, QObject *parent) : QObject(parent) {
 
@@ -157,18 +158,21 @@ void WebSocketService::responseToClents(int result) {
     }
 }
 
-void WebSocketService::qmlGenerateEvents(QString request, QString data) {
-
+void WebSocketService::qmlGenerateEvents(QString request, QString data)
+{
+    if (data.isEmpty()) {
+        data = ConnectManager::instance()->currentDeviceCode();
+    }
     if (request == "REQUEST_MIRROR_START") {
 
         if (resourceService->m_usb_serials.indexOf(data) == -1) {//if not exist add to usb list and execute command
             resourceService->m_usb_serials << data;
 
-            if (checkAdbRun()) {
-                return;
-            }
-            data = data.remove("\"");
-            m_adb.execute("", QStringList() << "-s" << data << "tcpip" << "5555");
+            // if (checkAdbRun()) {
+            //     return;
+            // }
+            // data = data.remove("\"");
+            // m_adb.execute("", QStringList() << "-s" << data << "tcpip" << "5555");
         }
 
         resourceService->setSerial(data);
@@ -218,7 +222,7 @@ void WebSocketService::requestMirrorStart() {
     params.serial = resourceService->serial();
 
     params.maxSize = resourceService->mirror->resolution;           // 720 - 1080 - 1280 - 1920;
-    params.bitRate = resourceService->mirror->bitrate * 1000000;    // Mbit/s
+    params.bitRate = Config::getInstance().getKBitRate() * 1000;    // Mbit/s
 
     // on devices with Android >= 10, the capture frame rate can be limited
     params.maxFps = static_cast<quint32>(Config::getInstance().getMaxFps());

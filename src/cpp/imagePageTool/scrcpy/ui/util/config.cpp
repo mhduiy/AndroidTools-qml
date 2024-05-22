@@ -2,10 +2,16 @@
 #include <QFileInfo>
 #include <QSettings>
 #include <QDebug>
+#include <QStandardPaths>
+#include <QDir>
+#include <QSettings>
+#include <QtQml>
 
 #include "config.h"
+#include "src/cpp/utils/globalsetting.h"
 
 #define GROUP_COMMON "common"
+#define GROUP_SCRCPY "scrcpy"
 
 // config
 #define COMMON_TITLE_KEY "WindowTitle"
@@ -21,7 +27,7 @@
 #define COMMON_SERVER_PATH_DEF "/data/local/tmp/scrcpy-server.jar"
 
 #define COMMON_MAX_FPS_KEY "MaxFps"
-#define COMMON_MAX_FPS_DEF 0
+#define COMMON_MAX_FPS_DEF 60
 
 #define COMMON_DESKTOP_OPENGL_KEY "UseDesktopOpenGL"
 #define COMMON_DESKTOP_OPENGL_DEF -1
@@ -49,7 +55,7 @@
 #define COMMON_RECORD_DEF ""
 
 #define COMMON_BITRATE_KEY "BitRate"
-#define COMMON_BITRATE_DEF 2000000
+#define COMMON_BITRATE_DEF 2000
 
 #define COMMON_MAX_SIZE_INDEX_KEY "MaxSizeIndex"
 #define COMMON_MAX_SIZE_INDEX_DEF 2
@@ -70,7 +76,7 @@
 #define COMMON_REVERSE_CONNECT_DEF true
 
 #define COMMON_SHOW_FPS_KEY "ShowFPS"
-#define COMMON_SHOW_FPS_DEF false
+#define COMMON_SHOW_FPS_DEF true
 
 #define COMMON_WINDOW_ON_TOP_KEY "WindowOnTop"
 #define COMMON_WINDOW_ON_TOP_DEF false
@@ -102,28 +108,29 @@
 QString Config::s_configPath = "";
 
 Config::Config(QObject *parent) : QObject(parent) {
-    m_settings = new QSettings(getConfigPath() + "/config.ini", QSettings::IniFormat);
-
-    m_userData = new QSettings(getConfigPath() + "/userdata.ini", QSettings::IniFormat);
+    QString configDir = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+    QDir dir(configDir);
+    if(!dir.exists(configDir)) {
+        dir.mkpath(configDir);
+    }
+    m_globalSetting = GlobalSetting::instance();
+    m_settings = new QSettings(configDir + "/config.ini", QSettings::IniFormat);
+    m_userData = new QSettings(configDir + "/userdata.ini", QSettings::IniFormat);
 
     qDebug() << m_userData->childGroups();
+}
+
+void Config::initConfig()
+{
+    // maxFps
+    m_globalSetting->checkConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF);
+    // bitRate
+    m_globalSetting->checkConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, COMMON_BITRATE_DEF);
 }
 
 Config &Config::getInstance() {
     static Config config;
     return config;
-}
-
-const QString &Config::getConfigPath() {
-    if (s_configPath.isEmpty()) {
-        s_configPath = QString::fromLocal8Bit(qgetenv("QTSCRCPY_CONFIG_PATH"));
-        QFileInfo fileInfo(s_configPath);
-        if (s_configPath.isEmpty() || !fileInfo.isDir()) {
-            // default application dir
-            s_configPath = "config";
-        }
-    }
-    return s_configPath;
 }
 
 void Config::setProjectPath(QString path) {
@@ -215,19 +222,28 @@ QString Config::getNickName(const QString &serial) {
 }
 
 QString Config::getServerVersion() {
-    QString server;
-    m_settings->beginGroup(GROUP_COMMON);
-    server = m_settings->value(COMMON_SERVER_VERSION_KEY, COMMON_SERVER_VERSION_DEF).toString();
-    m_settings->endGroup();
-    return server;
+    return COMMON_SERVER_VERSION_DEF;
+}
+
+void Config::setMaxFps(int maxFps) {
+    maxFps = qBound(10, maxFps, 165);
+    m_globalSetting->writeConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, maxFps);
 }
 
 int Config::getMaxFps() {
-    int fps = 0;
-    m_settings->beginGroup(GROUP_COMMON);
-    fps = m_settings->value(COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF).toInt();
-    m_settings->endGroup();
-    return fps;
+    int maxFps = m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF).toUInt();
+    return qBound(10, maxFps, 165);
+}
+
+void Config::setKBitRate(int kBitRate)
+{
+    kBitRate = qBound(100, kBitRate, 100000);    // 0.1Mbps ~ 100Mbps
+    m_globalSetting->writeConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, kBitRate);
+}
+int Config::getKBitRate()
+{
+    int kBitRate = m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, COMMON_BITRATE_DEF).toUInt();
+    return qBound(100, kBitRate, 100000);
 }
 
 int Config::getDesktopOpenGL() {
@@ -318,4 +334,9 @@ QString Config::getTitle() {
     title = m_settings->value(COMMON_TITLE_KEY, COMMON_TITLE_DEF).toString();
     m_settings->endGroup();
     return title;
+}
+
+void Config::declareQml()
+{
+    qmlRegisterSingletonInstance("ScrcpyConfig", 1, 0, "ScrcpyConfig", &Config::getInstance());
 }

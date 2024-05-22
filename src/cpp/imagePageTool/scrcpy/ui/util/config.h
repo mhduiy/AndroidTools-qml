@@ -3,12 +3,14 @@
 #include <QObject>
 #include <QPointer>
 #include <QRect>
+#include <qtmetamacros.h>
+#include "src/cpp/utils/globalsetting.h"
 
 struct UserBootConfig {
 
     QString recordPath = "";
 
-    quint32 bitRate = 2000000;
+    quint32 bitRate = 500000;
     int maxSizeIndex = 0;
     int recordFormatIndex = 0;
     int lockOrientationIndex = 0;
@@ -26,17 +28,17 @@ struct UserBootConfig {
 
 class QSettings;
 
-class Config : public QObject {
-
-Q_OBJECT
-
+class Config : public QObject 
+{
+    Q_OBJECT
+    Q_PROPERTY(int maxFps READ getMaxFps WRITE setMaxFps NOTIFY maxFpsChanged)
+    Q_PROPERTY(int kBitRate READ getKBitRate WRITE setKBitRate NOTIFY kBitRateChanged)
 public:
     static Config &getInstance();
 
     // config
     QString getTitle();
     QString getServerVersion();
-    int getMaxFps();
     int getDesktopOpenGL();
     int getSkin();
     int getRenderExpiredFrames();
@@ -61,17 +63,30 @@ public:
 
     void deleteGroup(const QString &serial);
 
+    static void declareQml();
+
     void setProjectPath(QString path);
     QString getProjectPath();
+
+    void setMaxFps(int maxFps);
+    int getMaxFps();
+
+    void setKBitRate(int kBitRate);
+    int getKBitRate();
+
+signals:
+    void maxFpsChanged(int maxFps);
+    void kBitRateChanged(int bitRate);
 
 private:
     explicit Config(QObject *parent = nullptr);
 
-    const QString &getConfigPath();
+    void initConfig();
 
 private:
     static QString s_configPath;
     QPointer<QSettings> m_settings;
     QPointer<QSettings> m_userData;
+    QPointer<GlobalSetting> m_globalSetting;
     QString projectPath;
 };
