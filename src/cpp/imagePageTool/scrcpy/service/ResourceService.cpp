@@ -3,9 +3,12 @@
 #include "../core/include/QtScrcpyCore.h"
 #include "ResourceService.h"
 
+#define MIRROW_WIDTH 260
+#define MIRROW_HEIGHT 550
+
 ResourceService::ResourceService(QObject *parent) : QObject{parent} {
-    m_portraitSize.setWidth(375);
-    m_portraitSize.setHeight(830);
+    m_portraitSize.setWidth(MIRROW_WIDTH);
+    m_portraitSize.setHeight(MIRROW_HEIGHT);
     mirror = new Mirror();
 }
 
@@ -95,13 +98,12 @@ void ResourceService::setFrameSize(QSize size) {
     m_frameSize = size;
 
     if (size.height() > size.width()) {
-        m_portraitSize.setWidth(488 / 1.5 );
-        m_portraitSize.setHeight(1080 / 1.5);
+        m_portraitSize.setWidth(MIRROW_WIDTH);
+        m_portraitSize.setHeight(MIRROW_HEIGHT);
         setOrientation(DisplayOrientation::PORTRAIT);
     } else {
-        float scale = 1.35;
-        m_landscapeSize.setWidth(1080 * scale);
-        m_landscapeSize.setHeight(488 * scale);
+        m_landscapeSize.setWidth(MIRROW_HEIGHT);
+        m_landscapeSize.setHeight(MIRROW_WIDTH);
         setOrientation(DisplayOrientation::LANDSCAPE);
     }
 

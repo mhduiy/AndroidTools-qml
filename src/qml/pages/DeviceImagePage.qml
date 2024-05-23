@@ -5,6 +5,8 @@ import MFloat
 import App 1.0
 import Resource 1.0
 import ScrcpyConfig 1.0
+import NotificationControl 1.0
+import DeviceControl 1.0
 
 Item {
     id: root
@@ -17,25 +19,25 @@ Item {
         anchors.rightMargin: 10
         anchors.bottomMargin: 10
         Rectangle {
-            Layout.fillHeight: true
-            Layout.preferredWidth: 260
-            Layout.maximumWidth: 260
-            Layout.minimumWidth: 260
+            // Layout.fillHeight: true
+            Layout.preferredHeight: 560
+            Layout.preferredWidth: 270
+            Layout.maximumWidth: 270
+            Layout.minimumWidth: 270
             radius: 10
             color: "black"
-
-            property int enum_WINDOW_HOME: 0
-            property int enum_WINDOW_MIRROR_PORTRATE: 1
-            property int enum_WINDOW_MIRROR_LANDSCAPE: 2
-            property int enum_WINDOW_MIRROR_FULLSCREEN: 3
-            property int enum_WINDOW_MIRROR_MUSIC: 4
-            property int enum_WINDOW_MIRROR_SMALL: 5
-
 
             MirrorScene {
                 id: video
                 anchors.fill: parent
                 anchors.margins: 5
+
+                property int enum_WINDOW_HOME: 0
+                property int enum_WINDOW_MIRROR_PORTRATE: 1
+                property int enum_WINDOW_MIRROR_LANDSCAPE: 2
+                property int enum_WINDOW_MIRROR_FULLSCREEN: 3
+                property int enum_WINDOW_MIRROR_MUSIC: 4
+                property int enum_WINDOW_MIRROR_SMALL: 5
 
                 onCppGenerateEvents: {
                     console.log(request)
@@ -53,10 +55,10 @@ Item {
                         break
                     case "DISPLAY_ORIENTATION_CHANGED":
 
-                        if (Resource.orientation == 0) {
+                        if (Resource.orientation === 0) {
                             // Portrait orientation is vertical
                             Resource.scene = enum_WINDOW_MIRROR_PORTRATE
-                        } else if (Resource.orientation == 1) {
+                        } else if (Resource.orientation === 1) {
                             //Landscape orientation is horizontal
                             console.log("enum_WINDOW_MIRROR_LANDSCAPE")
                             Resource.scene = enum_WINDOW_MIRROR_LANDSCAPE
@@ -143,32 +145,65 @@ Item {
                 GridLayout {
                     anchors.fill: parent
                     anchors.margins: 10
-                    columns: 3
+                    columns: 4
                     MButton {
                         Layout.fillWidth: true
                         text: "电源"
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Power)
+                        }
                     }
                     MButton {
                         Layout.fillWidth: true
                         text: "V +"
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Music, DeviceControl.VolumeAdd)
+                        }
                     }
                     MButton {
                         Layout.fillWidth: true
                         text: "V -"
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Music, DeviceControl.VolumeReduce)
+                        }
+                    }
+                    MButton {
+                        Layout.fillWidth: true
+                        text: "连接"
+                        btnType: MButton.FBtnType.Suggest
+                        onClicked:  {
+                            Resource.qmlRequest("REQUEST_MIRROR_START", "")
+                            NotificationControl.send("请求连接", 0, 3000)
+                        }
                     }
                     MButton {
                         Layout.fillWidth: true
                         text: "Menu"
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Menu)
+                        }
                     }
                     MButton {
                         Layout.fillWidth: true
                         text: "Home"
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Home)
+                        }
                     }
                     MButton {
                         Layout.fillWidth: true
                         text: "Back"
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Back)
+                        }
+                    }
+                    MButton {
+                        Layout.fillWidth: true
+                        text: "断开"
+                        btnType: MButton.FBtnType.Warning
                         onClicked:  {
-                            Resource.qmlRequest("REQUEST_MIRROR_START", "")
+                            Resource.qmlRequest("REQUEST_MIRROR_FINISH", "")
+                            NotificationControl.send("请求断开", 0, 3000)
                         }
                     }
                 }
@@ -204,6 +239,8 @@ Item {
                             btnType: MButton.FBtnType.Suggest
                             onClicked: {
                                 ScrcpyConfig.maxFps = parseInt(fpsEdit.editItem.text)
+                                Resource.qmlRequest("REQUEST_MIRROR_FINISH", "")
+                                Resource.qmlRequest("REQUEST_MIRROR_START", "")
                             }
                         }
                     }
@@ -230,6 +267,8 @@ Item {
                             btnType: MButton.FBtnType.Suggest
                             onClicked: {
                                 ScrcpyConfig.kBitRate = parseInt(rateEdit.editItem.text)
+                                Resource.qmlRequest("REQUEST_MIRROR_FINISH", "")
+                                Resource.qmlRequest("REQUEST_MIRROR_START", "")
                             }
                         }
                     }

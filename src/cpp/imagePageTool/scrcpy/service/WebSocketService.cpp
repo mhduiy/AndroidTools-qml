@@ -167,12 +167,6 @@ void WebSocketService::qmlGenerateEvents(QString request, QString data)
 
         if (resourceService->m_usb_serials.indexOf(data) == -1) {//if not exist add to usb list and execute command
             resourceService->m_usb_serials << data;
-
-            // if (checkAdbRun()) {
-            //     return;
-            // }
-            // data = data.remove("\"");
-            // m_adb.execute("", QStringList() << "-s" << data << "tcpip" << "5555");
         }
 
         resourceService->setSerial(data);

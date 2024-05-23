@@ -90,10 +90,11 @@ void MirrorScene::mouseProcess(QMouseEvent *event) {
     if (!device) {
         return;
     }
-    if (m_resourceService->orientation() == 0)
-            emit device->mouseEvent(event, m_resourceService->frameSize(), m_resourceService->portraitSize());
+    if (m_resourceService->orientation() == 0) {
+        emit device->mouseEvent(event, m_resourceService->frameSize(), m_resourceService->portraitSize());
+    }
     else
-            emit device->mouseEvent(event, m_resourceService->frameSize(), m_resourceService->landscapeSize());
+        emit device->mouseEvent(event, m_resourceService->frameSize(), m_resourceService->landscapeSize());
 }
 
 void MirrorScene::mousePressEvent(QMouseEvent *event) {
