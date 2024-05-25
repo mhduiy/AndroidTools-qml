@@ -7,6 +7,7 @@ import FastBootDeviceManager 1.0
 import FlashLinkModel 1.0
 
 Item {
+    property bool isCurrentPage: false
     id: root
     Layout.minimumWidth: 780
     ColorConstants {

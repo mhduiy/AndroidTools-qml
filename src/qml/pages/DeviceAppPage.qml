@@ -7,6 +7,7 @@ import SoftListModel 1.0
 import AppDetailControl 1.0
 
 Item {
+    property bool isCurrentPage: false
     id: root
     Layout.minimumWidth: 780
     ColorConstants {

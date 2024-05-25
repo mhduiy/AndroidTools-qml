@@ -224,29 +224,7 @@ ApplicationWindow {
                                     Layout.preferredHeight: parent.height * 0.65
 
                                     onCurrentIndexChanged: {
-                                        switch (currentIndex) {
-                                        case 0:
-                                            rightContainter.push(deviceInfoPage)
-                                            break
-                                        case 1:
-                                            rightContainter.push(deviceControlPage)
-                                            break
-                                        case 2:
-                                            rightContainter.push(deviceAppPage)
-                                            break
-                                        case 3:
-                                            rightContainter.push(deviceFlashPage)
-                                            break
-                                        case 4:
-                                            rightContainter.push(deviceImagePage)
-                                            break
-                                        case 5:
-                                            rightContainter.push(deviceTerminalPage)
-                                            break
-                                        case 6:
-                                            rightContainter.push(settingPage)
-                                            break
-                                        }
+                                        mainStackLayout.currentIndex = currentIndex
                                     }
                                 }
                             }
@@ -261,103 +239,52 @@ ApplicationWindow {
                     }
                 }
 
-                StackView {
-                    id: rightContainter
+                StackLayout {
+                    id: mainStackLayout
                     Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    initialItem: deviceInfoPage
-
-                    pushExit: Transition {
-                        PropertyAnimation { target: pushExit.view; property: "opacity"; to: 0; duration: 300 }
-                    }
-                    pushEnter: Transition {
-                        PropertyAnimation { target: pushEnter.view; property: "opacity"; to: 1; duration: 600;}
-                        PropertyAnimation { target: pushEnter.view; property: "y"; from: 200; to: 0; duration: 600; easing.type: Easing.OutQuart}
-                    }
-                }
-                Component {
-                    id: deviceInfoPage
-                    Page {
-                        background: {}
-                        DeviceInfoPage {
-                            anchors.fill: parent
-                        }
-                    }
-                }
-
-                Component {
-                    id: deviceControlPage
-                    Page {
-                        background: {}
-                        DeviceControlPage {
-                            anchors.fill: parent
+                    onCurrentIndexChanged: {
+                        for (var i = 0; i < mainStackLayout.count; i++) {
+                            mainStackLayout.itemAt(i).isCurrentPage = (i == currentIndex);
                         }
                     }
 
-                }
-
-                Component {
-                    id: deviceAppPage
-                    Page {
-                        background: {}
-                        DeviceAppPage {
-                            anchors.fill: parent
-                        }
+                    DeviceInfoPage {
+                        anchors.fill: parent
                     }
 
-                }
-
-                Component {
-                    id: deviceFlashPage
-                    Page {
-                        background: {}
-                        DeviceFlashPage {
-                            anchors.fill: parent
-                        }
+                    DeviceControlPage {
+                        anchors.fill: parent
                     }
 
-                }
-
-                Component {
-                    id: deviceImagePage
-                    Page {
-                        background: {}
-                        DeviceImagePage {
-                            anchors.fill: parent
-                        }
+                    DeviceAppPage {
+                        anchors.fill: parent
                     }
 
-                }
-
-                Component {
-                    id: deviceTerminalPage
-
-                    Page {
-                        background: {}
-                        DeviceTerminalPage {
-                            anchors.fill: parent
-                        }
-                    }
-                }
-
-                Component {
-                    id: settingPage
-                    Page {
-                        background: {}
-                        SettingPage {
-                            anchors.fill: parent
-                        }
+                    DeviceFlashPage {
+                        anchors.fill: parent
                     }
 
+                    DeviceImagePage {
+                        anchors.fill: parent
+                    }
+
+                    DeviceTerminalPage {
+                        anchors.fill: parent
+                    }
+
+                    SettingPage {
+                        anchors.fill: parent
+                    }
                 }
             }
-
         }
 
-
     }
+
+
 
     Dialog {
         id: wirelessConnectDialog

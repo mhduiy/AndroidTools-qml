@@ -12,6 +12,7 @@ import InputText 1.0
 import StartActivity 1.0
 
 Item {
+    property bool isCurrentPage: false
     id: root
     Layout.minimumWidth: 780
 

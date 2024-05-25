@@ -5,6 +5,7 @@ import MFloat
 import QMLTermWidget 1.0
 
 Item {
+    property bool isCurrentPage: false
     id: root
     Layout.minimumWidth: 780
     ColorConstants {
@@ -69,7 +70,7 @@ Item {
                 Component.onCompleted: {
                     mainsession.setShellProgram("/usr/bin/zsh")
                     mainsession.startShellProgram();
-                    forceActiveFocus();
+                    forceActiveFocus()
                 }
 
                 QMLTermScrollbar {
@@ -83,7 +84,14 @@ Item {
                         anchors.fill: parent
                     }
                 }
-
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    onClicked: {
+                        console.log("---")
+                        terminal.forceActiveFocus()
+                    }
+                }
             }
 
         }
