@@ -58,10 +58,6 @@ Item {
                         console.log("found at: %1 %2 %3 %4".arg(startColumn).arg(startLine).arg(endColumn).arg(endLine));
                     }
                     onNoMatchFound: {   
-
-
-
-                        
                         console.log("not found");
                     }
                 }
@@ -86,9 +82,8 @@ Item {
                 }
                 MouseArea {
                     anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
+                    propagateComposedEvents: true
                     onClicked: {
-                        console.log("---")
                         terminal.forceActiveFocus()
                     }
                 }
@@ -113,8 +108,29 @@ Item {
                         Layout.fillWidth: true
                     }
 
-                    MSwitchButton {
+                    Timer {
+                        id: terminalStartTimer
+                        interval: 100
+                        repeat: false
+                        onTriggered: {
+                            mainsession.setShellProgram("/usr/bin/zsh")
+                            mainsession.startShellProgram();
+                            forceActiveFocus()
+                        }
+                    }
 
+                    MSwitchButton {
+                        onStatusChanged: {
+                            if (status) {
+                                mainsession.setShellProgram("/usr/bin/zsh")
+                                mainsession.startShellProgram();
+                                mainsession.sendText("adb shell \n")
+                                forceActiveFocus()
+                            } else {
+                                mainsession.sendText('exit \n')
+                                terminalStartTimer.start()
+                            }
+                        }
                     }
                 }
                 RowLayout {
