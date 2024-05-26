@@ -24,6 +24,8 @@ public:
     void setBlurRadius(const int &value);
     int getBlurRadius() const;
 
+    Q_INVOKABLE void requestAddCustomWallpaper();
+
 private:
     void writeValueToConfig();
 
@@ -31,6 +33,7 @@ signals:
     void wallpaperChanged(const QString &url);
     void opacityChanged(const qreal &value);
     void blurRadiusChanged(const int value);
+    void requestRefreshWallpaperList();
 
 private:
     QString m_wallpaperUrl;

@@ -3,7 +3,11 @@
 
 #include <QObject>
 #include <QHash>
+#include <QDir>
+#include <QApplication>
+#include <QStandardPaths>
 
+const QString WALLPAPERCACHEJSONPATH = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QDir::separator() + "AndroidTools" + QDir::separator() + "wallpaperCache.json";
 class constants
 {
 public:

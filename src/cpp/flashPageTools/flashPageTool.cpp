@@ -25,7 +25,7 @@ FlashPageTool::FlashPageTool(QObject *parent)
 FlashLinkModel::FlashLinkModel(QObject *parent)
     : QAbstractListModel(parent)
 {
-    appendRow(FlashLinKInfo("https://www.baidu.com", "百度", "百度一下，你就知道"));
+    
 }
 
 int FlashLinkModel::rowCount(const QModelIndex &parent) const

@@ -34,20 +34,41 @@ Item {
                     anchors.top: parent.top
                     anchors.leftMargin: 10
                     height: 60
-                    ColumnLayout {
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        height: wallpaperSettingItemTitle_Titel.height + wallpaperSettingItemTitle_des.height
-                        Label {
-                            id: wallpaperSettingItemTitle_Titel
-                            text: "壁纸设置"
-                            font.pixelSize: 16
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.rightMargin: 20
+                        ColumnLayout {
+                            Layout.fillHeight: true
+                            Layout.alignment: Qt.AlignLeading
+                            height: wallpaperSettingItemTitle_Titel.height + wallpaperSettingItemTitle_des.height
+                            Label {
+                                id: wallpaperSettingItemTitle_Titel
+                                text: "壁纸设置"
+                                font.pixelSize: 16
+                            }
+                            Label {
+                                id: wallpaperSettingItemTitle_des
+                                text: "设置AndroidTools的背景壁纸"
+                                font.pixelSize: 12
+                                color: "gray"
+                            }
                         }
-                        Label {
-                            id: wallpaperSettingItemTitle_des
-                            text: "设置AndroidTools的背景壁纸"
-                            font.pixelSize: 12
-                            color: "gray"
+
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                        }
+
+                        MButton {
+                            text: "添加"
+                            Layout.preferredWidth: 60
+                            Layout.maximumWidth: 60
+                            Layout.minimumWidth: 60
+                            width: 60
+                            btnType: MButton.FBtnType.Suggest
+                            onClicked: {
+                                WallpaperHelper.requestAddCustomWallpaper()
+                            }
                         }
                     }
                 }

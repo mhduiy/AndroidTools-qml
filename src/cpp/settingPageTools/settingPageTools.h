@@ -36,12 +36,14 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE void appendRow(WallPaperInfo info);
+    Q_INVOKABLE void insertRow(int row, WallPaperInfo info);
     Q_INVOKABLE void removeRow(const QString &code);
     Q_INVOKABLE void setInfo(const WallPaperInfo &info);
     QModelIndex index(int row, int column = 1, const QModelIndex &parent = QModelIndex()) const override;
 
     Q_INVOKABLE void setCurrentIndex(int index);
     int currentIndex() {return m_currentIndex;}
+    void clearData();
 
 signals:
     void currentItemChanged(const QString &url);
@@ -63,6 +65,7 @@ class SettingPageTools : public QObject
 
 private slots:
     void onBingWallPaperWorkFinish(const QString &url);
+    void onRequestRefreshWallpaperList();
 
 private:
     WallPaperModel *m_wallpaperModel;

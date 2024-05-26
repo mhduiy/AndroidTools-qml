@@ -1,8 +1,19 @@
 #include "wallpaperhelper.h"
 #include <QDebug>
+#include <qcontainerfwd.h>
+#include <qdir.h>
+#include <qfiledialog.h>
 #include <qlogging.h>
+#include <qtmetamacros.h>
 #include <qtypes.h>
 #include "../utils/globalsetting.h"
+#include <QFileDialog>
+#include <QApplication>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include "../utils/constants.h"
+#include <QUrl>
 
 WallpaperHelper::WallpaperHelper(QObject *parent)
     : QObject(parent)
@@ -67,4 +78,30 @@ void WallpaperHelper::writeValueToConfig()
 {
     GlobalSetting::instance()->writeConfig("wallpaper", "opacity", m_opacity);
     GlobalSetting::instance()->writeConfig("wallpaper", "blurRadius", m_blurRadius);
+}
+
+void WallpaperHelper::requestAddCustomWallpaper()
+{
+    qWarning() << "---";
+    QStringList filePaths = QFileDialog::getOpenFileNames();
+    QFile cacheFile(WALLPAPERCACHEJSONPATH);
+    qWarning() << WALLPAPERCACHEJSONPATH;
+    if (!cacheFile.open(QIODevice::ReadWrite | QIODevice::Text)) {
+        return;
+    }
+    QJsonDocument cacheDoc = QJsonDocument::fromJson(cacheFile.readAll());
+    QJsonArray cacheArray = cacheDoc.array();
+
+    for (const QString &filePath : filePaths) {
+        QJsonObject wallpaperJson;
+        qWarning() << filePath;
+        wallpaperJson.insert("url", QUrl::fromLocalFile(filePath).toString());
+        cacheArray.append(wallpaperJson);
+    }
+    QJsonDocument tempDoc(cacheArray);
+    cacheFile.seek(0);
+    cacheFile.write(tempDoc.toJson());
+    cacheFile.close();
+
+    emit requestRefreshWallpaperList();
 }

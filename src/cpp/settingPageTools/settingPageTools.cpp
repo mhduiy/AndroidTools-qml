@@ -7,6 +7,10 @@
 #include "src/cpp/utils/Notification.h"
 #include "wallpaperhelper.h"
 #include "../utils/globalsetting.h"
+#include "../utils/constants.h"
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 WallPaperModel::WallPaperModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -46,6 +50,13 @@ void WallPaperModel::appendRow(WallPaperInfo info)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_wallPaperInfo.append(info);
+    endInsertRows();
+}
+
+void WallPaperModel::insertRow(int row, WallPaperInfo info)
+{
+    beginInsertRows(QModelIndex(), row, row);
+    m_wallPaperInfo.insert(row, info);
     endInsertRows();
 }
 
@@ -101,6 +112,13 @@ QHash<int, QByteArray> WallPaperModel::roleNames() const
     return roles;
 }
 
+void WallPaperModel::clearData()
+{
+    beginResetModel();
+    m_wallPaperInfo.clear();
+    endResetModel();
+}
+
 SettingPageTools::SettingPageTools(QObject *parent)
     : QObject(parent)
     , m_wallpaperModel(new WallPaperModel)
@@ -113,9 +131,9 @@ SettingPageTools::SettingPageTools(QObject *parent)
     m_wallpaperModel->setCurrentIndex(configWallpaperIndex);
 
     // 默认壁纸和每日bing壁纸
-    m_wallpaperModel->appendRow(WallPaperInfo("qrc:/res/backgroundImage.jpeg", "默认壁纸", false));
     connect(m_bingWallpaperHander, &BingWallPaperHander::workFinish, this, &SettingPageTools::onBingWallPaperWorkFinish);
-    m_bingWallpaperHander->doWork();
+    connect(WallpaperHelper::instance(), &WallpaperHelper::requestRefreshWallpaperList, this, &SettingPageTools::onRequestRefreshWallpaperList);
+    onRequestRefreshWallpaperList();
 }
 
 SettingPageTools::~SettingPageTools()
@@ -130,4 +148,32 @@ void SettingPageTools::onBingWallPaperWorkFinish(const QString &url)
         return;
     }
     m_wallpaperModel->appendRow(WallPaperInfo(url, "Bing 每日壁纸", false));
+}
+
+void SettingPageTools::onRequestRefreshWallpaperList()
+{
+    m_wallpaperModel->clearData();
+    m_wallpaperModel->appendRow(WallPaperInfo("qrc:/res/backgroundImage.jpeg", "默认壁纸", false));
+    m_bingWallpaperHander->doWork();
+
+    QFile cacheFile(WALLPAPERCACHEJSONPATH);
+    if (!cacheFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+    QJsonDocument doc = QJsonDocument::fromJson(cacheFile.readAll());
+    if (doc.isNull()) {
+        return;
+    }
+    QJsonArray array = doc.array();
+    for (auto it : array) {
+        QJsonObject imageObj = it.toObject();
+        QString fileNameUrl = imageObj["url"].toString();
+        QUrl url = QUrl(fileNameUrl);
+        qWarning() << url << url.toLocalFile();
+        if (!QFile::exists(url.toLocalFile())) {
+            continue;
+        }
+        m_wallpaperModel->appendRow(WallPaperInfo(url.toString(), "自定义壁纸", true));
+    }
+    cacheFile.close();
 }
