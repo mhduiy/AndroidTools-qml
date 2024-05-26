@@ -362,9 +362,16 @@ Item {
                                     radius: 10
                                     Text {
                                         anchors.fill: parent
-                                        text: model.url
+                                        text: model.title
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: {
+                                            Qt.openUrlExternally(model.url)
+                                        }
                                     }
                                 }
                             }

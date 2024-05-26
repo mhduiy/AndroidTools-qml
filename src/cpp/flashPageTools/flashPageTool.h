@@ -6,26 +6,12 @@
 #include "fastbootdevicemanager.h"
 #include "../utils/singleton.hpp"
 #include <QAbstractListModel>
+#include "flashUrlHandle.h"
 
 enum FlashLinkRole {
     FlashUrlRole = Qt::UserRole + 1,
     FlashTitleRole,
     FlashDescriptionRole,
-};
-
-struct FlashLinKInfo
-{
-    QString url;
-    QString title;
-    QString description;
-
-    FlashLinKInfo(const QString &_url, const QString &_title, const QString &_description)
-    : url(_url)
-    , title(_title)
-    , description(_description)
-    {
-
-    }
 };
 
 class FlashLinkModel : public QAbstractListModel
@@ -40,6 +26,7 @@ public:
     QModelIndex index(int row, int column = 1, const QModelIndex &parent = QModelIndex()) const override;
 
     Q_INVOKABLE void goLink(int index);
+    void clearData();
 
 signals:
     void currentItemChanged(const QString &code);
@@ -62,6 +49,7 @@ private:
     QThread *m_deviceCheckThread;
     FastBootDeviceManager *m_fastBootDeviceManager;
     FlashLinkModel *m_flashLinkModel;
+    FlashUrlHandle *m_flashUrlHandle;
 };
 
 #endif

@@ -4,10 +4,20 @@
 FlashPageTool::FlashPageTool(QObject *parent)
     : QObject(parent)
     , m_fastBootDeviceManager(FastBootDeviceManager::instance(this))
+    , m_flashUrlHandle(new FlashUrlHandle(this))
 {
     m_flashLinkModel = new FlashLinkModel(this);
     qmlRegisterSingletonInstance("FastBootDeviceManager", 1, 0, "FastBootDeviceManager", m_fastBootDeviceManager);
     qmlRegisterSingletonInstance("FlashLinkModel", 1, 0, "FlashLinkModel", m_flashLinkModel);
+
+    connect(m_flashUrlHandle, &FlashUrlHandle::workFinish, this, [this](){
+        auto infos = m_flashUrlHandle->getInfo();
+        m_flashLinkModel->clearData();
+        for (auto &info : infos) {
+            m_flashLinkModel->appendRow(info);
+        }
+    });
+    m_flashUrlHandle->doWork();
 }
 
 FlashLinkModel::FlashLinkModel(QObject *parent)
@@ -43,6 +53,13 @@ QVariant FlashLinkModel::data(const QModelIndex &index, int role) const
     default:
         return QVariant();
     }
+}
+
+void FlashLinkModel::clearData()
+{
+    beginRemoveRows(QModelIndex(), 0, rowCount());
+    m_deviceInfos.clear();
+    endRemoveRows();
 }
 
 void FlashLinkModel::appendRow(FlashLinKInfo info)
