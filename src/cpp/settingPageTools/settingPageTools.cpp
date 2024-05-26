@@ -3,6 +3,7 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <QNetworkAccessManager>
 #include <QThread>
+#include <qlogging.h>
 #include "src/cpp/utils/Notification.h"
 #include "wallpaperhelper.h"
 #include "../utils/globalsetting.h"
@@ -80,10 +81,12 @@ void WallPaperModel::setCurrentIndex(int index)
     const QString url = m_wallPaperInfo.value(index).url;
     if (url.isEmpty()) {
         NotificationControl::instance()->send("设置失败了", NotificationControl::Error);
+        return;
     }
     m_currentIndex = index;
     emit currentItemChanged(url);
     emit currentIndexChanged(index);
+    qWarning() << "****" << url;
     WallpaperHelper::instance()->setWallPaper(url);
     GlobalSetting::instance()->writeConfig("wallpaper", "url", url);
     GlobalSetting::instance()->writeConfig("wallpaper", "index", QString::number(index));
@@ -105,15 +108,9 @@ SettingPageTools::SettingPageTools(QObject *parent)
 {
     qmlRegisterSingletonInstance("WallPaperModel", 1, 0, "WallPaperModel", m_wallpaperModel);
     qmlRegisterSingletonInstance("WallpaperHelper", 1, 0, "WallpaperHelper", WallpaperHelper::instance(this));
-    // 获取壁纸配置
-    QString cutWallpaperUrl = GlobalSetting::instance()->readConfig("wallpaper", "url").toString();
+
     int configWallpaperIndex = GlobalSetting::instance()->readConfig("wallpaper", "index").toInt();
     m_wallpaperModel->setCurrentIndex(configWallpaperIndex);
-    if (cutWallpaperUrl.isEmpty()) {
-        WallpaperHelper::instance()->setWallPaper("qrc:/res/backgroundImage.jpeg");
-    } else {
-        WallpaperHelper::instance()->setWallPaper(cutWallpaperUrl);
-    }
 
     // 默认壁纸和每日bing壁纸
     m_wallpaperModel->appendRow(WallPaperInfo("qrc:/res/backgroundImage.jpeg", "默认壁纸", false));

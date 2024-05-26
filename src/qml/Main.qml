@@ -88,6 +88,15 @@ ApplicationWindow {
             anchors.fill: parent
             color: "transparent"
 
+            // 模糊效果
+            GaussianBlur {
+                id: blurEffect
+                anchors.fill: parent
+                source: backgroundImage
+                radius: WallpaperHelper.blurRadius
+                visible: false
+            }
+
             Image {
                 id: backgroundImage
                 fillMode: Image.PreserveAspectCrop
@@ -102,8 +111,14 @@ ApplicationWindow {
             }
             OpacityMask {
                 anchors.fill: parent
-                source: backgroundImage
+                source: blurEffect
                 maskSource: mask
+            }
+
+            Rectangle{
+                anchors.fill: parent
+                radius: 10
+                opacity: WallpaperHelper.opacity
             }
         }
 

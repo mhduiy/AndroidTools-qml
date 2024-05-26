@@ -6,6 +6,7 @@ import QtQuick.Layouts
 import "../components/"
 import NotificationControl 1.0
 import WallPaperModel 1.0
+import WallpaperHelper 1.0
 
 Item {
     property bool isCurrentPage: false
@@ -149,11 +150,54 @@ Item {
                 }
             }
 
+            SettingItem {
+                title: "壁纸透明度"
+                description: "设置壁纸白色遮罩的透明度"
+                controlItemWidth: 200
+                controlItem: Component {
+                    Slider {
+                        id: slider
+                        width: 200
+                        from: 0
+                        value: 0.2
+                        to: 1
+                        snapMode: Slider.NoSnap
+                        stepSize: 0.05
+
+                        onValueChanged: {
+                            WallpaperHelper.opacity = value
+                        }
+                    }
+                }
+            }
+            SettingItem {
+                title: "壁纸模糊度"
+                description: "设置壁纸的模糊半径"
+                controlItemWidth: 200
+                controlItem: Component {
+                    Slider {
+                        id: slider
+                        width: 200
+                        from: 0
+                        value: 10
+                        to: 50
+                        snapMode: Slider.NoSnap
+                        stepSize: 1
+
+                        onValueChanged: {
+                            WallpaperHelper.blurRadius = value
+                        }
+                    }
+                }
+            }
+
+
             Repeater {
                 model: 16
                 SettingItem {
                     title: "夜间模式"
                     description: "将所有控件设置为深色主题"
+                    controlItemWidth: 30
                     controlItem: Component {
                         MLoadIndicator {
                             id: loadIndicator

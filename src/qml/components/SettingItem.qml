@@ -10,57 +10,47 @@ Item {
     property alias title: titleLabel.text
     property alias description: desLabel.text
     property Component controlItem: null
-    property Component expandItem: null
     property int mainLayoutHeight: 60
-    property int expandLayoutHeight: 100
-    property alias expendVisible: expendItem.visible
-    height: mainLayoutHeight + (expendItem.visible ? expandLayoutHeight : 0)
+    property int controlItemWidth: 30
+    height: mainLayoutHeight
     MFrame {
         anchors.fill: parent
         wrapperColor: Qt.rgba(255, 255, 255, 0.65)
-        ColumnLayout {
+        RowLayout {
             anchors.fill: parent
-            RowLayout {
-                id: mainControlLayout
-                height: 60
-                Item {
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.leftMargin: 10
-                    height: titleLabel.height + desLabel.height
-                    width: 100
-                    Column {
-                        Label {
-                            id: titleLabel
-                            font.pixelSize: 16
-                        }
-                        Label {
-                            id: desLabel
-                            font.pixelSize: 12
-                            color: "gray"
-                        }
+            id: mainControlLayout
+            Item {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 10
+                height: titleLabel.height + desLabel.height
+                width: 100
+                Column {
+                    Label {
+                        id: titleLabel
+                        font.pixelSize: 16
                     }
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                Item {
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                    Layout.fillHeight: true
-                    Layout.rightMargin: 10
-                    width: 50
-                    Loader {
-                        anchors.verticalCenter: parent.verticalCenter
-                        sourceComponent: controlItem
+                    Label {
+                        id: desLabel
+                        font.pixelSize: 12
+                        color: "gray"
                     }
                 }
             }
-            Rectangle {
-                id: expendItem
-                visible: false
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            Item {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                Layout.fillHeight: true
+                Layout.rightMargin: 10
+                Layout.preferredWidth: root.controlItemWidth
+                Layout.maximumWidth: root.controlItemWidth
+                Layout.minimumWidth: root.controlItemWidth
                 Loader {
-                    sourceComponent: expandItem
+                    anchors.verticalCenter: parent.verticalCenter
+                    sourceComponent: controlItem
                 }
             }
         }
