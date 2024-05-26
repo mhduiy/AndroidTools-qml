@@ -37,6 +37,9 @@ public:
     Q_INVOKABLE void unfreezeApp(const QString &packageName);
     Q_INVOKABLE void extractApp(const QString &packageName, const QString &targetPath);
     Q_INVOKABLE void stopApp(const QString &packageName);
+
+    Q_INVOKABLE void startApp(const QString &packageName);
+    Q_INVOKABLE void startActivity(const QString &activity, const QStringList &args);
 signals:
     void valueChanged(const AppDetailInfo &info);
 

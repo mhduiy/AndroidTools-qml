@@ -298,3 +298,10 @@ bool ADBInterface::extractApp(const QString &deviceCode, const QString &packageP
     m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
     return true;
 }
+
+void ADBInterface::startApp(const QString &deviceCode, const QString &packageName)
+{
+    QStringList args;
+    args << "-s" << deviceCode << "monkey" << "-p" << packageName << "-c" << "android.intent.category.LAUNCHER" << "1";
+    m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
+}

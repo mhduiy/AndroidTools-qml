@@ -56,11 +56,20 @@ void AppDetailControl::unfreezeApp(const QString &packageName)
 
 void AppDetailControl::extractApp(const QString &packageName, const QString &targetPath)
 {
-    qWarning() << "main Thread" << QThread::currentThreadId();
     QMetaObject::invokeMethod(m_appHelper, "extractApp", Qt::QueuedConnection, m_info.path, targetPath, packageName);
 }
 
 void AppDetailControl::stopApp(const QString &packageName)
 {
     QMetaObject::invokeMethod(m_appHelper, "stopApp", Qt::QueuedConnection, packageName);
+}
+
+void AppDetailControl::startApp(const QString &packageName)
+{
+    QMetaObject::invokeMethod(m_appHelper, "startApp", Qt::QueuedConnection, packageName);
+}
+
+void AppDetailControl::startActivity(const QString &activity, const QStringList &args)
+{
+    QMetaObject::invokeMethod(m_appHelper, "startActivity", Qt::QueuedConnection, activity, args);
 }

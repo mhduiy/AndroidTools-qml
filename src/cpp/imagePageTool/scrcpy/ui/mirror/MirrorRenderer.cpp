@@ -83,11 +83,11 @@ void MirrorRenderer::resize(int width, int height) {
 }
 
 void MirrorRenderer::initShader() {
-    if (!mProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, Config::getInstance().getProjectPath() + "/res/shaders/vertex.vsh")) {
+    if (!mProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/res/shaders/vertex.vsh")) {
         qDebug() << " add vertex shaders file failed.";
         return;
     }
-    if (!mProgram.addShaderFromSourceFile(QOpenGLShader::Fragment, Config::getInstance().getProjectPath() + "/res/shaders/fragment.fsh")) {
+    if (!mProgram.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/res/shaders/fragment.fsh")) {
         qDebug() << " add fragment shaders file failed.";
         return;
     }

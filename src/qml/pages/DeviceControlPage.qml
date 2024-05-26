@@ -395,6 +395,7 @@ Item {
                             id: activityNameEdit
                             Layout.fillWidth: true
                             placeholderText: "activity名"
+                            editItem.text: "com.tencent.mm/.ui.LauncherUI"
                         }
                         MLineEdit {
                             id: activityArgsEdit

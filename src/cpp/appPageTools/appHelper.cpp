@@ -71,3 +71,17 @@ void AppHelper::stopApp(const QString &packageName)
     ADBInterface::instance()->killActivity(packageName, deviceCode);
     NotificationControl::instance()->send("执行完成");
 }
+
+void AppHelper::startApp(const QString &packageName)
+{
+const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
+    ADBInterface::instance()->startApp(deviceCode, packageName);
+    NotificationControl::instance()->send("卸载完成");
+}
+
+void AppHelper::startActivity(const QString &activity, const QStringList &args)
+{
+    const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
+    ADBInterface::instance()->startActivity(deviceCode, activity, args);
+    NotificationControl::instance()->send("卸载完成");
+}

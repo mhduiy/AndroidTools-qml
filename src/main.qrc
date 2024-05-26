@@ -19,5 +19,8 @@
         <file>res/errorIcon.png</file>
         <file>res/successIcon.png</file>
         <file>res/warningIcon.png</file>
+        <file>res/shaders/fragment.fsh</file>
+        <file>res/shaders/vertex.vsh</file>
+        <file>res/scrcpy-server</file>
     </qresource>
 </RCC>

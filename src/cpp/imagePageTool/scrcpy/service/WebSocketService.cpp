@@ -226,8 +226,8 @@ void WebSocketService::requestMirrorStart() {
     params.renderExpiredFrames = false;
     params.lockVideoOrientation = -1;
     params.stayAwake = false;
-    params.recordFile = false;
-    params.recordPath = "";
+    params.recordFile = true;
+    params.recordPath = "/home/mhduiy/";
     params.recordFileFormat = "mp4";
     params.serverLocalPath = Config::getInstance().getProjectPath() + "/res/scrcpy-server";
     params.serverRemotePath = Config::getInstance().getServerPath();

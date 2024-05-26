@@ -273,15 +273,14 @@ Item {
                         Layout.fillWidth: true
                     }
                     MButton{
-                        text: "示例"
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 40
-                    }
-                    MButton{
                         text: "启动"
                         btnType: MButton.FBtnType.Suggest
                         Layout.fillWidth: true
                         Layout.preferredWidth: 40
+                        Layout.columnSpan: 2
+                        onClicked: {
+                            AppDetailControl.startApp(AppDetailControl.packageName)
+                        }
                     }
                 }
             }

@@ -1,14 +1,16 @@
 #include "flashPageTool.h"
+#include "src/cpp/flashPageTools/flashtools.h"
 #include <QtQml>
 
 FlashPageTool::FlashPageTool(QObject *parent)
     : QObject(parent)
     , m_fastBootDeviceManager(FastBootDeviceManager::instance(this))
+    , m_flashLinkModel(new FlashLinkModel(this))
     , m_flashUrlHandle(new FlashUrlHandle(this))
 {
-    m_flashLinkModel = new FlashLinkModel(this);
     qmlRegisterSingletonInstance("FastBootDeviceManager", 1, 0, "FastBootDeviceManager", m_fastBootDeviceManager);
     qmlRegisterSingletonInstance("FlashLinkModel", 1, 0, "FlashLinkModel", m_flashLinkModel);
+    qmlRegisterSingletonInstance("FlashTools", 1, 0, "FlashTools", FlashTools::instance());
 
     connect(m_flashUrlHandle, &FlashUrlHandle::workFinish, this, [this](){
         auto infos = m_flashUrlHandle->getInfo();

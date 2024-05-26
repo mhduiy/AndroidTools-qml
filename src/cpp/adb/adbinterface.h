@@ -137,6 +137,8 @@ public:
     bool freezeApp(const QString &deviceCode, const QString &packageName);                             //冻结软件
     bool uninstallApp(const QString &deviceCode, const QString &packageName);                          //卸载软件
     bool extractApp(const QString &deviceCode, const QString &packagePath, const QString &targetPath); //提取软件
+
+    void startApp(const QString &deviceCode, const QString &packageName);
 signals:
     void adbStarted();
     void adbKilled();

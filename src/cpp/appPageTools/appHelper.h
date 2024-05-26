@@ -17,6 +17,9 @@ public slots:
     void unfreezeApp(const QString &packageName);
     void extractApp(const QString &packagePath, const QString &targetPath, const QString &packageName);
     void stopApp(const QString &packageName);
+
+    void startApp(const QString &packageName);
+    void startActivity(const QString &activity, const QStringList &args);
 };
 
 #endif

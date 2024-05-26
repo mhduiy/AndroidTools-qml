@@ -5,6 +5,8 @@ import MFloat
 import "../components"
 import FastBootDeviceManager 1.0
 import FlashLinkModel 1.0
+import FlashTools 1.0
+import QtQuick.Dialogs
 
 Item {
     property bool isCurrentPage: false
@@ -116,6 +118,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MLineEdit {
+                                id: bootImageEdit
                                 placeholderText: "boot镜像路径"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -125,6 +128,9 @@ Item {
                                 text: "选择镜像"
                                 Layout.preferredWidth: 80
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    startBootImageDialog.open()
+                                }
                             }
                         }
                         MButton {
@@ -132,6 +138,9 @@ Item {
                             btnType: MButton.FBtnType.Warning
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+                            onClicked: {
+                                FlashTools.startBoot("", bootImageEdit.editItem.text)
+                            }
                         }
                     }
                 }
@@ -150,6 +159,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MLineEdit {
+                                id: flashImageEdit
                                 placeholderText: "镜像路径"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -159,12 +169,16 @@ Item {
                                 text: "选择镜像"
                                 Layout.preferredWidth: 80
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    flashImageSelectDialog.open()
+                                }
                             }
                         }
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MLineEdit {
+                                id: flashPartNameEdit
                                 placeholderText: "分区名"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -174,6 +188,9 @@ Item {
                                 text: "开始刷写"
                                 Layout.preferredWidth: 80
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    FlashTools.flash("", flashPartNameEdit.editItem.text, flashImageEdit.editItem.text)
+                                }
                             }
                         }
                     }
@@ -190,6 +207,7 @@ Item {
                         anchors.rightMargin: 10
                         anchors.bottomMargin: 10
                         MLineEdit {
+                            id: clearPartEdit
                             placeholderText: "分区名"
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -199,6 +217,9 @@ Item {
                             btnType: MButton.FBtnType.Warning
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+                            onClicked: {
+                                FlashTools.clear("", clearPartEdit.editItem.text)
+                            }
                         }
                     }
                 }
@@ -217,6 +238,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MLineEdit {
+                                id: exeScriptEdit
                                 placeholderText: "刷机脚本路径"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -226,6 +248,9 @@ Item {
                                 text: "选择路径"
                                 Layout.preferredWidth: 80
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    exeScriptPathSelectDialog.open()
+                                }
                             }
                         }
                         RowLayout {
@@ -264,6 +289,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MLineEdit {
+                                id: xiaomiImageEdit
                                 placeholderText: "线刷包路径"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -273,6 +299,9 @@ Item {
                                 text: "选择路径"
                                 Layout.preferredWidth: 80
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    xiaomiFlashImageDialog.open()
+                                }
                             }
                         }
                         MButton {
@@ -298,6 +327,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MLineEdit {
+                                id: unzipInEdit
                                 placeholderText: "线刷包路径（默认解压payload.img）"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -307,12 +337,16 @@ Item {
                                 text: "选择路径"
                                 Layout.preferredWidth: 80
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    unzipPathInDialog.open()
+                                }
                             }
                         }
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MLineEdit {
+                                id: unzipOutEdit
                                 placeholderText: "输出目录"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -322,6 +356,9 @@ Item {
                                 text: "选择"
                                 Layout.preferredWidth: 40
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    unzipPathOutDialog.open()
+                                }
                             }
                             MButton {
                                 btnType: MButton.FBtnType.Ordinary
@@ -379,6 +416,54 @@ Item {
                     }
                 }
             }
+        }
+    }
+    FileDialog {
+        id: startBootImageDialog
+        title: "Select a File"
+        fileMode: FileDialog.OpenFile
+        onAccepted: {
+            bootImageEdit.editItem.text = startBootImageDialog.currentFile
+        }
+    }
+    FileDialog {
+        id: flashImageSelectDialog
+        title: "Select a File"
+        fileMode: FileDialog.OpenFile
+        onAccepted: {
+            flashImageEdit.editItem.text = flashImageSelectDialog.currentFile
+        }
+    }
+    FileDialog {
+        id: exeScriptPathSelectDialog
+        title: "Select a File"
+        fileMode: FileDialog.OpenFile
+        onAccepted: {
+            exeScriptEdit.editItem.text = exeScriptPathSelectDialog.currentFile
+        }
+    }
+    FileDialog {
+        id: xiaomiFlashImageDialog
+        title: "Select a File"
+        fileMode: FileDialog.OpenFile
+        onAccepted: {
+            xiaomiImageEdit.editItem.text = xiaomiFlashImageDialog.currentFile
+        }
+    }
+    FileDialog {
+        id: unzipPathInDialog
+        title: "Select a File"
+        fileMode: FileDialog.OpenFile
+        onAccepted: {
+            unzipInEdit.editItem.text = unzipPathInDialog.currentFile
+        }
+    }
+    FileDialog {
+        id: unzipPathOutDialog
+        title: "Select a File"
+        fileMode: FileDialog.OpenFile
+        onAccepted: {
+            unzipOutEdit.editItem.text = unzipPathOutDialog.currentFile
         }
     }
 }
