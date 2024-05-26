@@ -151,7 +151,7 @@ Item {
             }
 
             SettingItem {
-                title: "壁纸透明度"
+                title: "壁纸不透明度"
                 description: "设置壁纸白色遮罩的透明度"
                 controlItemWidth: 200
                 controlItem: Component {
@@ -159,7 +159,7 @@ Item {
                         id: slider
                         width: 200
                         from: 0
-                        value: 0.2
+                        value: WallpaperHelper.opacity
                         to: 1
                         snapMode: Slider.NoSnap
                         stepSize: 0.05
@@ -179,7 +179,7 @@ Item {
                         id: slider
                         width: 200
                         from: 0
-                        value: 10
+                        value: WallpaperHelper.blurRadius
                         to: 50
                         snapMode: Slider.NoSnap
                         stepSize: 1
@@ -191,6 +191,16 @@ Item {
                 }
             }
 
+            SettingItem {
+                title: "夜间模式"
+                description: "将所有控件设置为深色主题"
+                controlItemWidth: 50
+                controlItem: Component {
+                    MSwitchButton {
+
+                    }
+                }
+            }
 
             Repeater {
                 model: 16

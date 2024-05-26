@@ -18,6 +18,11 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+#ifdef Q_OS_LINUX
+    qunsetenv("http_proxy");
+    qunsetenv("https_proxy");
+#endif
+
     ADBTools::instance(&app);
     ADBInterface *interface = ADBInterface::instance(&app);
     interface->startADBService();

@@ -41,8 +41,6 @@ Item {
                 property int enum_WINDOW_MIRROR_SMALL: 5
 
                 onCppGenerateEvents: {
-                    console.log(request)
-
                     switch (request) {
                     case "MIRROR_START":
                         mirrorApp.close()

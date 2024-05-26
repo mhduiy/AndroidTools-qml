@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
 import QMLTermWidget 1.0
+import TerminalPageTools 1.0
 
 Item {
     property bool isCurrentPage: false
@@ -140,16 +141,25 @@ Item {
                         btnType: MButton.FBtnType.Ordinary
                         text: "从剪切板粘贴"
                         Layout.fillWidth: true
+                        onClicked: {
+                            terminal.pasteClipboard();
+                        }
                     }
                     MButton {
                         btnType: MButton.FBtnType.Ordinary
                         text: "清除所有"
                         Layout.fillWidth: true
+                        onClicked: {
+                            mainsession.sendText('clear \n')
+                        }
                     }
                     MButton {
                         btnType: MButton.FBtnType.Ordinary
                         text: "打开系统终端"
                         Layout.fillWidth: true
+                        onClicked: {
+                            TerminalPageTools.startSystemTerminal()
+                        }
                     }
                 }
             }

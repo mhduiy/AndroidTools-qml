@@ -10,6 +10,7 @@ class TerminalPageTools : public QObject
     Q_OBJECT
     SINGLETON(TerminalPageTools)
 public:
+    Q_INVOKABLE void startSystemTerminal();
 };
 
 #endif
