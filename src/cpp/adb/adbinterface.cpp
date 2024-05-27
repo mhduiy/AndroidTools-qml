@@ -1,6 +1,9 @@
 #include "adbinterface.h"
 #include <QtConcurrent/QtConcurrent>
 #include <QTimer>
+#include <qdatetime.h>
+#include <qlogging.h>
+#include <QDesktopServices>
 #include "../utils/utils.hpp"
 #include "../utils/Notification.h"
 
@@ -302,6 +305,37 @@ bool ADBInterface::extractApp(const QString &deviceCode, const QString &packageP
 void ADBInterface::startApp(const QString &deviceCode, const QString &packageName)
 {
     QStringList args;
-    args << "-s" << deviceCode << "monkey" << "-p" << packageName << "-c" << "android.intent.category.LAUNCHER" << "1";
+    args << "-s" << deviceCode << "shell" << "monkey" << "-p" << packageName << "-c" << "android.intent.category.LAUNCHER" << "1";
+    m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
+}
+
+
+void ADBInterface::shotScreen(const QString &deviceCode, const QString &outPath)
+{
+    QString filePath = outPath + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + ".png";
+    QStringList args;
+    args << "-s" << deviceCode << "exec-out" << "screencap" << "-p";
+
+    QProcess process;
+    process.start("adb", args);
+    if (process.waitForFinished()) {
+        QByteArray output = process.readAllStandardOutput();
+        QFile file(filePath);
+        if (file.open(QIODevice::WriteOnly)) {
+            file.write(output);
+            file.close();
+            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+        } else {
+            qWarning() << "Failed to open file for writing:" << filePath;
+        }
+    } else {
+        qWarning() << "ADB command failed to finish";
+    }
+}
+
+void ADBInterface::disConnectDeivce(const QString &deviceCode)
+{
+    QStringList args;
+    args << "disconnect" << deviceCode;
     m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
 }

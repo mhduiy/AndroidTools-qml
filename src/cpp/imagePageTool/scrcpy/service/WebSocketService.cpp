@@ -2,6 +2,7 @@
 #include "service/include/server.h"
 #include "ui/util/config.h"
 #include "src/cpp/adb/connectmanager.h"
+#include <qlogging.h>
 
 WebSocketService::WebSocketService(quint16 port, QObject *parent) : QObject(parent) {
 
@@ -227,7 +228,8 @@ void WebSocketService::requestMirrorStart() {
     params.lockVideoOrientation = -1;
     params.stayAwake = false;
     params.recordFile = true;
-    params.recordPath = "/home/mhduiy/";
+    params.recordPath = Config::getInstance().getRecordOutPath();
+    qInfo() << "录制路径: " << params.recordPath;
     params.recordFileFormat = "mp4";
     params.serverLocalPath = Config::getInstance().getProjectPath() + "/res/scrcpy-server";
     params.serverRemotePath = Config::getInstance().getServerPath();

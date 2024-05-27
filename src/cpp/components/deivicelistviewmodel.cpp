@@ -1,4 +1,5 @@
 #include "deivicelistviewmodel.h"
+#include "src/cpp/adb/adbinterface.h"
 
 DeviceListviewModel::DeviceListviewModel(QObject *parent)
 : QAbstractListModel(parent)
@@ -117,4 +118,14 @@ QHash<int, QByteArray> DeviceListviewModel::roleNames() const
     roles[isChargingRole] = "isCharging";
     roles[deviceCodeRole] = "deviceCode";
     return roles;
+}
+
+void DeviceListviewModel::requestDisConnect(const QString &deviceCode)
+{
+    for (auto &it : m_deviceInfos) {
+        if (it.deviceCode == deviceCode) {
+            ADBInterface::instance()->disConnectDeivce(deviceCode);
+            return;
+        }
+    }
 }

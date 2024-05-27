@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include <QSharedPointer>
 #include <QList>
+#include <qtmetamacros.h>
 #include "../adb/adbinterface.h"
 
 
@@ -33,6 +34,7 @@ public:
     bool hasDeviceCode(const QString &code);
 
     Q_INVOKABLE void setCurrentIndex(int index);
+    Q_INVOKABLE void requestDisConnect(const QString &deviceCode);
 
 signals:
     void currentItemChanged(const QString &code);

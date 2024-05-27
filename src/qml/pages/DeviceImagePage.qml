@@ -7,6 +7,7 @@ import Resource 1.0
 import ScrcpyConfig 1.0
 import NotificationControl 1.0
 import DeviceControl 1.0
+import ImageDetailTools 1.0
 
 Item {
     property bool isCurrentPage: false
@@ -281,6 +282,8 @@ Item {
                             Layout.fillWidth: true
                         }
                         MLineEdit {
+                            id: shotScreenEdit
+                            editItem.text: "/home/mhduiy/"
                             Layout.preferredWidth: 140
                             placeholderText: "保存路径"
                         }
@@ -289,6 +292,9 @@ Item {
                             Layout.preferredWidth: 80
                             text: "点击截图"
                             btnType: MButton.FBtnType.Suggest
+                            onClicked: {
+                                ImageDetailTools.shotScreen(shotScreenEdit.editItem.text)
+                            }
                         }
                     }
                     RowLayout {
@@ -301,6 +307,8 @@ Item {
                             Layout.fillWidth: true
                         }
                         MLineEdit {
+                            id: recordPathEdit
+                            editItem.text: ScrcpyConfig.recordOutPath
                             Layout.preferredWidth: 140
                             placeholderText: "保存路径"
                         }
@@ -309,6 +317,12 @@ Item {
                             text: "开始录制"
                             Layout.preferredWidth: 80
                             btnType: MButton.FBtnType.Suggest
+                            onClicked: {
+                                ScrcpyConfig.recordOutPath = recordPathEdit.editItem.text
+                                Resource.qmlRequest("REQUEST_MIRROR_FINISH", "")
+                                Resource.qmlRequest("REQUEST_MIRROR_START", "")
+                                NotificationControl.send("开始录制, 断开即结束录制", 0, 3000)
+                            }
                         }
                     }
                     RowLayout {

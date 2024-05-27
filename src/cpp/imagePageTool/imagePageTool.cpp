@@ -1,9 +1,35 @@
 #include "imagePageTool.h"
 #include <qobject.h>
+#include "src/cpp/adb/adbinterface.h"
+#include "src/cpp/adb/connectmanager.h"
+#include "src/cpp/utils/Notification.h"
+#include "src/cpp/utils/utils.hpp"
 #include "ui/util/config.h"
 #include "service/ServiceManager.h"
 #include "ui/mirror/MirrorScene.h"
 #include "service/WebSocketService.h"
+
+ImageDetailTools::ImageDetailTools(QObject *parent)
+    : QObject(parent)
+{
+
+}
+
+void ImageDetailTools::shotScreen(const QString &outPath)
+{
+    const QString &deviceCode =  ConnectManager::instance()->currentDeviceCode();
+    if (deviceCode.isEmpty()) {
+        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Error, 3000);
+        return;
+    }
+
+    auto func = [deviceCode, outPath](){
+        NotificationControl::instance()->send("正在截图...", NotificationControl::Info, 5000);
+        ADBInterface::instance()->shotScreen(deviceCode, outPath);
+    };
+
+    asyncOperator(func);
+}
 
 ImagePageTool::ImagePageTool(QObject *parent)
 : QObject(parent)
@@ -27,4 +53,6 @@ ImagePageTool::ImagePageTool(QObject *parent)
     Config::declareQml();
 
     qmlRegisterSingletonInstance("Resource", 1, 0, "Resource", resourceService);
+    qmlRegisterSingletonInstance("ImageDetailTools", 1, 0, "ImageDetailTools", ImageDetailTools::instance(this));
+
 }

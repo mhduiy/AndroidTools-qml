@@ -6,6 +6,8 @@
 #include <QDir>
 #include <QSettings>
 #include <QtQml>
+#include <qdir.h>
+#include <qtmetamacros.h>
 
 #include "config.h"
 #include "src/cpp/utils/globalsetting.h"
@@ -126,6 +128,7 @@ void Config::initConfig()
     m_globalSetting->checkConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF);
     // bitRate
     m_globalSetting->checkConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, COMMON_BITRATE_DEF);
+    m_globalSetting->checkConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, QDir::homePath());
 }
 
 Config &Config::getInstance() {
@@ -228,9 +231,11 @@ QString Config::getServerVersion() {
 void Config::setMaxFps(int maxFps) {
     maxFps = qBound(10, maxFps, 165);
     m_globalSetting->writeConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, maxFps);
+    emit maxFpsChanged(maxFps);
 }
 
-int Config::getMaxFps() {
+int Config::getMaxFps() const 
+{
     int maxFps = m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF).toUInt();
     return qBound(10, maxFps, 165);
 }
@@ -239,11 +244,22 @@ void Config::setKBitRate(int kBitRate)
 {
     kBitRate = qBound(100, kBitRate, 100000);    // 0.1Mbps ~ 100Mbps
     m_globalSetting->writeConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, kBitRate);
+    emit kBitRateChanged(kBitRate);
 }
-int Config::getKBitRate()
+int Config::getKBitRate() const
 {
     int kBitRate = m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, COMMON_BITRATE_DEF).toUInt();
     return qBound(100, kBitRate, 100000);
+}
+
+void Config::setRecordOutPath(const QString &recordOutPath)
+{
+    m_globalSetting->writeConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, recordOutPath);
+    emit recordOutPathChanged(recordOutPath);
+}
+QString Config::getRecordOutPath() const
+{
+    return m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, QDir::homePath()).toString();
 }
 
 int Config::getDesktopOpenGL() {

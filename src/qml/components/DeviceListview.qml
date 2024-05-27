@@ -110,13 +110,26 @@ Item {
                     MButton {
                         btnType: model.isConnected ? MButton.FBtnType.Warning : MButton.FBtnType.Suggest
                         text: model.isConnected ? "断开连接" : "立即连接"
+                        z: 1000
+                        onClicked: {
+                            DeviceListviewModel.requestDisConnect(model.deviceCode)
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                DeviceListviewModel.requestDisConnect(model.deviceCode)
+                                console.log("断开连接")
+                            }
+                        }
                     }
                 }
             }
             MouseArea {
                 anchors.fill: parent
+                propagateComposedEvents: true
                 onClicked: {
                     listView.currentIndex = index
+                    mouse.accepted = false
                 }
             }
         }

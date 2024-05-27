@@ -139,6 +139,8 @@ public:
     bool extractApp(const QString &deviceCode, const QString &packagePath, const QString &targetPath); //提取软件
 
     void startApp(const QString &deviceCode, const QString &packageName);
+    void shotScreen(const QString &deviceCode, const QString &outPath);
+    void disConnectDeivce(const QString &deviceCode);
 signals:
     void adbStarted();
     void adbKilled();
