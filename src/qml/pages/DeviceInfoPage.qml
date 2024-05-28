@@ -10,6 +10,7 @@ import ADBControl 1.0
 import DetailInfoControl 1.0
 import NotificationControl 1.0
 import DeviceControl 1.0
+import QtCharts 2.7
 
 ItemPage {
     id: root
@@ -284,6 +285,121 @@ ItemPage {
 
                         ColumnLayout {
                             width: parent.parent.width
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.preferredWidth: parent.width
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Layout.preferredWidth: parent.width
+                                    Text {
+                                        text: "电池温度"
+                                        font.pixelSize: 14
+                                    }
+
+                                    MSwitchButton {
+                                        id: checktepBtn
+                                        Layout.alignment: Qt.AlignRight
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 100
+                                    radius: 5
+                                    border.width: 1
+                                    color: Qt.rgba(255, 255, 255, 0.65)
+                                    border.color: "gray"
+                                    ChartView {
+                                        anchors.fill: parent
+                                        antialiasing: true
+                                        legend.visible: false
+                                        theme: ChartView.ChartThemeQt
+                                        animationOptions: ChartView.AllAnimations
+                                        plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
+                                        dropShadowEnabled: true
+
+                                        ValueAxis {
+                                            id: xAxis
+                                            min: 0
+                                            // tickCount: 50
+                                            max: 50
+                                            // gridLineVisible: false
+                                        }
+
+                                        ValueAxis {
+                                            id: yAxis
+                                            min: 20
+                                            // tickCount: 10
+                                            max: 40
+                                            // gridLineVisible: false
+                                        }
+                                        SplineSeries {
+                                            id: splineSeries
+                                            axisX: xAxis
+                                            axisY: yAxis
+                                        }
+                                    }
+                                }
+                            }
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.preferredWidth: parent.width
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Layout.preferredWidth: parent.width
+                                    Text {
+                                        text: "电池电量"
+                                        font.pixelSize: 14
+                                    }
+
+                                    MSwitchButton {
+                                        id: checklevelBtn
+                                        Layout.alignment: Qt.AlignRight
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 100
+                                    radius: 5
+                                    border.width: 1
+                                    color: Qt.rgba(255, 255, 255, 0.65)
+                                    border.color: "gray"
+                                    ChartView {
+                                        anchors.fill: parent
+                                        antialiasing: true
+                                        legend.visible: false
+                                        theme: ChartView.ChartThemeQt
+                                        animationOptions: ChartView.AllAnimations
+                                        plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
+                                        dropShadowEnabled: true
+
+                                        ValueAxis {
+                                            id: xAxis2
+                                            min: 0
+                                            // tickCount: 50
+                                            max: 50
+                                            // gridLineVisible: false
+                                        }
+
+                                        ValueAxis {
+                                            id: yAxis2
+                                            min: 0
+                                            // tickCount: 20
+                                            max: 100
+                                            // gridLineVisible: false
+                                        }
+                                        SplineSeries {
+                                            id: splineSeries2
+                                            axisX: xAxis2
+                                            axisY: yAxis2
+                                        }
+                                    }
+                                }
+                            }
+
+
                             Repeater {
                                 model: monitorMap.length
                                 ColumnLayout {
@@ -309,12 +425,88 @@ ItemPage {
                                         border.width: 1
                                         color: Qt.rgba(255, 255, 255, 0.65)
                                         border.color: "gray"
+                                        ChartView {
+                                            anchors.fill: parent
+                                            antialiasing: true
+                                            legend.visible: false
+                                            theme: ChartView.ChartThemeQt
+                                            animationOptions: ChartView.AllAnimations
+                                            plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
+                                            dropShadowEnabled: true
+
+
+                                            LineSeries {
+                                                // id:
+
+                                            }
+
+                                            // 隐藏坐标轴
+                                            // axes: [
+
+                                            // ]
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    Timer {
+        id: btyTeTi
+        interval: 1000
+        running: checktepBtn.status
+        repeat: true
+        onTriggered: {
+            var lastX = splineSeries.count - 1
+            var lastY = splineSeries.at(lastX).y
+            var newX = lastX + 1
+            var newY = batteryModel.get(5).info
+            if (newY < 10 || newY > 50) {
+                return
+            }
+
+            splineSeries.append(newX, newY)
+
+            if (lastX > xAxis.max) {
+                xAxis.min += 1
+                xAxis.max += 1
+            }
+            if (newY > yAxis.max) {
+                yAxis.max = newY
+            } else if (newY < yAxis.min) {
+                yAxis.min = newY
+            }
+        }
+    }
+
+    Timer {
+        id: btyleTi
+        interval: 1000
+        running: checklevelBtn.status
+        repeat: true
+        onTriggered: {
+            var lastX = splineSeries2.count - 1
+            var lastY = splineSeries2.at(lastX).y
+            var newX = lastX + 1
+            var newY = BatteryControl.level
+            if (newY <= 0 || newY > 100) {
+                return
+            }
+
+            splineSeries2.append(newX, newY)
+
+            if (lastX > xAxis2.max) {
+                xAxis2.min += 1
+                xAxis2.max += 1
+            }
+            if (newY > yAxis2.max) {
+                yAxis2.max = newY
+            } else if (newY < yAxis2.min) {
+                yAxis2.min = newY
             }
         }
     }
@@ -330,14 +522,14 @@ ItemPage {
         ListElement { name: "系统信息"; info: "-"}
         ListElement { name: "安卓版本"; info: "-"}
         ListElement { name: "分辨率"; info: "-"}
-// 暂时只显示8个数据
-//        ListElement { name: "dpi"; info: "-"}
-//        ListElement { name: "ip地址"; info: "-"}
-//        ListElement { name: "Mac地址"; info: "-"}
-//        ListElement { name: "CPU信息"; info: "-"}
-//        ListElement { name: "内存容量"; info: "-"}
-//        ListElement { name: "SDK版本"; info: "-"}
-//        ListElement { name: "序列号"; info: "-"}
+        // 暂时只显示8个数据
+        //        ListElement { name: "dpi"; info: "-"}
+        //        ListElement { name: "ip地址"; info: "-"}
+        //        ListElement { name: "Mac地址"; info: "-"}
+        //        ListElement { name: "CPU信息"; info: "-"}
+        //        ListElement { name: "内存容量"; info: "-"}
+        //        ListElement { name: "SDK版本"; info: "-"}
+        //        ListElement { name: "序列号"; info: "-"}
 
         Component.onCompleted: {
             for (var i = 0; i < 8; i++) {
@@ -406,7 +598,7 @@ ItemPage {
                 batteryModel.get(4).info = power + "w"
             });
             BatteryControl.temperatureChanged.connect(function(temperature) {
-                batteryModel.get(5).info = parseFloat(temperature).toFixed(1) + "℃"
+                batteryModel.get(5).info = parseFloat(temperature).toFixed(1)
             });
         }
     }

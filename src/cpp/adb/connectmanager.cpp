@@ -98,6 +98,9 @@ void ConnectManager::refreshDevice()
         if (retStr.isEmpty()) { // 兼容部分荣耀
             retStr = m_adbTools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell",  R"(getprop ro.config.marketing_name)"}).simplified();
         }
+        if (retStr.isEmpty()) {
+            retStr = m_adbTools->executeCommand(ADBTools::ADB, {"-s", m_deviceCodeSet[i], "shell", "getprop", "ro.product.model"}).simplified();
+        }
         deviceBaceInfo.deviceName = retStr;
         deviceBaceInfo.battery = m_deviceBatteryInfoMap[m_deviceCodeSet[i]].level;
         deviceBaceInfo.isConnected = true;
