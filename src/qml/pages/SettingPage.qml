@@ -8,9 +8,7 @@ import NotificationControl 1.0
 import WallPaperModel 1.0
 import WallpaperHelper 1.0
 
-Item {
-    property bool isCurrentPage: false
-    Layout.minimumWidth: 780
+ItemPage {
     ScrollView {
         anchors.fill: parent
         anchors.rightMargin: 10

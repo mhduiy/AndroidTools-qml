@@ -2,6 +2,7 @@
 #include "../adb/connectmanager.h"
 #include "../adb/adbinterface.h"
 #include "../utils/utils.hpp"
+#include "src/cpp/appPageTools/appHelper.h"
 #include <QVariant>
 #include <QStandardPaths>
 #include <QDir>
@@ -14,18 +15,19 @@ AppDetailControl::AppDetailControl(QObject *parent)
 {
     m_appHelper->moveToThread(m_appHelperThread);
     m_appHelperThread->start();
+
+    connect(m_appHelper, &AppHelper::updateFinish, this, [this](){
+        auto info = this->m_appHelper->getInfo();
+        m_info = info;
+        emit valueChanged(m_info);
+    });
+
+    connect(m_appHelper, &AppHelper::requestUpdateSoftList, this, &AppDetailControl::requestUpdateSoftList);
 }
 
 void AppDetailControl::updateInfo(const QString &packageName)
 {
-    const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
-    auto operatorFunc = [this, &deviceCode, &packageName](){
-        this->m_info = ADBInterface::instance()->getAppDetailInfo(deviceCode, packageName);
-        qWarning() << this->m_info.versionName;
-        emit this->valueChanged(this->m_info);
-    };
-
-    asyncOperator(operatorFunc);
+    QMetaObject::invokeMethod(m_appHelper, "updateDetailInfo", Qt::QueuedConnection, packageName);
 }
 
 void AppDetailControl::installApp(const QString &path)

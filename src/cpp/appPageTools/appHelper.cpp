@@ -5,7 +5,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QThread>
-
+#include <QUrl>
 
 AppHelper::AppHelper(QObject *parent)
 {
@@ -15,9 +15,21 @@ AppHelper::AppHelper(QObject *parent)
 void AppHelper::installApp(const QString &path)
 {
     const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
+    QString filePath;
+    QUrl url(path);
+    if (url.isLocalFile()) {
+        filePath = url.toLocalFile();
+    } else {
+        filePath = path;
+    }
+
+    if (!QFile::exists(filePath)) {
+        NotificationControl::instance()->send("安装文件不合法", NotificationControl::Error);
+    }
     NotificationControl::instance()->send("开始安装，请耐心等待");
-    ADBInterface::instance()->installApp(deviceCode, path);
+    ADBInterface::instance()->installApp(deviceCode, filePath);
     NotificationControl::instance()->send("安装执行完成");
+    emit requestUpdateSoftList();
 }
 
 void AppHelper::clearData(const QString &packageName)
@@ -32,6 +44,7 @@ void AppHelper::uninstallApp(const QString &packageName)
     const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
     ADBInterface::instance()->uninstallApp(deviceCode, packageName);
     NotificationControl::instance()->send("卸载完成");
+    emit requestUpdateSoftList();
 }
 
 void AppHelper::freezeApp(const QString &packageName)
@@ -39,6 +52,7 @@ void AppHelper::freezeApp(const QString &packageName)
     const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
     ADBInterface::instance()->freezeApp(deviceCode, packageName);
     NotificationControl::instance()->send("冻结成功");
+    emit requestUpdateSoftList();
 }
 
 void AppHelper::unfreezeApp(const QString &packageName)
@@ -46,6 +60,7 @@ void AppHelper::unfreezeApp(const QString &packageName)
     const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
     ADBInterface::instance()->unfreezeApp(deviceCode, packageName);
     NotificationControl::instance()->send("解冻完成");
+    emit requestUpdateSoftList();
 }
 
 void AppHelper::extractApp(const QString &packagePath, const QString &targetPath, const QString &packageName)
@@ -84,4 +99,12 @@ void AppHelper::startActivity(const QString &activity, const QStringList &args)
     const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
     ADBInterface::instance()->startActivity(deviceCode, activity, args);
     NotificationControl::instance()->send("启动活动");
+}
+
+void AppHelper::updateDetailInfo(QString packageName)
+{
+    const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
+    this->m_info = ADBInterface::instance()->getAppDetailInfo(deviceCode, packageName);
+    qWarning() << this->m_info.versionName;
+    emit updateFinish();
 }

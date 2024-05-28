@@ -1,6 +1,7 @@
 #include "fastbootdevicemanager.h"
 #include <QDebug>
 #include "../utils/utils.hpp"
+#include "src/cpp/utils/Notification.h"
 
 DeviceCheckTool::DeviceCheckTool(QObject *parent)
     : QObject (parent)
@@ -94,11 +95,15 @@ void FastBootDeviceManager::rebootToFastBoot(const QString &deviceCode)
     if (deviceCode.isEmpty()) {
         tarDevice = m_currentDeviceCode;
     }
+    if (m_currentDeviceCode.isEmpty()) {
+        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Warning, 3000);
+        return;
+    }
 
     QStringList args;
     args << "-s"  << tarDevice << "reboot" << "fastboot";
 
-    auto operatorFunc = [&tarDevice, &args](){
+    auto operatorFunc = [tarDevice, args](){
         ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
     };
 
@@ -111,11 +116,15 @@ void FastBootDeviceManager::rebootToSystem(const QString &deviceCode)
     if (deviceCode.isEmpty()) {
         tarDevice = m_currentDeviceCode;
     }
+    if (m_currentDeviceCode.isEmpty()) {
+        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Warning, 3000);
+        return;
+    }
 
     QStringList args;
     args << "-s" << tarDevice << "reboot";
 
-    auto operatorFunc = [&tarDevice, &args](){
+    auto operatorFunc = [tarDevice, args](){
         ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
     };
 
@@ -128,11 +137,15 @@ void FastBootDeviceManager::rebootToRecovery(const QString &deviceCode)
     if (deviceCode.isEmpty()) {
         tarDevice = m_currentDeviceCode;
     }
+    if (m_currentDeviceCode.isEmpty()) {
+        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Warning, 3000);
+        return;
+    }
 
     QStringList args;
     args << "-s" << tarDevice << "reboot" << "recovery";
 
-    auto operatorFunc = [&tarDevice, &args](){
+    auto operatorFunc = [tarDevice, args](){
         ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
     };
 
@@ -145,12 +158,16 @@ void FastBootDeviceManager::powerOff(const QString &deviceCode)
     if (deviceCode.isEmpty()) {
         tarDevice = m_currentDeviceCode;
     }
+    if (m_currentDeviceCode.isEmpty()) {
+        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Warning, 3000);
+        return;
+    }
 
     QStringList args;
     args << "-s" << tarDevice << "poweroff";
 
 
-    auto operatorFunc = [&tarDevice, &args](){
+    auto operatorFunc = [tarDevice, args](){
         ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
     };
 

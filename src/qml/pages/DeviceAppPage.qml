@@ -6,10 +6,8 @@ import MFloat
 import SoftListModel 1.0
 import AppDetailControl 1.0
 
-Item {
-    property bool isCurrentPage: false
+ItemPage {
     id: root
-    Layout.minimumWidth: 780
     ColorConstants {
         id: colorConstants
     }
@@ -44,9 +42,9 @@ Item {
                         id: softListComboBox
                         Layout.minimumWidth: 80
                         model: [
-                            "所有应用",
+                            "第三方应用",
                             "系统应用",
-                            "第三方应用"
+                            "所有应用"
                         ]
                     }
                 }

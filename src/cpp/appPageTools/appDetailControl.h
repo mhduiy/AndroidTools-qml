@@ -42,6 +42,7 @@ public:
     Q_INVOKABLE void startActivity(const QString &activity, const QStringList &args);
 signals:
     void valueChanged(const AppDetailInfo &info);
+    void requestUpdateSoftList();
 
 private:
     AppDetailInfo m_info;

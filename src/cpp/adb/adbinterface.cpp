@@ -175,7 +175,7 @@ QList<AppListInfo> ADBInterface::getSoftListInfo(const QString &deviceCode)
 {
     QStringList args;
     QList<AppListInfo> res;
-    args << "-s" << deviceCode << "shell" << "pm" << "list" << "packages" <<  "--show-versioncode";
+    args << "-s" << deviceCode << "shell" << "pm" << "list" << "packages" << "-3" <<  "--show-versioncode";
     QStringList retList = m_adbTools->executeCommand(ADBTools::ADB, args).split('\n');
     int packageLen = QString("package:").length();
     int versionCodeLen = QString("versionCode:").length();

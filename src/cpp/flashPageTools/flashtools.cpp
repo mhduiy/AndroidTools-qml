@@ -2,11 +2,14 @@
 #include "../adb/adbtools.h"
 #include <qcontainerfwd.h>
 #include <QProcessEnvironment>
+#include <qlogging.h>
 #include <qprocess.h>
 #include <qtimer.h>
 #include <qtpreprocessorsupport.h>
 #include "../utils/Notification.h"
 #include <QTimer>
+#include <qurl.h>
+#include <QDebug>
 
 FlashTools::FlashTools(QObject *parent)
     : QObject(parent)
@@ -17,21 +20,24 @@ FlashTools::FlashTools(QObject *parent)
 void FlashTools::startBoot(const QString &deviceCode, const QString &bootImage)
 {
     QStringList args;
-    args << "-s" << deviceCode << "boot" << bootImage;
+    QUrl url(bootImage);
+    args << "boot" << url.toLocalFile();
     executeCommand(ADBTools::FASTBOOT, args);
 }
 
 void FlashTools::flash(const QString &deviceCode, const QString &partName, const QString &imagePath)
 {
     QStringList args;
-    args << "-s" << deviceCode << "flash" << partName << imagePath;
+    QUrl url(imagePath);
+    args << "flash" << partName << url.toLocalFile();
     executeCommand(ADBTools::FASTBOOT, args);
 }
 
 void FlashTools::clear(const QString &deviceCode, const QString &partName)
 {
     QStringList args;
-    args << "-s" << deviceCode << "erase" << partName;
+    QUrl url(partName);
+    args << "erase" << url.toLocalFile();
     executeCommand(ADBTools::FASTBOOT, args);
 }
 
@@ -74,6 +80,8 @@ void FlashTools::executeCommand(ADBTools::APP appType, const QStringList &args)
 #endif
 
     NotificationControl::instance()->send("两秒后在系统终端中执行命令");
+    
+    qWarning() << args;
 
     QTimer::singleShot(2000, this, [this, programName, startArgs](){
         QProcess::startDetached(programName, startArgs);

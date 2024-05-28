@@ -11,11 +11,8 @@ import FileTransfer 1.0
 import InputText 1.0
 import StartActivity 1.0
 
-Item {
-    property bool isCurrentPage: false
+ItemPage {
     id: root
-    Layout.minimumWidth: 780
-
     ColorConstants {
         id: colorConstants
     }

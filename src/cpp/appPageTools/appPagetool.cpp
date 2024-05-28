@@ -14,6 +14,7 @@ AppPageTool::AppPageTool(QObject *parent)
 
     m_appHandle->moveToThread(m_appHandleThread);
     m_appHandleThread->start();
+    connect(AppDetailControl::instance(), &AppDetailControl::requestUpdateSoftList, m_appHandle, &AppInfoHandle::updateListInfo);
     connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, m_appHandle, &AppInfoHandle::updateListInfo);
     connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, this, [this](){m_softListModel->clearData();});
     connect(m_appHandle, &AppInfoHandle::updateListFinish, this, &AppPageTool::updateAppListInfo);

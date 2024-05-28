@@ -1,6 +1,7 @@
 #ifndef APPHELPERTHREAD_H
 #define APPHELPERTHREAD_H
 
+#include "src/cpp/adb/adbinterface.h"
 #include <QObject>
 
 class AppHelper : public QObject
@@ -20,6 +21,16 @@ public slots:
 
     void startApp(const QString &packageName);
     void startActivity(const QString &activity, const QStringList &args);
+
+    void updateDetailInfo(QString packageName);
+    inline AppDetailInfo getInfo() const { return m_info; }
+
+signals:
+    void updateFinish();
+    void requestUpdateSoftList();
+
+private:
+    AppDetailInfo m_info;
 };
 
 #endif

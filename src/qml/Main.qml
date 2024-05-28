@@ -259,15 +259,27 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    property int preIndex: 0
 
                     onCurrentIndexChanged: {
+
                         for (var i = 0; i < mainStackLayout.count; i++) {
-                            mainStackLayout.itemAt(i).isCurrentPage = (i == currentIndex);
+                            mainStackLayout.itemAt(i).isCurrentPage = (i === currentIndex);
+                            if (i === currentIndex) {
+                                mainStackLayout.itemAt(i).state = "pageShow";
+                            } else {
+                                mainStackLayout.itemAt(i).state = "prepareShow";
+                            }
+
+
                         }
                     }
 
                     DeviceInfoPage {
                         anchors.fill: parent
+                        Component.onCompleted: {
+                            state: "pageShow"
+                        }
                     }
 
                     DeviceControlPage {

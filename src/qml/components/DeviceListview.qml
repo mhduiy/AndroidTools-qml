@@ -25,7 +25,7 @@ Item {
         id: lvDelegate
         Rectangle {
             width: ListView.view.width
-            height: 70
+            height: 75
             radius: 10
             border.width: 1
             border.color: "gray"
@@ -39,12 +39,13 @@ Item {
 
             ColumnLayout {
                 anchors.fill: parent
+                anchors.topMargin: 3
+                anchors.bottomMargin: 3
+                anchors.leftMargin: 5
+                anchors.rightMargin: 5
                 spacing: 2
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.leftMargin: 5
-                    Layout.rightMargin: 5
-                    Layout.topMargin: 2
                     Text {
                         id: deviceName
                         text: model.deviceName
@@ -59,6 +60,7 @@ Item {
                     }
 
                     MLabel {
+                        // Layout.preferredWidth: 50
                         text: model.isConnected ? model.isWireless ?  "无线" : "有线" : "历史"
                         textColor: "#ffffff"
                     }
@@ -66,13 +68,12 @@ Item {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.leftMargin: 5
-                    Layout.bottomMargin: 5
-                    Layout.rightMargin: 5
                     Layout.fillHeight: true
                     GridLayout {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
+                        columnSpacing: 1
+                        rowSpacing: 1
                         columns: 2
 
                         MLabel {
@@ -108,8 +109,10 @@ Item {
                     }
 
                     MButton {
+                        Layout.preferredWidth: 50
+                        Layout.alignment: Qt.AlignBottom
                         btnType: model.isConnected ? MButton.FBtnType.Warning : MButton.FBtnType.Suggest
-                        text: model.isConnected ? "断开连接" : "立即连接"
+                        text: model.isConnected ? "断开" : "立即连接"
                         z: 1000
                         onClicked: {
                             DeviceListviewModel.requestDisConnect(model.deviceCode)

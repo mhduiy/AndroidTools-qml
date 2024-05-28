@@ -5,10 +5,8 @@ import MFloat
 import QMLTermWidget 1.0
 import TerminalPageTools 1.0
 
-Item {
-    property bool isCurrentPage: false
+ItemPage {
     id: root
-    Layout.minimumWidth: 780
     ColorConstants {
         id: colorConstants
     }

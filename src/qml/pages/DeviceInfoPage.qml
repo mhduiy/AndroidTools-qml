@@ -9,11 +9,11 @@ import CutActivityControl 1.0
 import ADBControl 1.0
 import DetailInfoControl 1.0
 import NotificationControl 1.0
+import DeviceControl 1.0
 
-Item {
-    property bool isCurrentPage: false
+ItemPage {
     id: root
-    Layout.minimumWidth: 780
+    state: "pageShow"
     property var monitorMap: [
         {"name": "CPU占用"},
         {"name": "CPU温度"},
@@ -233,21 +233,33 @@ Item {
                             text: "重启手机"
                             btnType: MButton.FBtnType.Warning
                             width: 120
+                            onClicked: {
+                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Reboot)
+                            }
                         }
                         MButton {
                             text: "关闭手机"
                             btnType: MButton.FBtnType.Warning
                             width: 120
+                            onClicked: {
+                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Poweroff)
+                            }
                         }
                         MButton {
                             text: "重启到RECOVERY"
                             btnType: MButton.FBtnType.Warning
                             width: 120
+                            onClicked: {
+                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToRec)
+                            }
                         }
                         MButton {
                             text: "重启到FASTBOOT"
                             btnType: MButton.FBtnType.Warning
                             width: 120
+                            onClicked: {
+                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToFB)
+                            }
                         }
                     }
                 }

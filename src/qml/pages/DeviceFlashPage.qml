@@ -8,10 +8,8 @@ import FlashLinkModel 1.0
 import FlashTools 1.0
 import QtQuick.Dialogs
 
-Item {
-    property bool isCurrentPage: false
+ItemPage {
     id: root
-    Layout.minimumWidth: 780
     ColorConstants {
         id: colorConstants
     }
@@ -63,8 +61,7 @@ Item {
                     text: "重启FASTBOOT"
                     Layout.preferredWidth: 80
                     onClicked: {
-                        FastBootDeviceManager.rebootToFastBoot(""
-                                                               )
+                        FastBootDeviceManager.rebootToFastBoot("")
                     }
                 }
                 MButton {
