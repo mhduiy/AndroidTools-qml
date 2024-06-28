@@ -20,13 +20,14 @@ list(FILTER RES_PATHS EXCLUDE REGEX "${EXCLUDE_REGEX}")
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Widgets Gui Network Multimedia WebSockets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Network Multimedia WebSockets)
 
-include_directories(.)
+
 
 add_executable(${PROJECT_NAME}  ${QRC_SOURCES} ${SRC_PATHS} ${RES_PATHS})
-
 set(QSC_DEPLOY_PATH ${CMAKE_SOURCE_DIR}/.output/)
-include_directories(src/cpp/imagePageTool/scrcpy)
 add_subdirectory(src/cpp/imagePageTool/scrcpy/core)
+target_include_directories(AndroidTools PRIVATE .)
+target_include_directories(AndroidTools PRIVATE src/cpp/imagePageTool/scrcpy)
+target_include_directories(AndroidTools PRIVATE src/cpp/imagePageTool/core)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
@@ -37,5 +38,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Multimedia
     Qt${QT_VERSION_MAJOR}::WebSockets
     mfloatui
-    core
+    QtScrcpyCore
 )

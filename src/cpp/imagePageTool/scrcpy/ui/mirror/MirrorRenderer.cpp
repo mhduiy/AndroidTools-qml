@@ -9,7 +9,7 @@
 MirrorRenderer::MirrorRenderer(QObject *parent) {
     Q_UNUSED(parent);
     m_resourceService = ServiceManager::getInstance().resourceService();
-    connect(&qsc::IDeviceManage::getInstance(), &qsc::IDeviceManage::onNewFrame, this, &MirrorRenderer::onFrame);
+    // connect(&qsc::IDeviceManage::getInstance(), &qsc::IDeviceManage::onNewFrame, this, &MirrorRenderer::onFrame);
 }
 
 MirrorRenderer::MirrorRenderer() {

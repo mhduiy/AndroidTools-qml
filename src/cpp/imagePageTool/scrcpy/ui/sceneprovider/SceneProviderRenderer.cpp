@@ -23,7 +23,7 @@ namespace {
 
 SceneProviderRenderer::SceneProviderRenderer(QObject *parent) : QObject{parent} {
     initializeOpenGLFunctions();
-    connect(&qsc::IDeviceManage::getInstance(), &qsc::IDeviceManage::onNewFrame, this, &SceneProviderRenderer::onFrame);
+    // connect(&qsc::IDeviceManage::getInstance(), &qsc::IDeviceManage::onNewFrame, this, &SceneProviderRenderer::onFrame);
 }
 
 SceneProviderRenderer::~SceneProviderRenderer() {

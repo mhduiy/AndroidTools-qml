@@ -1,6 +1,6 @@
 #include <QtQml>
 
-#include "../core/include/QtScrcpyCore.h"
+#include "core/include/QtScrcpyCore.h"
 #include "ResourceService.h"
 
 #define MIRROW_WIDTH 260
