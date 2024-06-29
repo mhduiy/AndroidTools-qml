@@ -25,6 +25,9 @@ QTermWidgetForQml::QTermWidgetForQml(QQuickItem *parent)
 , m_terminal(new TermWidget())
 {
     m_terminal->setTerminalOpacity(0);
+    QFont font;
+    font.setFamilies({"Source Code Pro"});
+    m_terminal->setTerminalFont(font);
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]() {
