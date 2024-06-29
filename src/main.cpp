@@ -9,7 +9,7 @@
 #include "cpp/controlPageTool/controlPageTool.h"
 #include "cpp/appPageTools/appPagetool.h"
 #include "cpp/flashPageTools/flashPageTool.h"
-#include "cpp/TerminalPageTool/terminalTools.h"
+#include "cpp/terminalPageTool/terminalTools.h"
 #include "cpp/imagePageTool/imagePageTool.h"
 #include "cpp/settingPageTools/settingPageTools.h"
 #include "cpp/utils/Notification.h"

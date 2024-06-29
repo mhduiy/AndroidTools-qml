@@ -10,12 +10,23 @@ file(GLOB_RECURSE HEAD_PATHS src/*.h)
 file(GLOB_RECURSE QML_PATHS src/*.qml)
 file(GLOB_RECURSE RES_PATHS src/*.qrc)
 
-# 移除src/cpp/imagePageTool/scrcpy/core目录下的所有文件
-set(EXCLUDE_REGEX "src/cpp/imagePageTool/scrcpy/core/.*")
-list(FILTER SRC_PATHS EXCLUDE REGEX "${EXCLUDE_REGEX}")
-list(FILTER HEAD_PATHS EXCLUDE REGEX "${EXCLUDE_REGEX}")
-list(FILTER QML_PATHS EXCLUDE REGEX "${EXCLUDE_REGEX}")
-list(FILTER RES_PATHS EXCLUDE REGEX "${EXCLUDE_REGEX}")
+# 定义需要排除的正则表达式列表
+set(EXCLUDE_REGEX_LIST "src/cpp/imagePageTool/scrcpy/core/.*")
+
+# 函数：应用排除正则表达式列表过滤路径
+function(filter_paths var)
+    foreach(regex IN LISTS EXCLUDE_REGEX_LIST)
+        list(FILTER ${var} EXCLUDE REGEX "${regex}")
+    endforeach()
+    set(${var} ${${var}} PARENT_SCOPE)
+endfunction()
+
+# 对每个路径列表应用排除过滤
+filter_paths(SRC_PATHS)
+filter_paths(HEAD_PATHS)
+filter_paths(QML_PATHS)
+filter_paths(RES_PATHS)
+
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Widgets Gui Network Multimedia WebSockets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Network Multimedia WebSockets)
@@ -27,10 +38,8 @@ set(QSC_DEPLOY_PATH ${CMAKE_SOURCE_DIR}/.output/)
 include_directories(${CMAKE_SOURCE_DIR}/.)
 include_directories(${CMAKE_SOURCE_DIR}/src/cpp/imagePageTool/scrcpy)
 include_directories(${CMAKE_SOURCE_DIR}/src/cpp/imagePageTool/core)
-include_directories(${CMAKE_SOURCE_DIR}/src/cpp/terminalPageTool/qTermWidget6/lib)
-
+        
 add_subdirectory(src/cpp/imagePageTool/scrcpy/core)
-add_subdirectory(src/cpp/terminalPageTool/QTermWidget6)
 
 add_executable(${PROJECT_NAME}  ${QRC_SOURCES} ${SRC_PATHS} ${RES_PATHS})
 
@@ -42,6 +51,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Multimedia
     Qt${QT_VERSION_MAJOR}::WebSockets
+    Qt6::GuiPrivate
+    Qt6::WidgetsPrivate
+    Qt6::QuickPrivate
     mfloatui
     QtScrcpyCore
+    qtermwidget6
 )

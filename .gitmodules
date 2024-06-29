@@ -1,7 +1,3 @@
 [submodule "src/cpp/imagePageTool/scrcpy/core"]
 	path = src/cpp/imagePageTool/scrcpy/core
 	url = git@github.com:mhduiy/QtScrcpyCore.git
-[submodule "src/cpp/TerminalPageTool/QTermWidget6"]
-	path = src/cpp/terminalPageTool/QTermWidget6
-	url = git@github.com:lxqt/qtermwidget.git
-	branch = wip-qt6

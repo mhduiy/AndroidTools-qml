@@ -4,13 +4,13 @@
 #include <QtQml>
 #include <QSysInfo>
 #include <qsysinfo.h>
-#include "QTermWidget6/lib/TerminalDisplay.h"
+#include "qtermwidgetforqml.h"
 
 TerminalPageTools::TerminalPageTools(QObject *parent)
 : QObject(parent)
 {
     qmlRegisterSingletonInstance("TerminalPageTools", 1, 0, "TerminalPageTools", this);
-    qmlRegisterType<Konsole::TerminalDisplay>("QMLTermWidget", 1, 0, "QMLTermWidget");
+    qmlRegisterType<QTermWidgetForQml>("QTermWidgetForQml", 1, 0, "QTermWidgetForQml");
 }
 
 void TerminalPageTools::startSystemTerminal()
