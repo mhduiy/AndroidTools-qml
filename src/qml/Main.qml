@@ -298,10 +298,6 @@ ApplicationWindow {
                         anchors.fill: parent
                     }
 
-                    DeviceTerminalPage {
-                        anchors.fill: parent
-                    }
-
                     SettingPage {
                         anchors.fill: parent
                     }

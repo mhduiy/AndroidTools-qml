@@ -12,7 +12,6 @@
         <file>qml/pages/DeviceAppPage.qml</file>
         <file>qml/pages/DeviceFlashPage.qml</file>
         <file>qml/pages/DeviceImagePage.qml</file>
-        <file>qml/pages/DeviceTerminalPage.qml</file>
         <file>qml/pages/SettingPage.qml</file>
         <file>res/backgroundImage.jpeg</file>
         <file>res/closeIcon.png</file>
