@@ -5,8 +5,8 @@
 #include <qtmetamacros.h>
 #include "../utils/singleton.hpp"
 
-#include "service/ResourceService.h"
-#include "service/udp/Broadcast.h"
+// #include "service/ResourceService.h"
+// #include "service/udp/Broadcast.h"
 
 class ImageDetailTools : public QObject
 {
@@ -16,8 +16,8 @@ public:
     Q_INVOKABLE void shotScreen(const QString &outPath);
 
 private:
-    ResourceService *resourceService = nullptr;
-    Broadcast *m_broadcast = nullptr;
+    // ResourceService *resourceService = nullptr;
+    // Broadcast *m_broadcast = nullptr;
 };
 
 class ImagePageTool : public QObject
@@ -28,6 +28,6 @@ public:
 
 
 private:
-    ResourceService *resourceService = nullptr;
-    Broadcast *m_broadcast = nullptr;
+    // ResourceService *resourceService = nullptr;
+    // Broadcast *m_broadcast = nullptr;
 };

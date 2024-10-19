@@ -9,7 +9,6 @@
 #include "cpp/controlPageTool/controlPageTool.h"
 #include "cpp/appPageTools/appPagetool.h"
 #include "cpp/flashPageTools/flashPageTool.h"
-#include "cpp/terminalPageTool/terminalTools.h"
 #include "cpp/imagePageTool/imagePageTool.h"
 #include "cpp/settingPageTools/settingPageTools.h"
 #include "cpp/utils/Notification.h"
@@ -42,8 +41,6 @@ int main(int argc, char *argv[])
     AppPageTool::instance(&app);
     // 加载FlashPage相关逻辑
     FlashPageTool::instance(&app);
-    // 加载TerminalPage相关逻辑
-    TerminalPageTools::instance(&app);
     // 加载ImagePage相关逻辑
     ImagePageTool::instance(&app);
 

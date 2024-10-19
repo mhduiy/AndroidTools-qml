@@ -4,10 +4,10 @@
 #include "src/cpp/adb/connectmanager.h"
 #include "src/cpp/utils/Notification.h"
 #include "src/cpp/utils/utils.hpp"
-#include "ui/util/config.h"
-#include "service/ServiceManager.h"
-#include "ui/mirror/MirrorScene.h"
-#include "service/WebSocketService.h"
+// #include "ui/util/config.h"
+// #include "service/ServiceManager.h"
+// #include "ui/mirror/MirrorScene.h"
+// #include "service/WebSocketService.h"
 
 ImageDetailTools::ImageDetailTools(QObject *parent)
     : QObject(parent)
@@ -34,25 +34,25 @@ void ImageDetailTools::shotScreen(const QString &outPath)
 ImagePageTool::ImagePageTool(QObject *parent)
 : QObject(parent)
 {
-    QString str = QCoreApplication::applicationDirPath();
-    int index = str.indexOf("/.output");
-    QString leftSide = str.left(index);
+    // QString str = QCoreApplication::applicationDirPath();
+    // int index = str.indexOf("/.output");
+    // QString leftSide = str.left(index);
 
-    Config::getInstance().setProjectPath(leftSide);
+    // Config::getInstance().setProjectPath(leftSide);
 
-    resourceService = new ResourceService(this);
-    ServiceManager::getInstance().setResourceService(resourceService); // Register service to our C++ singleton
+    // resourceService = new ResourceService(this);
+    // ServiceManager::getInstance().setResourceService(resourceService); // Register service to our C++ singleton
 
-    m_broadcast = new Broadcast(); // UDP broadcast to clients can find server data
-    m_broadcast->start();
+    // m_broadcast = new Broadcast(); // UDP broadcast to clients can find server data
+    // m_broadcast->start();
 
-    new WebSocketService(8097, this);
+    // new WebSocketService(8097, this);
 
-    ResourceService::declareQml();
-    MirrorScene::declareQml();
-    Config::declareQml();
+    // ResourceService::declareQml();
+    // MirrorScene::declareQml();
+    // Config::declareQml();
 
-    qmlRegisterSingletonInstance("Resource", 1, 0, "Resource", resourceService);
-    qmlRegisterSingletonInstance("ImageDetailTools", 1, 0, "ImageDetailTools", ImageDetailTools::instance(this));
+    // qmlRegisterSingletonInstance("Resource", 1, 0, "Resource", resourceService);
+    // qmlRegisterSingletonInstance("ImageDetailTools", 1, 0, "ImageDetailTools", ImageDetailTools::instance(this));
 
 }
