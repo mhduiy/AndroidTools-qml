@@ -4,7 +4,7 @@
 #include <QNetworkAccessManager>
 #include <QThread>
 #include <qlogging.h>
-#include "src/cpp/utils/Notification.h"
+#include "src/cpp/utils/notificationcontroller.h"
 #include "wallpaperhelper.h"
 #include "../utils/globalsetting.h"
 #include "../utils/constants.h"
@@ -91,7 +91,7 @@ void WallPaperModel::setCurrentIndex(int index)
 {
     const QString url = m_wallPaperInfo.value(index).url;
     if (url.isEmpty()) {
-        NotificationControl::instance()->send("设置失败了", NotificationControl::Error);
+        NotificationController::instance()->send("设置失败", "请联系开发者", NotificationController::Error);
         return;
     }
     m_currentIndex = index;

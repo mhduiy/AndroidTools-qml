@@ -1,7 +1,7 @@
 #include "adbcontrol.h"
 #include <QtConcurrent/QtConcurrentRun>
 #include "../adb/adbinterface.h"
-#include "../utils/Notification.h"
+#include "../utils/notificationcontroller.h"
 #include <QDebug>
 
 ADBControl::ADBControl(QObject *parent) : QObject(parent)
@@ -20,31 +20,31 @@ void ADBControl::restartADB()
 void ADBControl::pairDevice(const QString ipAndPort, const QString &pairCode)
 {
     if (ipAndPort.isEmpty()) {
-        NotificationControl::instance()->send("ip和端口不能为空");
+        NotificationController::instance()->send("配对失败", "ip和端口不能为空");
         return;
     }
     if (pairCode.isEmpty()) {
-        NotificationControl::instance()->send("请输入配对码");
+        NotificationController::instance()->send("配对失败", "请输入配对码");
         return;
     }
     auto retStr = ADBTools::instance()->executeCommand(ADBTools::ADB, {"pair", ipAndPort}, pairCode).simplified();
     if (retStr.contains("Success")) {
-        NotificationControl::instance()->send("配对成功");
+        NotificationController::instance()->send("配对成功", "请进行下一步");
     } else {
-        NotificationControl::instance()->send("配对失败，请检查信息是否填写正确", NotificationControl::Error);
+        NotificationController::instance()->send("配对失败", "配对失败，请检查信息是否填写正确", NotificationController::Error);
     }
 }
 
 void ADBControl::connectDevice(const QString ipAndPort)
 {
     if (ipAndPort.isEmpty()) {
-        NotificationControl::instance()->send("ip和端口不能为空", NotificationControl::Warning);
+        NotificationController::instance()->send("配对失败", "ip和端口不能为空", NotificationController::Warning);
         return;
     }
     auto retStr = ADBTools::instance()->executeCommand(ADBTools::ADB, {"connect", ipAndPort}).simplified();
-    NotificationControl::instance()->send(retStr);
+    NotificationController::instance()->send("返回信息", retStr);
     if (!retStr.contains("connected")) {
-        NotificationControl::instance()->send("连接失败，请检查信息是否填写正确", NotificationControl::Error);
+        NotificationController::instance()->send("连接失败", "请检查信息是否填写正确", NotificationController::Error);
     }
 }
 

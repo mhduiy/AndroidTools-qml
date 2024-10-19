@@ -11,6 +11,7 @@ file(GLOB_RECURSE QML_PATHS src/qml/*.qml)
 
 set(RES_PATHS
     src/main.qrc
+    ${CMAKE_SOURCE_DIR}/src/MFloat/mfloat.qrc
 )
 
 set(SRC_PATHS

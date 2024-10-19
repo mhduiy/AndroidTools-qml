@@ -6,7 +6,7 @@
 #include <qprocess.h>
 #include <qtimer.h>
 #include <qtpreprocessorsupport.h>
-#include "../utils/Notification.h"
+#include "../utils/notificationcontroller.h"
 #include <QTimer>
 #include <qurl.h>
 #include <QDebug>
@@ -79,7 +79,7 @@ void FlashTools::executeCommand(ADBTools::APP appType, const QStringList &args)
     QProcess::startDetached("Terminal.app");
 #endif
 
-    NotificationControl::instance()->send("两秒后在系统终端中执行命令");
+    NotificationController::instance()->send("执行中", "两秒后在系统终端中执行命令");
     
     qWarning() << args;
 

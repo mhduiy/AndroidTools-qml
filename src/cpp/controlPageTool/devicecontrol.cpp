@@ -2,7 +2,7 @@
 #include <QtQml>
 #include <QtConcurrent/QtConcurrentRun>
 #include "../adb/connectmanager.h"
-#include "../utils/Notification.h"
+#include "../utils/notificationcontroller.h"
 #include "../utils/utils.hpp"
 
 const QHash<int, QString> DeviceControl::MusicControlArgsMap
@@ -80,7 +80,7 @@ void DeviceControl::control(ControlType controlType, int controlItem)
             return;
         }
         if (args.size() <= 2) {
-            NotificationControl::instance()->send("索引错误，请联系开发者", NotificationControl::Error);
+            NotificationController::instance()->send("索引错误", "，请联系开发者", NotificationController::Error);
             return;
         }
         m_adbtools->executeCommand(ADBTools::ADB, args);

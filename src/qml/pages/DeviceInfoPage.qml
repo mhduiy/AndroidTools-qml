@@ -8,7 +8,7 @@ import BatteryControl 1.0
 import CutActivityControl 1.0
 import ADBControl 1.0
 import DetailInfoControl 1.0
-import NotificationControl 1.0
+import NotificationController 1.0
 import DeviceControl 1.0
 import QtCharts 2.7
 
@@ -174,7 +174,7 @@ ItemPage {
                                 btnType: MButton.FBtnType.Warning
                                 onClicked: {
                                     CutActivityControl.killCutActivity()
-                                    NotificationControl.send("当前应用已停止", 1, 3000);
+                                    NotificationController.send("命令已发送", "当前应用已停止", 1, 3000);
                                 }
                             }
                         }

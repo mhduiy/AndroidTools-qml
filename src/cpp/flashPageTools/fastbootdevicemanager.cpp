@@ -1,7 +1,7 @@
 #include "fastbootdevicemanager.h"
 #include <QDebug>
 #include "../utils/utils.hpp"
-#include "src/cpp/utils/Notification.h"
+#include "src/cpp/utils/notificationcontroller.h"
 
 DeviceCheckTool::DeviceCheckTool(QObject *parent)
     : QObject (parent)
@@ -96,7 +96,7 @@ void FastBootDeviceManager::rebootToFastBoot(const QString &deviceCode)
         tarDevice = m_currentDeviceCode;
     }
     if (m_currentDeviceCode.isEmpty()) {
-        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Warning, 3000);
+        NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Warning, 3000);
         return;
     }
 
@@ -117,7 +117,7 @@ void FastBootDeviceManager::rebootToSystem(const QString &deviceCode)
         tarDevice = m_currentDeviceCode;
     }
     if (m_currentDeviceCode.isEmpty()) {
-        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Warning, 3000);
+        NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Warning, 3000);
         return;
     }
 
@@ -138,7 +138,7 @@ void FastBootDeviceManager::rebootToRecovery(const QString &deviceCode)
         tarDevice = m_currentDeviceCode;
     }
     if (m_currentDeviceCode.isEmpty()) {
-        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Warning, 3000);
+        NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Warning, 3000);
         return;
     }
 
@@ -159,7 +159,7 @@ void FastBootDeviceManager::powerOff(const QString &deviceCode)
         tarDevice = m_currentDeviceCode;
     }
     if (m_currentDeviceCode.isEmpty()) {
-        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Warning, 3000);
+        NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Warning, 3000);
         return;
     }
 

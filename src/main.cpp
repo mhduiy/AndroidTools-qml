@@ -11,7 +11,7 @@
 #include "cpp/flashPageTools/flashPageTool.h"
 #include "cpp/imagePageTool/imagePageTool.h"
 #include "cpp/settingPageTools/settingPageTools.h"
-#include "cpp/utils/Notification.h"
+#include "cpp/utils/notificationcontroller.h"
 
 int main(int argc, char *argv[])
 {
@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
     // 加载SettingPage的相关逻辑
     SettingPageTools::instance(&app);
 
-    NotificationControl::instance(&app);
-    qmlRegisterSingletonInstance("NotificationControl", 1, 0, "NotificationControl", NotificationControl::instance());
+    NotificationController::instance(&app);
+    qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
 
     QQmlApplicationEngine engine;
     const QUrl url("qrc:/qml/Main.qml");
@@ -56,13 +56,6 @@ int main(int argc, char *argv[])
         &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.load(url);
-
-    // 临时解决方案
-    auto objects = engine.rootObjects();
-    if (!objects.isEmpty()) {
-        QObject *rootObject = objects.first();
-        NotificationControl::instance()->setQmlObject(rootObject->children().value(1));
-    }
 
     return app.exec();
 }

@@ -1,7 +1,7 @@
 #include "connectmanager.h"
 #include <QtQml>
 #include <QTimer>
-#include "../utils/Notification.h"
+#include "../utils/notificationcontroller.h"
 
 ConnectManager::ConnectManager(QObject *parent) : QObject(parent)
 {
@@ -14,11 +14,11 @@ ConnectManager::ConnectManager(QObject *parent) : QObject(parent)
 
     connect(this, &ConnectManager::deviceConnected, [](QString code){
         qInfo() << code << " connected";
-        NotificationControl::instance()->send(QString(code + "已连接"));
+        NotificationController::instance()->send("检测到设备状态改变", QString(code + "已连接"));
     });
     connect(this, &ConnectManager::deviceDisconnected, [](QString code){
         qInfo() << code << " disconnected";
-        NotificationControl::instance()->send(QString(code + "已断开"), NotificationControl::Warning);
+        NotificationController::instance()->send("检测到设备状态改变", QString(code + "已断开"), NotificationController::Warning);
     });
 
     // TODO 可能导致异常

@@ -2,7 +2,7 @@
 #include <qobject.h>
 #include "src/cpp/adb/adbinterface.h"
 #include "src/cpp/adb/connectmanager.h"
-#include "src/cpp/utils/Notification.h"
+#include "src/cpp/utils/notificationcontroller.h"
 #include "src/cpp/utils/utils.hpp"
 // #include "ui/util/config.h"
 // #include "service/ServiceManager.h"
@@ -19,12 +19,12 @@ void ImageDetailTools::shotScreen(const QString &outPath)
 {
     const QString &deviceCode =  ConnectManager::instance()->currentDeviceCode();
     if (deviceCode.isEmpty()) {
-        NotificationControl::instance()->send("当前无设备连接", NotificationControl::Error, 3000);
+        NotificationController::instance()->send("截图失败", "当前无设备连接", NotificationController::Error, 3000);
         return;
     }
 
     auto func = [deviceCode, outPath](){
-        NotificationControl::instance()->send("正在截图...", NotificationControl::Info, 5000);
+        NotificationController::instance()->send("命令已发送", "正在截图...", NotificationController::Info, 5000);
         ADBInterface::instance()->shotScreen(deviceCode, outPath);
     };
 

@@ -4,7 +4,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import "../components/"
-import NotificationControl 1.0
+import NotificationController 1.0
 import WallPaperModel 1.0
 import WallpaperHelper 1.0
 

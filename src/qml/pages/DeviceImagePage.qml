@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
-import NotificationControl 1.0
+import NotificationController 1.0
 import DeviceControl 1.0
 
 ItemPage {
@@ -167,7 +167,7 @@ ItemPage {
                         btnType: MButton.FBtnType.Suggest
                         onClicked:  {
                             Resource.qmlRequest("REQUEST_MIRROR_START", "")
-                            NotificationControl.send("请求连接", 0, 3000)
+                            NotificationController.send("请求连接", "连接请求已经发送", 0, 3000)
                         }
                     }
                     MButton {
@@ -197,7 +197,7 @@ ItemPage {
                         btnType: MButton.FBtnType.Warning
                         onClicked:  {
                             Resource.qmlRequest("REQUEST_MIRROR_FINISH", "")
-                            NotificationControl.send("请求断开", 0, 3000)
+                            NotificationController.send("请求断开", "断开请求已经发送", 0, 3000)
                         }
                     }
                 }
@@ -315,7 +315,7 @@ ItemPage {
                                 ScrcpyConfig.recordOutPath = recordPathEdit.editItem.text
                                 Resource.qmlRequest("REQUEST_MIRROR_FINISH", "")
                                 Resource.qmlRequest("REQUEST_MIRROR_START", "")
-                                NotificationControl.send("开始录制, 断开即结束录制", 0, 3000)
+                                NotificationController.send("开始录制", "断开即结束录制", 0, 3000)
                             }
                         }
                     }

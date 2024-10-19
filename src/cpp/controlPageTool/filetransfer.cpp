@@ -1,7 +1,7 @@
 #include "filetransfer.h"
 #include "../adb/adbtools.h"
 #include "../adb/connectmanager.h"
-#include "../utils/Notification.h"
+#include "../utils/notificationcontroller.h"
 #include "../utils/utils.hpp"
 #include <QFile>
 #include <QUrl>
@@ -17,9 +17,9 @@ FileTransferHandler::FileTransferHandler(QObject *parent)
 
 void FileTransferHandler::transmission(QString deviceCode, QString source, QString targetDir)
 {
-    NotificationControl::instance()->send("开始传输，文件很大可能传输失败", NotificationControl::Info);
+    NotificationController::instance()->send("开始传输", "文件很大可能传输失败", NotificationController::Info);
     ADBTools::instance()->executeCommand(ADBTools::ADB, {"-s", deviceCode, "push", source, targetDir}, "", INT32_MAX);
-    NotificationControl::instance()->send("传输完成", NotificationControl::Info);
+    NotificationController::instance()->send("传输完成", "传输完成", NotificationController::Info);
 }
 
 FileTransfer::FileTransfer(QObject *parent)
@@ -34,7 +34,7 @@ FileTransfer::FileTransfer(QObject *parent)
 void FileTransfer::transmission(const QString &source, const QString &targetDir)
 {
     if (targetDir.isEmpty()) {
-        NotificationControl::instance()->send("目标路径不能为空", NotificationControl::Error);
+        NotificationController::instance()->send("传输失败", "目标路径不能为空", NotificationController::Error);
         return;
     }
 
@@ -47,7 +47,7 @@ void FileTransfer::transmission(const QString &source, const QString &targetDir)
     }
 
     if (!QFile::exists(filePath)) {
-        NotificationControl::instance()->send("待传输文件不合法", NotificationControl::Error);
+        NotificationController::instance()->send("传输失败", "待传输文件不合法", NotificationController::Error);
     }
 
     auto cutDevice = ConnectManager::instance()->currentDeviceCode();

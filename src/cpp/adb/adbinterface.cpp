@@ -5,7 +5,7 @@
 #include <qlogging.h>
 #include <QDesktopServices>
 #include "../utils/utils.hpp"
-#include "../utils/Notification.h"
+#include "../utils/notificationcontroller.h"
 
 ADBInterface::ADBInterface(QObject *parent) : QObject(parent)
 {
@@ -34,7 +34,7 @@ bool ADBInterface::stopADBService()
 
 bool ADBInterface::restartADBService()
 {
-    NotificationControl::instance()->send("重启中，请耐心等待", NotificationControl::Warning);
+    NotificationController::instance()->send("执行成功", "重启中，请耐心等待", NotificationController::Warning);
     stopADBService();
     startADBService();
     return true;
@@ -168,7 +168,7 @@ void ADBInterface::startActivity(const QString &deviceCode, const QString &activ
     QStringList adbArgs;
     adbArgs << "-s" << deviceCode << "shell" << "am" << "start" << "-n" << activity << args;
     QString ret = m_adbTools->executeCommand(ADBTools::ADB, adbArgs);
-    NotificationControl::instance()->send("命令已执行，可能没有成功，请确认", NotificationControl::Info);
+    NotificationController::instance()->send("指令已发送", "命令已执行，可能没有成功，请确认", NotificationController::Info);
 }
 
 QList<AppListInfo> ADBInterface::getSoftListInfo(const QString &deviceCode)

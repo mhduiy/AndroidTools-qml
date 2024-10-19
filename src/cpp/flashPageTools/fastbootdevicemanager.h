@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QThread>
 #include "../adb/adbtools.h"
-#include "../utils/Notification.h"
+#include "../utils/notificationcontroller.h"
 #include "../utils/singleton.hpp"
 
 class DeviceCheckTool : public QObject
