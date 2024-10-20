@@ -1,9 +1,10 @@
 import QtQuick
+import QtQuick.Layouts
 
 Item {
     id: root
-    width: 200
-    height: 30
+    Layout.fillWidth: true
+    Layout.preferredHeight: 20
 
     property int value: 50
     property bool showText: false

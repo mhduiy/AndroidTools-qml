@@ -94,6 +94,7 @@ ApplicationWindow {
                 anchors.fill: parent
                 source: backgroundImage
                 radius: WallpaperHelper.blurRadius
+                samples: radius
                 visible: false
             }
 

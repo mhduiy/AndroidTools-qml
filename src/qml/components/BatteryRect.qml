@@ -1,8 +1,6 @@
 import QtQuick
 
 Item {
-    width: 280
-    height: 100
     property bool charging: false
     property int level: 80
     id: root

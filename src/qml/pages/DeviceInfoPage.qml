@@ -31,68 +31,287 @@ ItemPage {
     }
 
     property var monitorItems: [0, 1]
-    ColumnLayout { // 主界面
-        anchors.fill: parent
-        RowLayout {  //  上方区域
-            spacing: 10
-            Layout.preferredWidth: parent.width
-            Layout.fillWidth: true
-            width: parent.width
-            Layout.preferredHeight: 250
-            Layout.alignment: Qt.AlignTop
 
-            Layout.maximumHeight: 280
-            onWidthChanged:  {
-                console.log("宽度" + width)
-            }
-            MFrame {
-                Layout.preferredWidth: parent.width * 0.48
-                Layout.fillHeight: true
-                Layout.alignment: Qt.AlignLeft
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
-                opacity: 0.9
+    RowLayout {
+        anchors.fill: parent
+        anchors.rightMargin: 10
+        anchors.bottomMargin: 10
+        MFrame {
+            Layout.preferredWidth: parent.width * 0.48
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignLeft
+            wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+            opacity: 0.9
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+                // 设备Title
                 RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 20
-                    spacing: 30
+                    Layout.preferredHeight: 50
+                    implicitHeight: 50
+                    Layout.fillWidth: true
+                    spacing: 20
                     Rectangle {
-                        Layout.preferredHeight: 200
-                        Layout.preferredWidth: 120
-                        radius: 5 * width / 100
-                        color: colorConstants.suggestClickedColor
+                        color: "black"
+                        Layout.preferredWidth: 60
+                        Layout.preferredHeight: 50
+                        radius: 10
                         Text {
                             anchors.fill: parent
                             text: "XIAOMI"
-                            font.pixelSize: 20
                             color: "white"
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                         }
                     }
-                    GridLayout {
+
+                    ColumnLayout {
+                        Text {
+                            text: "XIAOMI MI 8 LITE"
+                            font.pixelSize: 18
+                            font.bold: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        Text {
+                            text: "安卓版本: 12"
+                            opacity: 0.8
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
+                }
+
+                Text {
+                    text: "电池信息"
+                    font.bold: true
+                    font.pixelSize: 18
+                    color: colorConstants.ordinaryClickedColor
+                }
+
+                BatteryRect {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 50
+                    level: BatteryControl.level
+                }
+
+                GridLayout {
+                    Layout.fillWidth: true
+                    columns: 4
+                    Repeater {
+                        model: batteryModel
+                        MLabel {
+                            rectColor: colorConstants.suggestClickedColor
+                            text: model.name
+                            Layout.row: index / 2
+                            Layout.column: index % 2 == 1 ? 2 : 0
+                        }
+                    }
+                    Repeater {
+                        model: batteryModel
+                        Label {
+                            text: model.info
+                            Layout.row: index / 2
+                            Layout.column: index % 2 == 1 ? 3 : 1
+                            Layout.fillWidth: true
+                        }
+                    }
+                }
+
+                Text {
+                    text: "设备信息"
+                    font.bold: true
+                    font.pixelSize: 18
+                    color: colorConstants.ordinaryClickedColor
+                }
+
+                AppInfoItem {
+                    title: "硬件"
+                    content: {
+                        "设备名: platant\n设备代号: aosp\n主板序列号: 5a5s6d"
+                    }
+                }
+
+                AppInfoItem {
+                    title: "软件"
+                    content: {
+                        "系统名称: MIUI\n构建版本号: 3847587\n安卓版本: 13"
+                    }
+                }
+
+                AppInfoItem {
+                    title: "CPU"
+                    content: {
+                        "高通骁龙660\n最大主频 3000MHZ  核心数 8"
+                    }
+                }
+
+                AppInfoItem {
+                    title: "屏幕"
+                    content: {
+                        "分辨率: 1920x1080\nDPI: 300"
+                    }
+                }
+            }
+        }
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignTop
+
+            MFrame {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 140
+                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    Layout.alignment: Qt.AlignTop
+                    MonitorBarItem {
+                        title: "CPU温度"
+                        valueStr: "46"
+                        value: 20
+                    }
+                    MonitorBarItem {
+                        title: "CPU占用"
+                        valueStr: "46"
+                        value: 40
+                    }
+                    MonitorBarItem {
+                        title: "内存占用"
+                        valueStr: "46"
+                        value: 35
+                    }
+                    MonitorBarItem {
+                        title: "磁盘占用"
+                        valueStr: "46"
+                        value: 80
+                    }
+                    MonitorBarItem {
+                        title: "电池温度"
+                        valueStr: "46"
+                        value: 60
+                    }
+                }
+            }
+
+            MFrame {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 120
+                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                GridLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    columns: 2
+                    Text {
+                        font.bold: true
+                        font.family: "黑体"
+                        font.pixelSize: 20
+                        text: "快速控制"
+                    }
+                    MButton {
+                        text: "重启ADB"
+                        btnType: MButton.FBtnType.Warning
+                        Layout.alignment: Qt.AlignRight
+                        onClicked: {
+                            ADBControl.restartADB();
+                        }
+                    }
+                    MButton {
+                        text: "重启手机"
+                        btnType: MButton.FBtnType.Warning
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.alignment: Qt.AlignVCenter
-                        columns: 2
-                        Repeater {
-                            model: deviceInfoModel
-                            MLabel {
-                                rectColor: colorConstants.suggestClickedColor
-                                text: model.name
-                                Layout.row: index
-                                Layout.column: 0
-                                Layout.preferredWidth: 60
-                                Layout.alignment: Qt.AlignLeft
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Reboot)
+                        }
+                    }
+                    MButton {
+                        text: "关闭手机"
+                        btnType: MButton.FBtnType.Warning
+                        Layout.fillWidth: true
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Poweroff)
+                        }
+                    }
+                    MButton {
+                        text: "重启到RECOVERY"
+                        btnType: MButton.FBtnType.Warning
+                        Layout.fillWidth: true
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToRec)
+                        }
+                    }
+                    MButton {
+                        text: "重启到FASTBOOT"
+                        btnType: MButton.FBtnType.Warning
+                        Layout.fillWidth: true
+                        onClicked: {
+                            DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToFB)
+                        }
+                    }
+                }
+            }
+
+            MFrame {    // 当前活动信息
+                Layout.fillWidth: true
+                Layout.preferredHeight: 120
+                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 30
+                        Text {
+                            font.bold: true
+                            font.family: "黑体"
+                            font.pixelSize: 20
+                            text: "当前前台应用"
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MButton {
+                            Layout.preferredWidth: 80
+                            text: "停止当前应用"
+                            btnType: MButton.FBtnType.Warning
+                            onClicked: {
+                                CutActivityControl.killCutActivity()
+                                NotificationController.send("命令已发送", "当前应用已停止", 1, 3000);
                             }
                         }
-                        Repeater {
-                            model: deviceInfoModel
-                            Label {
-                                text: model.info
-                                Layout.row: index
-                                Layout.fillWidth: true
-                                Layout.column: 1
-                            }
+                    }
+                    GridLayout {
+                        columns: 2
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        MLabel {
+                            Layout.preferredWidth: 100
+                            rectColor: colorConstants.suggestClickedColor
+                            text: "窗口标识符"
+                        }
+                        Text {
+                            Layout.fillWidth: true
+                            text: CutActivityControl.identifier
+                        }
+                        MLabel {
+                            Layout.preferredWidth: 100
+                            rectColor: colorConstants.suggestClickedColor
+                            text: "前台包名"
+                        }
+                        Text {
+                            Layout.fillWidth: true
+                            text: CutActivityControl.cutPackageName
+                        }
+                        MLabel {
+                            Layout.preferredWidth: 100
+                            rectColor: colorConstants.suggestClickedColor
+                            text: "前台活动"
+                        }
+                        Text {
+                            Layout.fillWidth: true
+                            text: CutActivityControl.cutActivity
                         }
                     }
                 }
@@ -100,360 +319,495 @@ ItemPage {
 
             MFrame {
                 Layout.fillWidth: true
-                Layout.rightMargin: 10
                 Layout.fillHeight: true
-                Layout.alignment: Qt.AlignRight
                 wrapperColor: Qt.rgba(255, 255, 255, 0.65)
 
                 ColumnLayout {
-                    anchors.centerIn: parent
-                    ColumnLayout {
-
-                        BatteryRect {
-                            level: BatteryControl.level
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 30
+                        Text {
+                            font.bold: true
+                            font.family: "黑体"
+                            font.pixelSize: 20
+                            text: "ADB信息"
+                        }
+                        Item {
+                            Layout.fillWidth: true
                         }
 
-                        GridLayout {
-                            columns: 4
-                            Repeater {
-                                model: batteryModel
-                                MLabel {
-                                    rectColor: colorConstants.suggestClickedColor
-                                    text: model.name
-                                    Layout.row: index / 2
-                                    Layout.column: index % 2 == 1 ? 2 : 0
-                                }
-                            }
-                            Repeater {
-                                model: batteryModel
-                                Label {
-                                    text: model.info
-                                    Layout.row: index / 2
-                                    Layout.column: index % 2 == 1 ? 3 : 1
-                                }
+                        MButton {
+                            Layout.preferredWidth: 80
+                            text: "停止当前应用"
+                            btnType: MButton.FBtnType.Warning
+                            onClicked: {
+                                CutActivityControl.killCutActivity()
+                                NotificationController.send("命令已发送", "当前应用已停止", 1, 3000);
                             }
                         }
                     }
-                }
-            }
-        }
-        RowLayout { // 下方区域
-            spacing: 10
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.bottomMargin: 10
-
-            ColumnLayout {
-                Layout.preferredWidth: 300
-                Layout.maximumWidth: 300
-                Layout.fillHeight: true
-                MFrame {    // 当前活动信息
-                    id: activityRoot
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 150
-                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 20
-                        RowLayout {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 30
-                            Text {
-                                font.bold: true
-                                font.family: "黑体"
-                                font.pixelSize: 20
-                                text: "当前前台应用"
-                            }
-                            Item {
-                                Layout.fillWidth: true
-                            }
-
-                            MButton {
-                                Layout.preferredWidth: 80
-                                text: "停止当前应用"
-                                btnType: MButton.FBtnType.Warning
-                                onClicked: {
-                                    CutActivityControl.killCutActivity()
-                                    NotificationController.send("命令已发送", "当前应用已停止", 1, 3000);
-                                }
-                            }
-                        }
-                        GridLayout {
-                            columns: 2
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            MLabel {
-                                Layout.preferredWidth: 100
-                                rectColor: colorConstants.suggestClickedColor
-                                text: "窗口标识符"
-                            }
-                            Text {
-                                Layout.fillWidth: true
-                                text: CutActivityControl.identifier
-                            }
-                            MLabel {
-                                Layout.preferredWidth: 100
-                                rectColor: colorConstants.suggestClickedColor
-                                text: "前台包名"
-                            }
-                            Text {
-                                Layout.fillWidth: true
-                                text: CutActivityControl.cutPackageName
-                            }
-                            MLabel {
-                                Layout.preferredWidth: 100
-                                rectColor: colorConstants.suggestClickedColor
-                                text: "前台活动"
-                            }
-                            Text {
-                                Layout.fillWidth: true
-                                text: CutActivityControl.cutActivity
-                            }
-                        }
-                    }
-                }
-                MFrame {    // 简单设备控制
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                     GridLayout {
-                        anchors.centerIn: parent
                         columns: 2
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
                         MLabel {
-                            text: "ADB版本: " + ADBControl.adbVersion
+                            Layout.preferredWidth: 100
+                            rectColor: colorConstants.suggestClickedColor
+                            text: "窗口标识符"
                         }
-                        MButton {
-                            text: "重启ADB"
-                            btnType: MButton.FBtnType.Warning
-                            Layout.alignment: Qt.AlignRight
-                            onClicked: {
-                                ADBControl.restartADB();
-                            }
+                        Text {
+                            Layout.fillWidth: true
+                            text: CutActivityControl.identifier
                         }
-                        MButton {
-                            text: "重启手机"
-                            btnType: MButton.FBtnType.Warning
-                            width: 120
-                            onClicked: {
-                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Reboot)
-                            }
+                        MLabel {
+                            Layout.preferredWidth: 100
+                            rectColor: colorConstants.suggestClickedColor
+                            text: "前台包名"
                         }
-                        MButton {
-                            text: "关闭手机"
-                            btnType: MButton.FBtnType.Warning
-                            width: 120
-                            onClicked: {
-                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Poweroff)
-                            }
+                        Text {
+                            Layout.fillWidth: true
+                            text: CutActivityControl.cutPackageName
                         }
-                        MButton {
-                            text: "重启到RECOVERY"
-                            btnType: MButton.FBtnType.Warning
-                            width: 120
-                            onClicked: {
-                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToRec)
-                            }
+                        MLabel {
+                            Layout.preferredWidth: 100
+                            rectColor: colorConstants.suggestClickedColor
+                            text: "前台活动"
                         }
-                        MButton {
-                            text: "重启到FASTBOOT"
-                            btnType: MButton.FBtnType.Warning
-                            width: 120
-                            onClicked: {
-                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToFB)
-                            }
-                        }
-                    }
-                }
-            }
-
-            ColumnLayout {  // 监控区域
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.rightMargin: 10
-
-                MFrame {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
-
-                    ScrollView {
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        ScrollBar.vertical: ScrollBar {
-                            policy: ScrollBar.AlwaysOff
-                        }
-
-                        ColumnLayout {
-                            width: parent.parent.width
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Layout.preferredWidth: parent.width
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    Layout.preferredWidth: parent.width
-                                    Text {
-                                        text: "电池温度"
-                                        font.pixelSize: 14
-                                    }
-
-                                    MSwitchButton {
-                                        id: checktepBtn
-                                        Layout.alignment: Qt.AlignRight
-                                    }
-                                }
-
-                                Rectangle {
-                                    Layout.fillWidth: true
-                                    height: 100
-                                    radius: 5
-                                    border.width: 1
-                                    color: Qt.rgba(255, 255, 255, 0.65)
-                                    border.color: "gray"
-                                    ChartView {
-                                        anchors.fill: parent
-                                        antialiasing: true
-                                        legend.visible: false
-                                        theme: ChartView.ChartThemeQt
-                                        animationOptions: ChartView.AllAnimations
-                                        plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
-                                        dropShadowEnabled: true
-
-                                        ValueAxis {
-                                            id: xAxis
-                                            min: 0
-                                            // tickCount: 50
-                                            max: 50
-                                            // gridLineVisible: false
-                                        }
-
-                                        ValueAxis {
-                                            id: yAxis
-                                            min: 20
-                                            // tickCount: 10
-                                            max: 40
-                                            // gridLineVisible: false
-                                        }
-                                        SplineSeries {
-                                            id: splineSeries
-                                            axisX: xAxis
-                                            axisY: yAxis
-                                        }
-                                    }
-                                }
-                            }
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Layout.preferredWidth: parent.width
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    Layout.preferredWidth: parent.width
-                                    Text {
-                                        text: "电池电量"
-                                        font.pixelSize: 14
-                                    }
-
-                                    MSwitchButton {
-                                        id: checklevelBtn
-                                        Layout.alignment: Qt.AlignRight
-                                    }
-                                }
-
-                                Rectangle {
-                                    Layout.fillWidth: true
-                                    height: 100
-                                    radius: 5
-                                    border.width: 1
-                                    color: Qt.rgba(255, 255, 255, 0.65)
-                                    border.color: "gray"
-                                    ChartView {
-                                        anchors.fill: parent
-                                        antialiasing: true
-                                        legend.visible: false
-                                        theme: ChartView.ChartThemeQt
-                                        animationOptions: ChartView.AllAnimations
-                                        plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
-                                        dropShadowEnabled: true
-
-                                        ValueAxis {
-                                            id: xAxis2
-                                            min: 0
-                                            // tickCount: 50
-                                            max: 50
-                                            // gridLineVisible: false
-                                        }
-
-                                        ValueAxis {
-                                            id: yAxis2
-                                            min: 0
-                                            // tickCount: 20
-                                            max: 100
-                                            // gridLineVisible: false
-                                        }
-                                        SplineSeries {
-                                            id: splineSeries2
-                                            axisX: xAxis2
-                                            axisY: yAxis2
-                                        }
-                                    }
-                                }
-                            }
-
-
-                            Repeater {
-                                model: monitorMap.length
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Layout.preferredWidth: parent.width
-                                    RowLayout {
-                                        Layout.fillWidth: true
-                                        Layout.preferredWidth: parent.width
-                                        Text {
-                                            text: monitorMap[index].name
-                                            font.pixelSize: 14
-                                        }
-
-                                        MSwitchButton {
-                                            Layout.alignment: Qt.AlignRight
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        Layout.fillWidth: true
-                                        height: 100
-                                        radius: 5
-                                        border.width: 1
-                                        color: Qt.rgba(255, 255, 255, 0.65)
-                                        border.color: "gray"
-                                        ChartView {
-                                            anchors.fill: parent
-                                            antialiasing: true
-                                            legend.visible: false
-                                            theme: ChartView.ChartThemeQt
-                                            animationOptions: ChartView.AllAnimations
-                                            plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
-                                            dropShadowEnabled: true
-
-
-                                            LineSeries {
-                                                // id:
-
-                                            }
-
-                                            // 隐藏坐标轴
-                                            // axes: [
-
-                                            // ]
-                                        }
-                                    }
-                                }
-                            }
+                        Text {
+                            Layout.fillWidth: true
+                            text: CutActivityControl.cutActivity
                         }
                     }
                 }
             }
         }
     }
+
+    //    ColumnLayout { // 主界面
+    //        anchors.fill: parent
+    //        RowLayout {  //  上方区域
+    //            spacing: 10
+    //            Layout.preferredWidth: parent.width
+    //            Layout.fillWidth: true
+    //            width: parent.width
+    //            Layout.preferredHeight: 250
+    //            Layout.alignment: Qt.AlignTop
+
+    //            Layout.maximumHeight: 280
+    //            onWidthChanged:  {
+    //                console.log("宽度" + width)
+    //            }
+    //            MFrame {
+    //                Layout.preferredWidth: parent.width * 0.48
+    //                Layout.fillHeight: true
+    //                Layout.alignment: Qt.AlignLeft
+    //                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+    //                opacity: 0.9
+    //                RowLayout {
+    //                    anchors.fill: parent
+    //                    anchors.margins: 20
+    //                    spacing: 30
+    //                    Rectangle {
+    //                        Layout.preferredHeight: 200
+    //                        Layout.preferredWidth: 120
+    //                        radius: 5 * width / 100
+    //                        color: colorConstants.suggestClickedColor
+    //                        Text {
+    //                            anchors.fill: parent
+    //                            text: "XIAOMI"
+    //                            font.pixelSize: 20
+    //                            color: "white"
+    //                            horizontalAlignment: Text.AlignHCenter
+    //                            verticalAlignment: Text.AlignVCenter
+    //                        }
+    //                    }
+    //                    GridLayout {
+    //                        Layout.fillWidth: true
+    //                        Layout.fillHeight: true
+    //                        Layout.alignment: Qt.AlignVCenter
+    //                        columns: 2
+    //                        Repeater {
+    //                            model: deviceInfoModel
+    //                            MLabel {
+    //                                rectColor: colorConstants.suggestClickedColor
+    //                                text: model.name
+    //                                Layout.row: index
+    //                                Layout.column: 0
+    //                                Layout.preferredWidth: 60
+    //                                Layout.alignment: Qt.AlignLeft
+    //                            }
+    //                        }
+    //                        Repeater {
+    //                            model: deviceInfoModel
+    //                            Label {
+    //                                text: model.info
+    //                                Layout.row: index
+    //                                Layout.fillWidth: true
+    //                                Layout.column: 1
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+
+    //            MFrame {
+    //                Layout.fillWidth: true
+    //                Layout.rightMargin: 10
+    //                Layout.fillHeight: true
+    //                Layout.alignment: Qt.AlignRight
+    //                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+
+    //                ColumnLayout {
+    //                    anchors.centerIn: parent
+    //                    ColumnLayout {
+
+    //                        BatteryRect {
+    //                            level: BatteryControl.level
+    //                        }
+
+    //                        GridLayout {
+    //                            columns: 4
+    //                            Repeater {
+    //                                model: batteryModel
+    //                                MLabel {
+    //                                    rectColor: colorConstants.suggestClickedColor
+    //                                    text: model.name
+    //                                    Layout.row: index / 2
+    //                                    Layout.column: index % 2 == 1 ? 2 : 0
+    //                                }
+    //                            }
+    //                            Repeater {
+    //                                model: batteryModel
+    //                                Label {
+    //                                    text: model.info
+    //                                    Layout.row: index / 2
+    //                                    Layout.column: index % 2 == 1 ? 3 : 1
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        RowLayout { // 下方区域
+    //            spacing: 10
+    //            Layout.fillHeight: true
+    //            Layout.fillWidth: true
+    //            Layout.bottomMargin: 10
+
+    //            ColumnLayout {
+    //                Layout.preferredWidth: 300
+    //                Layout.maximumWidth: 300
+    //                Layout.fillHeight: true
+    //                MFrame {    // 当前活动信息
+    //                    id: activityRoot
+    //                    Layout.fillWidth: true
+    //                    Layout.preferredHeight: 150
+    //                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+    //                    ColumnLayout {
+    //                        anchors.fill: parent
+    //                        anchors.margins: 20
+    //                        RowLayout {
+    //                            Layout.fillWidth: true
+    //                            Layout.preferredHeight: 30
+    //                            Text {
+    //                                font.bold: true
+    //                                font.family: "黑体"
+    //                                font.pixelSize: 20
+    //                                text: "当前前台应用"
+    //                            }
+    //                            Item {
+    //                                Layout.fillWidth: true
+    //                            }
+
+    //                            MButton {
+    //                                Layout.preferredWidth: 80
+    //                                text: "停止当前应用"
+    //                                btnType: MButton.FBtnType.Warning
+    //                                onClicked: {
+    //                                    CutActivityControl.killCutActivity()
+    //                                    NotificationController.send("命令已发送", "当前应用已停止", 1, 3000);
+    //                                }
+    //                            }
+    //                        }
+    //                        GridLayout {
+    //                            columns: 2
+    //                            Layout.fillHeight: true
+    //                            Layout.fillWidth: true
+    //                            MLabel {
+    //                                Layout.preferredWidth: 100
+    //                                rectColor: colorConstants.suggestClickedColor
+    //                                text: "窗口标识符"
+    //                            }
+    //                            Text {
+    //                                Layout.fillWidth: true
+    //                                text: CutActivityControl.identifier
+    //                            }
+    //                            MLabel {
+    //                                Layout.preferredWidth: 100
+    //                                rectColor: colorConstants.suggestClickedColor
+    //                                text: "前台包名"
+    //                            }
+    //                            Text {
+    //                                Layout.fillWidth: true
+    //                                text: CutActivityControl.cutPackageName
+    //                            }
+    //                            MLabel {
+    //                                Layout.preferredWidth: 100
+    //                                rectColor: colorConstants.suggestClickedColor
+    //                                text: "前台活动"
+    //                            }
+    //                            Text {
+    //                                Layout.fillWidth: true
+    //                                text: CutActivityControl.cutActivity
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //                MFrame {    // 简单设备控制
+    //                    Layout.fillWidth: true
+    //                    Layout.fillHeight: true
+    //                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+    //                    GridLayout {
+    //                        anchors.centerIn: parent
+    //                        columns: 2
+    //                        MLabel {
+    //                            text: "ADB版本: " + ADBControl.adbVersion
+    //                        }
+    //                        MButton {
+    //                            text: "重启ADB"
+    //                            btnType: MButton.FBtnType.Warning
+    //                            Layout.alignment: Qt.AlignRight
+    //                            onClicked: {
+    //                                ADBControl.restartADB();
+    //                            }
+    //                        }
+    //                        MButton {
+    //                            text: "重启手机"
+    //                            btnType: MButton.FBtnType.Warning
+    //                            width: 120
+    //                            onClicked: {
+    //                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Reboot)
+    //                            }
+    //                        }
+    //                        MButton {
+    //                            text: "关闭手机"
+    //                            btnType: MButton.FBtnType.Warning
+    //                            width: 120
+    //                            onClicked: {
+    //                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Poweroff)
+    //                            }
+    //                        }
+    //                        MButton {
+    //                            text: "重启到RECOVERY"
+    //                            btnType: MButton.FBtnType.Warning
+    //                            width: 120
+    //                            onClicked: {
+    //                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToRec)
+    //                            }
+    //                        }
+    //                        MButton {
+    //                            text: "重启到FASTBOOT"
+    //                            btnType: MButton.FBtnType.Warning
+    //                            width: 120
+    //                            onClicked: {
+    //                                DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToFB)
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+
+    //            ColumnLayout {  // 监控区域
+    //                Layout.fillWidth: true
+    //                Layout.fillHeight: true
+    //                Layout.rightMargin: 10
+
+    //                MFrame {
+    //                    Layout.fillWidth: true
+    //                    Layout.fillHeight: true
+    //                    wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+
+    //                    ScrollView {
+    //                        anchors.fill: parent
+    //                        anchors.margins: 10
+    //                        ScrollBar.vertical: ScrollBar {
+    //                            policy: ScrollBar.AlwaysOff
+    //                        }
+
+    //                        ColumnLayout {
+    //                            width: parent.parent.width
+
+    //                            ColumnLayout {
+    //                                Layout.fillWidth: true
+    //                                Layout.preferredWidth: parent.width
+    //                                RowLayout {
+    //                                    Layout.fillWidth: true
+    //                                    Layout.preferredWidth: parent.width
+    //                                    Text {
+    //                                        text: "电池温度"
+    //                                        font.pixelSize: 14
+    //                                    }
+
+    //                                    MSwitchButton {
+    //                                        id: checktepBtn
+    //                                        Layout.alignment: Qt.AlignRight
+    //                                    }
+    //                                }
+
+    //                                Rectangle {
+    //                                    Layout.fillWidth: true
+    //                                    height: 100
+    //                                    radius: 5
+    //                                    border.width: 1
+    //                                    color: Qt.rgba(255, 255, 255, 0.65)
+    //                                    border.color: "gray"
+    //                                    ChartView {
+    //                                        anchors.fill: parent
+    //                                        antialiasing: true
+    //                                        legend.visible: false
+    //                                        theme: ChartView.ChartThemeQt
+    //                                        animationOptions: ChartView.AllAnimations
+    //                                        plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
+    //                                        dropShadowEnabled: true
+
+    //                                        ValueAxis {
+    //                                            id: xAxis
+    //                                            min: 0
+    //                                            // tickCount: 50
+    //                                            max: 50
+    //                                            // gridLineVisible: false
+    //                                        }
+
+    //                                        ValueAxis {
+    //                                            id: yAxis
+    //                                            min: 20
+    //                                            // tickCount: 10
+    //                                            max: 40
+    //                                            // gridLineVisible: false
+    //                                        }
+    //                                        SplineSeries {
+    //                                            id: splineSeries
+    //                                            axisX: xAxis
+    //                                            axisY: yAxis
+    //                                        }
+    //                                    }
+    //                                }
+    //                            }
+    //                            ColumnLayout {
+    //                                Layout.fillWidth: true
+    //                                Layout.preferredWidth: parent.width
+    //                                RowLayout {
+    //                                    Layout.fillWidth: true
+    //                                    Layout.preferredWidth: parent.width
+    //                                    Text {
+    //                                        text: "电池电量"
+    //                                        font.pixelSize: 14
+    //                                    }
+
+    //                                    MSwitchButton {
+    //                                        id: checklevelBtn
+    //                                        Layout.alignment: Qt.AlignRight
+    //                                    }
+    //                                }
+
+    //                                Rectangle {
+    //                                    Layout.fillWidth: true
+    //                                    height: 100
+    //                                    radius: 5
+    //                                    border.width: 1
+    //                                    color: Qt.rgba(255, 255, 255, 0.65)
+    //                                    border.color: "gray"
+    //                                    ChartView {
+    //                                        anchors.fill: parent
+    //                                        antialiasing: true
+    //                                        legend.visible: false
+    //                                        theme: ChartView.ChartThemeQt
+    //                                        animationOptions: ChartView.AllAnimations
+    //                                        plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
+    //                                        dropShadowEnabled: true
+
+    //                                        ValueAxis {
+    //                                            id: xAxis2
+    //                                            min: 0
+    //                                            // tickCount: 50
+    //                                            max: 50
+    //                                            // gridLineVisible: false
+    //                                        }
+
+    //                                        ValueAxis {
+    //                                            id: yAxis2
+    //                                            min: 0
+    //                                            // tickCount: 20
+    //                                            max: 100
+    //                                            // gridLineVisible: false
+    //                                        }
+    //                                        SplineSeries {
+    //                                            id: splineSeries2
+    //                                            axisX: xAxis2
+    //                                            axisY: yAxis2
+    //                                        }
+    //                                    }
+    //                                }
+    //                            }
+
+
+    //                            Repeater {
+    //                                model: monitorMap.length
+    //                                ColumnLayout {
+    //                                    Layout.fillWidth: true
+    //                                    Layout.preferredWidth: parent.width
+    //                                    RowLayout {
+    //                                        Layout.fillWidth: true
+    //                                        Layout.preferredWidth: parent.width
+    //                                        Text {
+    //                                            text: monitorMap[index].name
+    //                                            font.pixelSize: 14
+    //                                        }
+
+    //                                        MSwitchButton {
+    //                                            Layout.alignment: Qt.AlignRight
+    //                                        }
+    //                                    }
+
+    //                                    Rectangle {
+    //                                        Layout.fillWidth: true
+    //                                        height: 100
+    //                                        radius: 5
+    //                                        border.width: 1
+    //                                        color: Qt.rgba(255, 255, 255, 0.65)
+    //                                        border.color: "gray"
+    //                                        ChartView {
+    //                                            anchors.fill: parent
+    //                                            antialiasing: true
+    //                                            legend.visible: false
+    //                                            theme: ChartView.ChartThemeQt
+    //                                            animationOptions: ChartView.AllAnimations
+    //                                            plotArea: Qt.rect(0, 10, parent.width, 100 - 20)
+    //                                            dropShadowEnabled: true
+
+
+    //                                            LineSeries {
+    //                                                // id:
+
+    //                                            }
+
+    //                                            // 隐藏坐标轴
+    //                                            // axes: [
+
+    //                                            // ]
+    //                                        }
+    //                                    }
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
 
     Timer {
         id: btyTeTi

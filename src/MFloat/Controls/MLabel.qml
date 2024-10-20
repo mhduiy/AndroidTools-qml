@@ -11,6 +11,7 @@ Item {
     property int hMargin: 2
     property int radius: 5
     property Text wrapperText: centerText
+    property alias font: centerText.font
 
     Rectangle {
         id: rect
@@ -18,9 +19,9 @@ Item {
         color: root.rectColor
         radius: root.radius
         Text {
+            id: centerText
             x: hMargin
             y: vMargin
-            id: centerText
             text: root.text
             color: root.textColor
             horizontalAlignment: Text.AlignHCenter

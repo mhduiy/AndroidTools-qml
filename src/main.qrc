@@ -22,5 +22,7 @@
         <file>res/shaders/vertex.vsh</file>
         <file>res/scrcpy-server</file>
         <file>qml/pages/ItemPage.qml</file>
+        <file>qml/components/AppInfoItem.qml</file>
+        <file>qml/components/MonitorBarItem.qml</file>
     </qresource>
 </RCC>

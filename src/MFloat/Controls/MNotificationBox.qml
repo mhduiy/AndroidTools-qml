@@ -31,13 +31,13 @@ Item {
             PropertyAnimation {
                 target: root
                 properties: "x"
-                duration: 500
-                easing.type: Easing.InBack
+                duration: 300
+                easing.type: Easing.InExpo
             }
             PropertyAnimation {
                 target: root
                 properties: "opacity"
-                duration: 500
+                duration: 300
             }
         }
     ]
