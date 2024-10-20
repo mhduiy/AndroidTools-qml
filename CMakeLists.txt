@@ -24,7 +24,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Ne
 include_directories(.)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/adb)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPagetools)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPageTools)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/components)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/controlPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/flashPageTools)
