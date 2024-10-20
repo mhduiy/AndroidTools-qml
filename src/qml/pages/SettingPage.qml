@@ -11,7 +11,6 @@ import WallpaperHelper 1.0
 ItemPage {
     ScrollView {
         anchors.fill: parent
-        anchors.rightMargin: 10
         ScrollBar.vertical: ScrollBar {
             policy: ScrollBar.AlwaysOff
         }

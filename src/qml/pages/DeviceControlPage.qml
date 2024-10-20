@@ -19,7 +19,6 @@ ItemPage {
 
     RowLayout {
         anchors.fill: parent
-        anchors.bottomMargin: 10
         ColumnLayout {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -130,7 +129,7 @@ ItemPage {
             }
 
             ColumnLayout {
-                width: parent.parent.width - 10
+                width: parent.parent.width
                 StandardComponent {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 170

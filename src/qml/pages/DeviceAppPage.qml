@@ -13,8 +13,6 @@ ItemPage {
     }
     RowLayout {
         anchors.fill: parent
-        anchors.bottomMargin: 10
-        anchors.rightMargin: 10
 
         MFrame {
             Layout.minimumWidth: 300

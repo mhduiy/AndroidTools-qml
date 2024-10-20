@@ -24,5 +24,6 @@
         <file>qml/pages/ItemPage.qml</file>
         <file>qml/components/AppInfoItem.qml</file>
         <file>qml/components/MonitorBarItem.qml</file>
+        <file>qml/components/LeftBar.qml</file>
     </qresource>
 </RCC>

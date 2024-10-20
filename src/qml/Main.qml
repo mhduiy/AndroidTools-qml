@@ -11,8 +11,8 @@ import WallpaperHelper 1.0
 
 ApplicationWindow {
     id: root
-    width: 1000
-    height: 610
+    width: 900
+    height: 600
     visible: true
     title: "AndroidTools"
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
@@ -25,7 +25,6 @@ ApplicationWindow {
             rootRect.prepareDo = Main.PrepareDo.ShowWindow
         }
     }
-
     onWindowStateChanged: handleWindowStateChanged(windowState)
 
     ColorConstants {
@@ -151,115 +150,15 @@ ApplicationWindow {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Rectangle { // left
-                    id: leftSidebar
-                    Layout.fillHeight: true
-                    width: 200
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    color: "transparent"
-
-                    RowLayout {
-                        width: parent.width
-                        height: parent.height
-
-                        Item {
-                            height: parent.height
-                            width: 5
-
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            ColumnLayout {
-                                anchors.fill: parent
-                                Layout.alignment: Qt.AlignTop
-
-                                RowLayout {
-                                    spacing: 4
-                                    Layout.margins: 5
-                                    Layout.alignment: Qt.AlignTop
-                                    Text {
-                                        id: greeterText
-                                        font.bold: true
-                                        font.pixelSize: 18
-                                        color: "#E67E22"
-                                        text: "Hi! 下午好"
-                                        scale: 0.4
-                                        opacity: 0
-
-                                        Behavior on scale {
-                                            PropertyAnimation {
-                                                duration: 2000
-                                                easing.type: Easing.OutBack
-                                            }
-                                        }
-                                        Behavior on opacity {
-                                            PropertyAnimation {
-                                                duration: 2000
-                                            }
-                                        }
-
-                                        Component.onCompleted: {
-                                            scale = 1.0
-                                            opacity = 1.0
-                                        }
-                                    }
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                    }
-
-                                    MButton {
-                                        text: "无线连接"
-                                        btnType: MButton.FBtnType.Ordinary
-                                        onClicked: {
-                                            wirelessConnectDialog.open()
-                                        }
-                                    }
-                                }
-
-                                DeviceListview {
-                                    Layout.fillWidth: true
-                                    Layout.alignment: Qt.AlignTop
-                                    anchors.margins: 4
-                                    Layout.preferredHeight: parent.height * 0.30
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                }
-
-                                ControlListview {
-                                    id: controlListView
-                                    Layout.fillWidth: true
-                                    anchors.margins: 4
-                                    Layout.alignment: Qt.AlignBottom
-                                    Layout.preferredHeight: parent.height * 0.65
-
-                                    onCurrentIndexChanged: {
-                                        mainStackLayout.currentIndex = currentIndex
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.alignment: Qt.AlignTop
-                            width: 2
-                            height: parent.height
-                            color: "gray"
-                        }
-                    }
-                }
 
                 StackLayout {
                     id: mainStackLayout
                     Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    Layout.leftMargin: 15
+                    Layout.rightMargin: 5
+                    Layout.bottomMargin: 5
                     property int preIndex: 0
 
                     onCurrentIndexChanged: {
@@ -308,67 +207,7 @@ ApplicationWindow {
 
     }
 
-
-
-    Dialog {
-        id: wirelessConnectDialog
-        title: "开始无线连接"
-        width: 500
-        height: 300
-        modal: Qt.ApplicationModal
-        visible: false
-        anchors.centerIn: parent
-        ColumnLayout {
-            anchors.fill: parent
-            Text {
-                text: "1. 打开开发者模式中的无线调试"
-                font.family: "黑体"
-                font.pixelSize: 16
-            }
-            Text {
-                text: "2. 点击使用配对码配对设备，并填写IP和配对码，若已经配对则忽略"
-                font.family: "黑体"
-                font.pixelSize: 16
-                width: 100
-            }
-            RowLayout {
-                MLineEdit {
-                    id: pairEdit
-                    placeholderText: "IP:PORT"
-                    Layout.minimumWidth: 200
-                }
-                MLineEdit {
-                    id: pairCodeEdit
-                    placeholderText: "配对码"
-                    Layout.minimumWidth: 100
-                }
-                MButton {
-                    btnType: MButton.FBtnType.Suggest
-                    text: "配对设备"
-                    onClicked: {
-                        ADBControl.pairDevice(pairEdit.editItem.text, pairCodeEdit.editItem.text)
-                    }
-                }
-            }
-            Text {
-                text: "3. 返回上一级，查看IP和端口，并填写"
-                font.family: "黑体"
-                font.pixelSize: 16
-            }
-            RowLayout {
-                MLineEdit {
-                    id: connectEdit
-                    placeholderText: "IP:PORT"
-                    Layout.minimumWidth: 200
-                }
-                MButton {
-                    btnType: MButton.FBtnType.Suggest
-                    text: "连接设备"
-                    onClicked: {
-                        ADBControl.connectDevice(connectEdit.editItem.text)
-                    }
-                }
-            }
-        }
+    LeftBar {
+        backImage: imageRect
     }
 }

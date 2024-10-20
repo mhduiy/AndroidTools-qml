@@ -3,26 +3,21 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
 
-Item {
-    width: 20
-    height: 100
-    property int currentIndex: listView.currentIndex
-    ListView {
-        id: listView
-        anchors.fill: parent
-        clip: true
-        currentIndex: 0
-        model: [
-            "设备信息",
-            "设备控制",
-            "软件管理",
-            "刷机工具",
-            "设备镜像",
-            "设置"
-        ]
-        delegate: lvDelegate
-        spacing: 10
-    }
+ListView {
+    id: listView
+    clip: true
+    currentIndex: 0
+    height: contentHeight
+    model: [
+        "设备信息",
+        "设备控制",
+        "软件管理",
+        "刷机工具",
+        "设备镜像",
+        "设置",
+    ]
+    delegate: lvDelegate
+    spacing: 10
 
     Component {
         id: lvDelegate
@@ -31,7 +26,7 @@ Item {
             width: ListView.view.width
             height: 40
             radius: 6
-            color: ListView.isCurrentItem ? Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.65) : Qt.rgba(255,255,255, 0.65)
+            color: ListView.isCurrentItem ? Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.5) : Qt.rgba(255,255,255, 0.3)
             Behavior on color {
                 PropertyAnimation {
                     duration: 100
@@ -71,5 +66,6 @@ Item {
                 }
             }
         }
+
     }
 }

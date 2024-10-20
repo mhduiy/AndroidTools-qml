@@ -15,8 +15,6 @@ ItemPage {
     }
     ColumnLayout {
         anchors.fill: parent
-        anchors.rightMargin: 10
-        anchors.bottomMargin: 10
         Text {
             Layout.fillWidth: true
             Layout.preferredHeight: 30

@@ -12,8 +12,6 @@ ItemPage {
     }
     RowLayout {
         anchors.fill: parent
-        anchors.rightMargin: 10
-        anchors.bottomMargin: 10
         Rectangle {
             // Layout.fillHeight: true
             Layout.preferredHeight: 560

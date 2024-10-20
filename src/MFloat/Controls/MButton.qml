@@ -71,13 +71,6 @@ Item {
             }
         }
 
-        Behavior on scale {
-            PropertyAnimation {
-                duration: 300
-                easing.type: Easing.OutBack
-            }
-        }
-
         ParallelAnimation {
             id: clickRectAni
             PropertyAnimation{
@@ -136,11 +129,9 @@ Item {
             }
             onEntered: {
                 btnRect.btnState = MButton.FBtnState.Hover
-                btnRect.scale = 1.1
             }
             onExited: {
                 btnRect.btnState = MButton.FBtnState.Normal
-                btnRect.scale = 1.0
             }
             onPressed: {
                 btnRect.btnState = MButton.FBtnState.Clicked
