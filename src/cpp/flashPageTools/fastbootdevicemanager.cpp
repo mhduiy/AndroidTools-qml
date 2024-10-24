@@ -59,6 +59,14 @@ FastBootDeviceManager::FastBootDeviceManager(QObject *parent)
     connect(m_deviceCheckTool, &DeviceCheckTool::checkFinish, this, &FastBootDeviceManager::handleDeviceChanged);
 }
 
+FastBootDeviceManager::~FastBootDeviceManager()
+{
+    qInfo() << "FastBootDeviceManager Thread exiting";
+    m_deviceCheckThread->quit();
+    m_deviceCheckThread->wait();
+    qInfo() << "FastBootDeviceManager Thread exited";
+}
+
 void FastBootDeviceManager::setCurrentDevice(const QString &deviceCode)
 {
     Q_UNUSED(deviceCode)

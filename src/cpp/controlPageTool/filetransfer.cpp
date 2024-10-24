@@ -31,6 +31,14 @@ FileTransfer::FileTransfer(QObject *parent)
     m_handler->moveToThread(m_handleThread);
 }
 
+FileTransfer::~FileTransfer()
+{
+    qInfo() << "FileTransfer Thread exiting";
+    m_handleThread->quit();
+    m_handleThread->wait();
+    qInfo() << "FileTransfer Thread exited";
+}
+
 void FileTransfer::transmission(const QString &source, const QString &targetDir)
 {
     if (targetDir.isEmpty()) {

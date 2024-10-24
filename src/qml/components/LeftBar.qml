@@ -8,9 +8,10 @@ import Qt5Compat.GraphicalEffects
 
 Item {
     id: leftSidebar
+    property bool startAniStatus: false
     width: 220
     height: Window.height
-    x: hoverHandler.hovered ? 0 : -width + 20
+    x: hoverHandler.hovered  ? 0 : startAniStatus ?  -width + 80 : -width + 20
     y: 0
     property var backImage
     Behavior on x {
@@ -102,9 +103,28 @@ Item {
             }
         }
     }
+
     HoverHandler {
 
         id: hoverHandler
+    }
+
+    Component.onCompleted: {
+        startAniTimer.start()
+    }
+
+    Timer {
+        id: startAniTimer
+        interval: 1500
+        repeat : true
+        onTriggered: {
+            if (!startAniStatus) {
+                startAniStatus = true
+                repeat = false
+            } else {
+                startAniStatus = false
+            }
+        }
     }
 
     Dialog {

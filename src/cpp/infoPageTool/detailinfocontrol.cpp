@@ -4,12 +4,20 @@
 
 DetailInfoControl::DetailInfoControl(QObject *parent) : QObject(parent)
 {
-    QThread *thread = new QThread(this);
+    m_thread = new QThread(this);
     m_helper = new DetailInfoUpdateHelper();
-    m_helper->moveToThread(thread);
-    thread->start();
+    m_helper->moveToThread(m_thread);
+    m_thread->start();
     connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, m_helper, &DetailInfoUpdateHelper::updateInfo);
     connect(m_helper, &DetailInfoUpdateHelper::updateFinish, this, &DetailInfoControl::updateInfo);
+}
+
+DetailInfoControl::~DetailInfoControl()
+{
+    qInfo() << "DetailInfoControl Thread exiting";
+    m_thread->quit();
+    m_thread->wait();
+    qInfo() << "DetailInfoControl Thread exited";
 }
 
 void DetailInfoControl::updateInfo()

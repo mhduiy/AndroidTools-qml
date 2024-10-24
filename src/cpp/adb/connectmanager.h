@@ -19,6 +19,7 @@ public:
      * @brief startCheckDevice 开始检测设备
      */
     void startCheckDevice();
+    void stopCheckDevice();
 
     DeviceBaceInfo getDeviceBaceInfo(const QString &code = "");
     DeviceBatteryInfo getDeviceBatteryInfo(const QString &code = "");

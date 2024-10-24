@@ -20,7 +20,7 @@ class AppDetailControl : public QObject
     Q_PROPERTY(QVariant minSdk READ getMinSdk NOTIFY valueChanged)
     Q_PROPERTY(QVariant appId READ getAppId NOTIFY valueChanged)
 public:
-
+    ~AppDetailControl();
     QVariant getPackageName() { return m_info.packageName; };
     QVariant getVersionCode() { return m_info.versionName; } ;
     QVariant getInstallDate()  { return m_info.installDate; };

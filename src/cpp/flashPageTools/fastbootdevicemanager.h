@@ -34,6 +34,7 @@ class FastBootDeviceManager : public QObject
     Q_PROPERTY(QString currentDeviceCode READ currentDeviceCode NOTIFY currentDeviceChanged)
 
 public:
+    ~FastBootDeviceManager();
     void setCurrentDevice(const QString &deviceCode);
     void setCurrentDevice(int deviceIndex);
 

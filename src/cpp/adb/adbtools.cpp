@@ -45,12 +45,15 @@ QString ADBTools::executeCommand(APP app, const QStringList &args, const QString
         return {};
     }
 
+    m_isRunning.storeRelease(m_isRunning.loadRelaxed() + 1);
+
     if (!writeStr.isEmpty()) {
         pro.write(writeStr.toLocal8Bit());
         pro.closeWriteChannel(); // 关闭写入通道，表示数据写入完毕
     }
 
     pro.waitForFinished(timeout);    //命令执行超过3秒强制提出
+    m_isRunning.storeRelease(m_isRunning.loadRelaxed() - 1);
 
     QString ret = pro.readAllStandardOutput();
     if(ret.isEmpty()) {
@@ -68,4 +71,9 @@ ADBTools *ADBTools::instance(QObject *parent)
         instance = new ADBTools(parent);
     }
     return instance;
+}
+
+bool ADBTools::isRunning()
+{
+    return m_isRunning.loadRelaxed();
 }

@@ -25,6 +25,14 @@ AppDetailControl::AppDetailControl(QObject *parent)
     connect(m_appHelper, &AppHelper::requestUpdateSoftList, this, &AppDetailControl::requestUpdateSoftList);
 }
 
+AppDetailControl::~AppDetailControl()
+{
+    qInfo() << "AppDetail Thread exiting";
+    m_appHelperThread->quit();
+    m_appHelperThread->wait();
+    qInfo() << "AppDetail Thread exited";
+}
+
 void AppDetailControl::updateInfo(const QString &packageName)
 {
     QMetaObject::invokeMethod(m_appHelper, "updateDetailInfo", Qt::QueuedConnection, packageName);

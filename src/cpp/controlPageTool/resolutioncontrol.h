@@ -14,6 +14,7 @@ class ResolutionControl : public QObject
     Q_PROPERTY(quint16 dpi READ getScreenDPI WRITE setScreenDPI NOTIFY screenDPIChanged)
 
 public:
+    ~ResolutionControl();
     void setResolutionWidth(quint16 width);
     void setResolutionHeight(quint16 height);
     void setScreenDPI(quint16 dpi);
@@ -35,6 +36,7 @@ private:
     quint16 m_scrennWidth;
     quint16 m_deviceDpi;
     DetailInfoUpdateHelper *m_detailInfohelper;
+    QThread *m_thread;
 };
 
 #endif // RESOLUTIONCONTROL_H

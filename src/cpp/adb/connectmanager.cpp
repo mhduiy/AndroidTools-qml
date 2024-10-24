@@ -14,11 +14,11 @@ ConnectManager::ConnectManager(QObject *parent) : QObject(parent)
 
     connect(this, &ConnectManager::deviceConnected, [](QString code){
         qInfo() << code << " connected";
-        NotificationController::instance()->send("检测到设备状态改变", QString(code + "已连接"));
+        NotificationController::instance()->send("发现设备", QString(code + "已连接"));
     });
     connect(this, &ConnectManager::deviceDisconnected, [](QString code){
         qInfo() << code << " disconnected";
-        NotificationController::instance()->send("检测到设备状态改变", QString(code + "已断开"), NotificationController::Warning);
+        NotificationController::instance()->send("设备断开", QString(code + "已断开"), NotificationController::Warning);
     });
 
     // TODO 可能导致异常
@@ -45,6 +45,14 @@ bool ConnectManager::setCurrentDeviceCode(const QString &code)
 void ConnectManager::startCheckDevice()
 {
     m_deviceCheckTimer->start();
+}
+
+void ConnectManager::stopCheckDevice()
+{
+    m_deviceCheckTimer->stop();
+    qInfo() << "等待ADB执行结束";
+    while(ADBTools::instance()->isRunning());
+    qInfo() << "ADB执行结束";
 }
 
 DeviceBaceInfo ConnectManager::getDeviceBaceInfo(const QString &code)

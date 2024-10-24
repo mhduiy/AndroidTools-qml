@@ -28,6 +28,7 @@ class AppPageTool : public QObject
     Q_OBJECT
     SINGLETON(AppPageTool)
 public:
+    ~AppPageTool();
 
 private:
 void initData();

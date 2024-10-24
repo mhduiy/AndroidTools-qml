@@ -20,6 +20,15 @@ AppPageTool::AppPageTool(QObject *parent)
     connect(m_appHandle, &AppInfoHandle::updateListFinish, this, &AppPageTool::updateAppListInfo);
 }
 
+AppPageTool::~AppPageTool()
+{
+    qInfo() << "AppPageTool Thread exiting";
+    m_appHandleThread->quit();
+    m_appHandleThread->wait();
+    qInfo() << "AppPageTool Thread exited";
+
+}
+
 void AppPageTool::updateAppListInfo()
 {
     m_softListModel->clearData();

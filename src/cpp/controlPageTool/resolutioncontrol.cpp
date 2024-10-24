@@ -5,10 +5,10 @@
 
 ResolutionControl::ResolutionControl(QObject *parent) : QObject(parent)
 {
-    QThread *thread = new QThread(this);
+    m_thread = new QThread(this);
     auto *m_detailInfohelper = new DetailInfoUpdateHelper();
-    m_detailInfohelper->moveToThread(thread);
-    thread->start();
+    m_detailInfohelper->moveToThread(m_thread);
+    m_thread->start();
     connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, m_detailInfohelper, &DetailInfoUpdateHelper::updateInfo);
     connect(m_detailInfohelper, &DetailInfoUpdateHelper::updateFinish, this, [this, m_detailInfohelper](){
         auto infos = m_detailInfohelper->getInfo();
@@ -17,6 +17,14 @@ ResolutionControl::ResolutionControl(QObject *parent) : QObject(parent)
         setResolutionHeight(sizeInfo.last().toUInt());
         setScreenDPI(infos.value(8).toUInt());
     });
+}
+
+ResolutionControl::~ResolutionControl()
+{
+    qInfo() << "ResolutionControl Thread exiting";
+    m_thread->quit();
+    m_thread->wait();
+    qInfo() << "ResolutionControl Thread exited";
 }
 
 void ResolutionControl::setResolutionWidth(quint16 width)

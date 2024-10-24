@@ -25,6 +25,7 @@ class DetailInfoControl : public QObject
 
     Q_PROPERTY(QVariantList info READ getInfo NOTIFY valueChanged)
 public:
+    ~DetailInfoControl();
     void updateInfo();
     QVariantList getInfo() const { return m_info; };
 
@@ -34,6 +35,7 @@ signals:
 private:
     QVariantList m_info;
     DetailInfoUpdateHelper *m_helper;
+    QThread *m_thread;
 };
 
 #endif // DETAILINFOCONTROL_H

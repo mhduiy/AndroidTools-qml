@@ -23,6 +23,7 @@ class FileTransfer : public QObject
     Q_OBJECT
     SINGLETON(FileTransfer)
 public:
+    ~FileTransfer();
     Q_INVOKABLE void transmission(const QString &source, const QString &targetDir);
 private:
     FileTransferHandler *m_handler;

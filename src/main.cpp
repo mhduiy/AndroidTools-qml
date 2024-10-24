@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
     FlashPageTool::instance(&app);
     // 加载ImagePage相关逻辑
     ImagePageTool::instance(&app);
-
     // 加载SettingPage的相关逻辑
     SettingPageTools::instance(&app);
 
+    // 注册通知控制管理
     NotificationController::instance(&app);
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
 
@@ -56,6 +56,14 @@ int main(int argc, char *argv[])
         &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.load(url);
+
+    QObject::connect(qApp, &QApplication::aboutToQuit, qApp, [thread]() {
+        ConnectManager::instance()->stopCheckDevice();
+        qInfo() << "等待设备管理线程结束";
+        thread->quit();
+        thread->wait();
+        qInfo() << "设备管理线程结束";
+    });
 
     return app.exec();
 }
