@@ -10,7 +10,7 @@ class DetailInfoUpdateHelper : public QObject
 public:
     explicit DetailInfoUpdateHelper(QObject *parent = nullptr);
     void updateInfo();
-    QVariantList getInfo() {return m_info;}
+    QVariantList getInfo() { return m_info; }
     friend class DetailInfoControl;
 signals:
     void updateFinish();
@@ -22,9 +22,29 @@ class DetailInfoControl : public QObject
 {
     Q_OBJECT
     SINGLETON(DetailInfoControl)
-
     Q_PROPERTY(QVariantList info READ getInfo NOTIFY valueChanged)
 public:
+
+    enum DetailInfoType {
+        DETA_MANUFACTURER = 0,
+        DETA_BRAND,
+        DETA_MODEL,
+        DETA_DEVICENAME,
+        DETA_DEVICECODE,
+        DETA_SYSTEMINFO,
+        DETA_ANDROIDVERSION,
+        DETA_RESOLVING,
+        DETA_DPI,
+        DETA_MACADDR,
+        DETA_IPADDR,
+        DETA_CPUINFO,
+        DETA_MEMORY,
+        DETA_SDKVERSION,
+        DETA_SERIALNUMBER
+    };
+
+    Q_ENUM(DetailInfoType)
+
     ~DetailInfoControl();
     void updateInfo();
     QVariantList getInfo() const { return m_info; };

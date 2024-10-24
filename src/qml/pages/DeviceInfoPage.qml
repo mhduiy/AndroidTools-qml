@@ -56,7 +56,7 @@ ItemPage {
                         radius: 10
                         Text {
                             anchors.fill: parent
-                            text: "XIAOMI"
+                            text: DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER]
                             color: "white"
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -65,14 +65,18 @@ ItemPage {
 
                     ColumnLayout {
                         Text {
-                            text: "XIAOMI MI 8 LITE"
+                            text: {
+                                return DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME] === "" ?
+                                    DetailInfoControl.info[DetailInfoControl.DETA_MODEL]
+                                    : DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME]
+                            }
                             font.pixelSize: 18
                             font.bold: true
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                         }
                         Text {
-                            text: "安卓版本: 12"
+                            text: "安卓版本: " + DetailInfoControl.info[DetailInfoControl.DETA_ANDROIDVERSION]
                             opacity: 0.8
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -126,28 +130,28 @@ ItemPage {
                 AppInfoItem {
                     title: "硬件"
                     content: {
-                        "设备名: platant\n设备代号: aosp\n主板序列号: 5a5s6d"
+                        return `设备型号: ${DetailInfoControl.info[DetailInfoControl.DETA_MODEL]}\n设备代号: ${DetailInfoControl.info[DetailInfoControl.DETA_DEVICECODE]}\n主板序列号: ${DetailInfoControl.info[DetailInfoControl.DETA_SERIALNUMBER]}`
                     }
                 }
 
                 AppInfoItem {
                     title: "软件"
                     content: {
-                        "系统名称: MIUI\n构建版本号: 3847587\n安卓版本: 13"
+                        `系统名称: ${DetailInfoControl.info[DetailInfoControl.DETA_SYSTEMINFO]}\n构建版本号: 3847587\n安卓版本: ${DetailInfoControl.info[DetailInfoControl.DETA_ANDROIDVERSION]}`
                     }
                 }
 
                 AppInfoItem {
                     title: "CPU"
                     content: {
-                        "高通骁龙660\n最大主频 3000MHZ  核心数 8"
+                        `高通骁龙660\n最大主频 3000MHZ  核心数 8`
                     }
                 }
 
                 AppInfoItem {
                     title: "屏幕"
                     content: {
-                        "分辨率: 1920x1080\nDPI: 300"
+                        `分辨率:  ${DetailInfoControl.info[DetailInfoControl.DETA_RESOLVING]}\nDPI:  ${DetailInfoControl.info[DetailInfoControl.DETA_DPI]}`
                     }
                 }
             }

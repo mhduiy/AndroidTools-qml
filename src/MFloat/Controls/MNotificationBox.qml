@@ -88,6 +88,8 @@ Item {
                     return colorConstants.warningClickedColor
                 }
             }
+            border.color: Qt.lighter(color, 1.3)
+            border.width: 1
 
             Item {
                 anchors.fill: parent
