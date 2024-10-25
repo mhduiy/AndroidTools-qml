@@ -16,7 +16,7 @@ void StartActivity::start(const QString &activity, const QString &argsStr)
 
     const QString &cutDevice = ConnectManager::instance()->currentDeviceCode();
 
-    auto operatorFunc = [&activity, &argsStr, &cutDevice]() -> void{
+    auto operatorFunc = [activity, argsStr, cutDevice]() -> void{
         ADBInterface::instance()->startActivity(cutDevice, activity, argsStr.split(' '));
     };
 

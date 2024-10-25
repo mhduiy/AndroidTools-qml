@@ -16,7 +16,7 @@ void InputText::pushKey(Qt::Key key)
     if (cutDevice.isEmpty() || cutKey < 0) {
         return;
     }
-    auto operatorFunc = [cutKey, &cutDevice]() -> void {
+    auto operatorFunc = [cutKey, cutDevice]() -> void {
         ADBInterface::instance()->pushKey(QString::number(cutKey), cutDevice);
     };
 

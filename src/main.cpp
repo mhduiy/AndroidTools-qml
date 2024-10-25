@@ -4,6 +4,8 @@
 #include <QQmlContext>
 #include <QThread>
 #include <QQuickItem>
+#include <QElapsedTimer>
+
 #include "cpp/adb/connectmanager.h"
 #include "cpp/infoPageTool/infopagetool.h"
 #include "cpp/controlPageTool/controlPageTool.h"
@@ -22,6 +24,9 @@ int main(int argc, char *argv[])
     qunsetenv("https_proxy");
 #endif
 
+    QElapsedTimer loaderTimer;
+    loaderTimer.start();
+
     ADBTools::instance(&app);
     ADBInterface *interface = ADBInterface::instance(&app);
     interface->startADBService();
@@ -33,22 +38,31 @@ int main(int argc, char *argv[])
     // 开始检测设备连接
     ConnectManager::instance()->startCheckDevice();
 
+    qInfo() << "load1" << loaderTimer.elapsed();
     // 加载InfoPage的相关逻辑
     InfoPageTool::instance(&app);
+    qInfo() << "load2" << loaderTimer.elapsed();
     // 加载ControlPage相关逻辑
     ControlPageTool::instance(&app);
+    qInfo() << "load3" << loaderTimer.elapsed();
     // 加载AppPage的相关逻辑
     AppPageTool::instance(&app);
+    qInfo() << "load4" << loaderTimer.elapsed();
     // 加载FlashPage相关逻辑
     FlashPageTool::instance(&app);
+    qInfo() << "load5" << loaderTimer.elapsed();
     // 加载ImagePage相关逻辑
     ImagePageTool::instance(&app);
+    qInfo() << "load6" << loaderTimer.elapsed();
     // 加载SettingPage的相关逻辑
     SettingPageTools::instance(&app);
+    qInfo() << "load7" << loaderTimer.elapsed();
 
     // 注册通知控制管理
     NotificationController::instance(&app);
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
+    qInfo() << "load8" << loaderTimer.elapsed();
+
 
     QQmlApplicationEngine engine;
     const QUrl url("qrc:/qml/Main.qml");
@@ -56,6 +70,7 @@ int main(int argc, char *argv[])
         &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.load(url);
+    qInfo() << "load9" << loaderTimer.elapsed();
 
     QObject::connect(qApp, &QApplication::aboutToQuit, qApp, [thread]() {
         ConnectManager::instance()->stopCheckDevice();

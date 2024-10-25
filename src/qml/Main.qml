@@ -101,7 +101,9 @@ ApplicationWindow {
                 id: backgroundImage
                 fillMode: Image.PreserveAspectCrop
                 source: WallpaperHelper.wallpaper
+                asynchronous: true
                 visible: false
+                
             }
             Rectangle {
                 id: mask
@@ -176,30 +178,36 @@ ApplicationWindow {
                     }
 
                     DeviceInfoPage {
-                        anchors.fill: parent
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                         Component.onCompleted: {
                             state: "pageShow"
                         }
                     }
 
                     DeviceControlPage {
-                        anchors.fill: parent
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
 
                     DeviceAppPage {
-                        anchors.fill: parent
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
 
                     DeviceFlashPage {
-                        anchors.fill: parent
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
 
                     DeviceImagePage {
-                        anchors.fill: parent
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
 
                     SettingPage {
-                        anchors.fill: parent
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
                 }
             }
