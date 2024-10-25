@@ -34,168 +34,118 @@ ItemPage {
 
     RowLayout {
         anchors.fill: parent
-        MFrame {
+        MWrapper {
             Layout.preferredWidth: parent.width * 0.48
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft
-            wrapperColor: Qt.rgba(255, 255, 255, 0.65)
-            opacity: 0.9
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 10
-                // 设备Title
-                RowLayout {
-                    Layout.preferredHeight: 50
-                    implicitHeight: 50
-                    Layout.fillWidth: true
-                    spacing: 20
-                    Rectangle {
-                        color: "black"
-                        Layout.preferredWidth: 60
-                        Layout.preferredHeight: 50
-                        radius: 10
-                        Text {
-                            anchors.fill: parent
-                            text: DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER]
-                            color: "white"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
+            ScrollView {
+                id: scrollView
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                ColumnLayout {
+                   width: scrollView.availableWidth
+                    // 设备Title
+                    spacing: 10
+                    Text {
+                        text: {
+                            return DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER] + " "
+                                    + (DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME] === "" ?
+                                        DetailInfoControl.info[DetailInfoControl.DETA_MODEL]
+                                      : DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME])
                         }
+                        font.pixelSize: 22
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
 
-                    ColumnLayout {
-                        Text {
-                            text: {
-                                return DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME] === "" ?
-                                    DetailInfoControl.info[DetailInfoControl.DETA_MODEL]
-                                    : DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME]
+                    Text {
+                        text: "设备序列号: " + DetailInfoControl.info[DetailInfoControl.DETA_SERIALNUMBER]
+                        opacity: 0.8
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    Item {
+                        Layout.preferredHeight: 10
+                    }
+
+                    Repeater {
+                        id: deviceDetailInfoRep
+                        property var texts: [
+                            ["厂商", "品牌", "型号", "设备名", "设备代号"],
+                            ["CPU信息", "最大频率", "核心数"],
+                            ["系统", "安卓版本", "sdk版本"],
+                            ["尺寸", "分辨率", "DPI"],
+                            ["MAC地址", "IP地址", "内存容量"]
+                        ]
+                        property var values: [
+                            ["Xiaomi", "Redmi K40", "ds325252", "adsd", "325"],
+                            ["高通骁龙660", "3Ghz", "8"],
+                            ["MIUI 12", "12", "22"],
+                            ["6.2", "1920*1080", "300"],
+                            ["sd:sd:rt:wq:fd:as:sd", "192.168.1.21", "16GB"]
+                        ]
+                        property var titles: ["设备信息", "处理器", "系统信息", "屏幕", "其他信息"]
+                        model: texts.length
+                        ColumnLayout {
+                            Text {
+                                text: deviceDetailInfoRep.titles[index]
+                                font.bold: true
+                                font.pixelSize: 18
+                                color: colorConstants.ordinaryClickedColor
                             }
-                            font.pixelSize: 18
-                            font.bold: true
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
+                            Repeater {
+                                id: rep
+                                model: deviceDetailInfoRep.texts[index].length
+                                property int repIndex: index
+                                delegate: RowLayout {
+                                    Layout.leftMargin: 20
+                                    Rectangle {
+                                        width: 10
+                                        height: 10
+                                        radius: width / 2
+                                        color: "#008c8c"
+                                        opacity: 0.6
+                                    }
+
+                                    Item {
+                                        Layout.preferredWidth: 5
+                                    }
+
+                                    Text {
+                                        text: deviceDetailInfoRep.texts[rep.repIndex][index]
+                                        opacity: 0.4
+                                        font.pixelSize: 14
+                                    }
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: 1
+                                        color: Qt.rgba(255, 255, 255, 0.7)
+                                    }
+
+                                    Text {
+                                        text: deviceDetailInfoRep.values[rep.repIndex][index]
+                                    }
+                                }
+                            }
                         }
-                        Text {
-                            text: "安卓版本: " + DetailInfoControl.info[DetailInfoControl.DETA_ANDROIDVERSION]
-                            opacity: 0.8
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
+
                     }
-                }
 
-                Text {
-                    text: "电池信息"
-                    font.bold: true
-                    font.pixelSize: 18
-                    color: colorConstants.ordinaryClickedColor
-                }
-
-                BatteryRect {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 50
-                    level: BatteryControl.level
-                }
-
-                GridLayout {
-                    Layout.fillWidth: true
-                    columns: 4
-                    Repeater {
-                        model: batteryModel
-                        MLabel {
-                            rectColor: colorConstants.suggestClickedColor
-                            text: model.name
-                            Layout.row: index / 2
-                            Layout.column: index % 2 == 1 ? 2 : 0
-                        }
-                    }
-                    Repeater {
-                        model: batteryModel
-                        Label {
-                            text: model.info
-                            Layout.row: index / 2
-                            Layout.column: index % 2 == 1 ? 3 : 1
-                            Layout.fillWidth: true
-                        }
-                    }
-                }
-
-                Text {
-                    text: "设备信息"
-                    font.bold: true
-                    font.pixelSize: 18
-                    color: colorConstants.ordinaryClickedColor
-                }
-
-                AppInfoItem {
-                    title: "硬件"
-                    content: {
-                        return `设备型号: ${DetailInfoControl.info[DetailInfoControl.DETA_MODEL]}\n设备代号: ${DetailInfoControl.info[DetailInfoControl.DETA_DEVICECODE]}\n主板序列号: ${DetailInfoControl.info[DetailInfoControl.DETA_SERIALNUMBER]}`
-                    }
-                }
-
-                AppInfoItem {
-                    title: "软件"
-                    content: {
-                        `系统名称: ${DetailInfoControl.info[DetailInfoControl.DETA_SYSTEMINFO]}\n构建版本号: 3847587\n安卓版本: ${DetailInfoControl.info[DetailInfoControl.DETA_ANDROIDVERSION]}`
-                    }
-                }
-
-                AppInfoItem {
-                    title: "CPU"
-                    content: {
-                        `高通骁龙660\n最大主频 3000MHZ  核心数 8`
-                    }
-                }
-
-                AppInfoItem {
-                    title: "屏幕"
-                    content: {
-                        `分辨率:  ${DetailInfoControl.info[DetailInfoControl.DETA_RESOLVING]}\nDPI:  ${DetailInfoControl.info[DetailInfoControl.DETA_DPI]}`
+                    Item {
+                        Layout.fillHeight:  true
                     }
                 }
             }
+
+
         }
         ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
-
-            MFrame {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 140
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    Layout.alignment: Qt.AlignTop
-                    MonitorBarItem {
-                        title: "CPU温度"
-                        valueStr: "46"
-                        value: 20
-                    }
-                    MonitorBarItem {
-                        title: "CPU占用"
-                        valueStr: "46"
-                        value: 40
-                    }
-                    MonitorBarItem {
-                        title: "内存占用"
-                        valueStr: "46"
-                        value: 35
-                    }
-                    MonitorBarItem {
-                        title: "磁盘占用"
-                        valueStr: "46"
-                        value: 80
-                    }
-                    MonitorBarItem {
-                        title: "电池温度"
-                        valueStr: "46"
-                        value: 60
-                    }
-                }
-            }
 
             MFrame {
                 Layout.fillWidth: true
@@ -254,9 +204,81 @@ ItemPage {
                 }
             }
 
+            MWrapper {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 160
+                title: "电池信息"
+                ColumnLayout {
+                    BatteryRect {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        level: BatteryControl.level
+                    }
+
+                    GridLayout {
+                        Layout.fillWidth: true
+                        columns: 4
+                        Repeater {
+                            model: batteryModel
+                            MLabel {
+                                rectColor: colorConstants.suggestClickedColor
+                                text: model.name
+                                Layout.row: index / 2
+                                Layout.column: index % 2 == 1 ? 2 : 0
+                            }
+                        }
+                        Repeater {
+                            model: batteryModel
+                            Label {
+                                text: model.info
+                                Layout.row: index / 2
+                                Layout.column: index % 2 == 1 ? 3 : 1
+                                Layout.fillWidth: true
+                            }
+                        }
+                    }
+                }
+            }
+
+            MFrame {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 140
+                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    Layout.alignment: Qt.AlignTop
+                    MonitorBarItem {
+                        title: "CPU温度"
+                        valueStr: "46"
+                        value: 20
+                    }
+                    MonitorBarItem {
+                        title: "CPU占用"
+                        valueStr: "46"
+                        value: 40
+                    }
+                    MonitorBarItem {
+                        title: "内存占用"
+                        valueStr: "46"
+                        value: 35
+                    }
+                    MonitorBarItem {
+                        title: "磁盘占用"
+                        valueStr: "46"
+                        value: 80
+                    }
+                    MonitorBarItem {
+                        title: "电池温度"
+                        valueStr: "46"
+                        value: 60
+                    }
+                }
+            }
+
             MFrame {    // 当前活动信息
                 Layout.fillWidth: true
-                Layout.preferredHeight: 120
+                Layout.fillHeight: true
                 wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                 ColumnLayout {
                     anchors.fill: parent
@@ -269,72 +291,6 @@ ItemPage {
                             font.family: "黑体"
                             font.pixelSize: 20
                             text: "当前前台应用"
-                        }
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MButton {
-                            Layout.preferredWidth: 80
-                            text: "停止当前应用"
-                            btnType: MButton.FBtnType.Warning
-                            onClicked: {
-                                CutActivityControl.killCutActivity()
-                                NotificationController.send("命令已发送", "当前应用已停止", 1, 3000);
-                            }
-                        }
-                    }
-                    GridLayout {
-                        columns: 2
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        MLabel {
-                            Layout.preferredWidth: 100
-                            rectColor: colorConstants.suggestClickedColor
-                            text: "窗口标识符"
-                        }
-                        Text {
-                            Layout.fillWidth: true
-                            text: CutActivityControl.identifier
-                        }
-                        MLabel {
-                            Layout.preferredWidth: 100
-                            rectColor: colorConstants.suggestClickedColor
-                            text: "前台包名"
-                        }
-                        Text {
-                            Layout.fillWidth: true
-                            text: CutActivityControl.cutPackageName
-                        }
-                        MLabel {
-                            Layout.preferredWidth: 100
-                            rectColor: colorConstants.suggestClickedColor
-                            text: "前台活动"
-                        }
-                        Text {
-                            Layout.fillWidth: true
-                            text: CutActivityControl.cutActivity
-                        }
-                    }
-                }
-            }
-
-            MFrame {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 30
-                        Text {
-                            font.bold: true
-                            font.family: "黑体"
-                            font.pixelSize: 20
-                            text: "ADB信息"
                         }
                         Item {
                             Layout.fillWidth: true

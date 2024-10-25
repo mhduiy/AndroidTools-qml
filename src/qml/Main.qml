@@ -99,8 +99,10 @@ ApplicationWindow {
 
             Image {
                 id: backgroundImage
+                anchors.fill: parent
                 fillMode: Image.PreserveAspectCrop
                 source: WallpaperHelper.wallpaper
+                clip: true
                 asynchronous: true
                 visible: false
                 

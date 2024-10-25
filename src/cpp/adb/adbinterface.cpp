@@ -36,7 +36,7 @@ bool ADBInterface::restartADBService()
 {
     NotificationController::instance()->send("执行成功", "重启中，请耐心等待", NotificationController::Warning);
     stopADBService();
-    startADBService();
+    QTimer::singleShot(1000, this, &ADBInterface::startADBService);
     return true;
 }
 
