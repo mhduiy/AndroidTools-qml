@@ -30,6 +30,11 @@ ItemPage {
         id: colorConstants
     }
 
+    function gInfo(key) {
+        console.warn("----", DetailInfoControl.info[key])
+        return DetailInfoControl.info[key]
+    }
+
     property var monitorItems: [0, 1]
 
     RowLayout {
@@ -48,10 +53,16 @@ ItemPage {
                     spacing: 10
                     Text {
                         text: {
-                            return DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER] + " "
+                            let title = DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER];
+                            if (title === "" || title === undefined) {
+                                title = "请连接设备"
+                                return title;
+                            }
+                            title = title + " "
                                     + (DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME] === "" ?
                                         DetailInfoControl.info[DetailInfoControl.DETA_MODEL]
                                       : DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME])
+                            return title;
                         }
                         font.pixelSize: 22
                         font.bold: true
@@ -60,7 +71,13 @@ ItemPage {
                     }
 
                     Text {
-                        text: "设备序列号: " + DetailInfoControl.info[DetailInfoControl.DETA_SERIALNUMBER]
+                        text: {
+                            let str = DetailInfoControl.info[DetailInfoControl.DETA_SERIALNUMBER]
+                            if (str === "" || str === undefined) {
+                                str = "请连接设备"
+                            }
+                            return "设备序列号:" + str;
+                        }
                         opacity: 0.8
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
@@ -80,11 +97,11 @@ ItemPage {
                             ["MAC地址", "IP地址", "内存容量"]
                         ]
                         property var values: [
-                            ["Xiaomi", "Redmi K40", "ds325252", "adsd", "325"],
-                            ["高通骁龙660", "3Ghz", "8"],
-                            ["MIUI 12", "12", "22"],
-                            ["6.2", "1920*1080", "300"],
-                            ["sd:sd:rt:wq:fd:as:sd", "192.168.1.21", "16GB"]
+                            [ DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER],  DetailInfoControl.info[DetailInfoControl.DETA_BRAND],  DetailInfoControl.info[DetailInfoControl.DETA_MODEL],  DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME],  DetailInfoControl.info[DetailInfoControl.DETA_DEVICECODE]],
+                            [ DetailInfoControl.info[DetailInfoControl.DETA_CPUINFO],  DetailInfoControl.info[DetailInfoControl.DATE_MAXFREP],  DetailInfoControl.info[DetailInfoControl.DATE_MAXCORENUM]],
+                            ["未知",  DetailInfoControl.info[DetailInfoControl.DETA_ANDROIDVERSION],  DetailInfoControl.info[DetailInfoControl.DETA_SDKVERSION]],
+                            ["未知",  DetailInfoControl.info[DetailInfoControl.DETA_RESOLVING],  DetailInfoControl.info[DetailInfoControl.DETA_DPI]],
+                            [ DetailInfoControl.info[DetailInfoControl.DETA_MACADDR],  DetailInfoControl.info[DetailInfoControl.DETA_IPADDR],  DetailInfoControl.info[DetailInfoControl.DETA_MEMORY]]
                         ]
                         property var titles: ["设备信息", "处理器", "系统信息", "屏幕", "其他信息"]
                         model: texts.length
@@ -126,7 +143,16 @@ ItemPage {
                                     }
 
                                     Text {
+                                        visible: deviceDetailInfoRep.values[rep.repIndex][index] !== undefined
                                         text: deviceDetailInfoRep.values[rep.repIndex][index]
+                                    }
+
+                                    MLoadIndicator {
+                                        scale: 0.8
+                                        visible: deviceDetailInfoRep.values[rep.repIndex][index] === undefined
+                                        Component.onCompleted: {
+                                            start()
+                                        }
                                     }
                                 }
                             }

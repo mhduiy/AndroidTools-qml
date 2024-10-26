@@ -67,6 +67,9 @@ struct DeviceDetailInfo {
     QString memory;         // 内存容量
     QString sdkVersion;     // sdk版本
     QString serialNumber;   // 序列号
+
+    QString maxFrep;    // CPU 最大频率
+    QString maxCoreNum; // CPU 核心数量
 };
 
 enum AppState

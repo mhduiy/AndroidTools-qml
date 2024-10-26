@@ -40,7 +40,9 @@ public:
         DETA_CPUINFO,
         DETA_MEMORY,
         DETA_SDKVERSION,
-        DETA_SERIALNUMBER
+        DETA_SERIALNUMBER,
+        DATE_MAXFREP,
+        DATE_MAXCORENUM
     };
 
     Q_ENUM(DetailInfoType)

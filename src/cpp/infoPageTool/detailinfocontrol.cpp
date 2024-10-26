@@ -34,6 +34,7 @@ DetailInfoUpdateHelper::DetailInfoUpdateHelper(QObject *parent) : QObject(parent
 void DetailInfoUpdateHelper::updateInfo()
 {
     m_info.clear();
+    emit updateFinish();
     auto infos = ADBInterface::instance()->getDeviceDetailInfo(ConnectManager::instance()->currentDeviceCode());
     m_info.append(infos.manufacturer);
     m_info.append(infos.brand);
@@ -50,5 +51,7 @@ void DetailInfoUpdateHelper::updateInfo()
     m_info.append(infos.memory);
     m_info.append(infos.sdkVersion);
     m_info.append(infos.serialNumber);
+    m_info.append(infos.maxFrep);
+    m_info.append(infos.maxCoreNum);
     emit updateFinish();
 }

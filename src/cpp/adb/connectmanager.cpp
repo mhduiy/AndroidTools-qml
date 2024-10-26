@@ -32,13 +32,18 @@ QString ConnectManager::currentDeviceCode()
 
 bool ConnectManager::setCurrentDeviceCode(const QString &code)
 {
+    if (code.isEmpty()) {
+        emit currentDeviceChanged(code);
+        qInfo() << "set current device: " << "Empty";
+        return true;
+    }
     if (m_deviceCodeSet.contains(code) && m_currentDeviceCode != code) {
         m_currentDeviceCode = code;
         emit currentDeviceChanged(code);
-        qWarning() << "set current device: " << code;
+        qInfo() << "set current device: " << code;
         return true;
     }
-    qWarning() << "set current failed: " << code;
+    qInfo() << "set current failed: " << code;
     return false;
 }
 
@@ -79,6 +84,9 @@ void ConnectManager::refreshDevice()
         if (!deviceCode.isEmpty() && !m_deviceCodeSet.contains(deviceCode)) {
             m_deviceCodeSet.push_back(deviceCode);
             emit deviceConnected(deviceCode);
+            if (deviceCode == m_currentDeviceCode) {
+                emit currentDeviceChanged("");
+            }
         }
     }
 

@@ -111,6 +111,9 @@ DeviceCutActivityInfo ADBInterface::getCutActivityInfo(const QString &code) cons
 
 DeviceDetailInfo ADBInterface::getDeviceDetailInfo(const QString &code)
 {
+    if (code.isEmpty()) {
+        return {};
+    }
     DeviceDetailInfo info;
     /*厂商*/
     QString ret;
@@ -132,18 +135,45 @@ DeviceDetailInfo ADBInterface::getDeviceDetailInfo(const QString &code)
     /*Dpi*/
     info.dpi = getDeviceProp(code, "ro.sf.lcd_density");
     /*MAC地址*/
-    info.macAddr = "";
+    info.macAddr = "未知";
     /*IP地址*/
-    info.ipAddr = "";
-    /*CPU*/
-    info.cpuInfo = getDeviceProp(code, "ro.product.board");
-    /*内存容量*/
-    info.memory = "";
+    info.ipAddr = "未知";
     /*SDK版本*/
     info.sdkVersion = getDeviceProp(code, "ro.build.version.sdk");
     /*序列号*/
     ret = getDeviceProp(code, "ro.serialno").simplified();
     info.serialNumber = ret.split(' ').value(0);
+    // CPU最大频率
+    ret = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq"});
+    {
+        QStringList maxs = ret.split('\n');
+        int max;
+        for (const auto &maxStr : maxs) {
+            max = std::max(maxStr.toInt(), max);
+        }
+        info.maxFrep = QString("%1Mhz").arg(QString::number(max / 1000));
+    }
+    // CPU核心数量 CPU 信息
+    ret = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "cat /proc/cpuinfo"});
+    {
+        QStringList retList = ret.split('\n');
+        for (const auto &cpuInfo : retList) {
+            if (cpuInfo.startsWith("CPU architecture")) {
+                info.maxCoreNum = cpuInfo.split(':').last().simplified();
+            } else if (cpuInfo.startsWith("Hardware")) {
+                info.cpuInfo = cpuInfo.split(':').last().simplified();
+                break;
+            }
+        }
+    }
+
+    if (info.cpuInfo.isEmpty()) {
+        info.cpuInfo = getDeviceProp(code, "ro.hardware");
+    }
+
+    // 内存信息
+    ret = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "cat /proc/meminfo | grep MemTotal:"});
+    info.memory = QString::number(ret.simplified().split(' ').value(1).toUInt() / 1024.0 / 1024.0, 'g') + "GB";
 
     return info;
 }
