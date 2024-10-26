@@ -35,51 +35,51 @@ AppDetailControl::~AppDetailControl()
 
 void AppDetailControl::updateInfo(const QString &packageName)
 {
-    QMetaObject::invokeMethod(m_appHelper, "updateDetailInfo", Qt::QueuedConnection, packageName);
+    QMetaObject::invokeMethod(m_appHelper, "updateDetailInfo", Qt::QueuedConnection, Q_ARG(QString, packageName));
 }
 
 void AppDetailControl::installApp(const QString &path)
 {
     qWarning() << "main Thread" << QThread::currentThreadId();
-    QMetaObject::invokeMethod(m_appHelper, "installApp", Qt::QueuedConnection, path);
+    QMetaObject::invokeMethod(m_appHelper, "installApp", Qt::QueuedConnection,  Q_ARG(QString, path));
 }
 
 void AppDetailControl::clearData(const QString &packageName)
 {
-    QMetaObject::invokeMethod(m_appHelper, "clearData", Qt::QueuedConnection, packageName);
+    QMetaObject::invokeMethod(m_appHelper, "clearData", Qt::QueuedConnection,  Q_ARG(QString, packageName));
 }
 
 void AppDetailControl::uninstallApp(const QString &packageName)
 {
-    QMetaObject::invokeMethod(m_appHelper, "uninstallApp", Qt::QueuedConnection, packageName);
+    QMetaObject::invokeMethod(m_appHelper, "uninstallApp", Qt::QueuedConnection,  Q_ARG(QString, packageName));
 }
 
 void AppDetailControl::freezeApp(const QString &packageName)
 {
-    QMetaObject::invokeMethod(m_appHelper, "freezeApp", Qt::QueuedConnection, packageName);
+    QMetaObject::invokeMethod(m_appHelper, "freezeApp", Qt::QueuedConnection,  Q_ARG(QString, packageName));
 }
 
 void AppDetailControl::unfreezeApp(const QString &packageName)
 {
-    QMetaObject::invokeMethod(m_appHelper, "unfreezeApp", Qt::QueuedConnection, packageName);
+    QMetaObject::invokeMethod(m_appHelper, "unfreezeApp", Qt::QueuedConnection,  Q_ARG(QString, packageName));
 }
 
 void AppDetailControl::extractApp(const QString &packageName, const QString &targetPath)
 {
-    QMetaObject::invokeMethod(m_appHelper, "extractApp", Qt::QueuedConnection, m_info.path, targetPath, packageName);
+    QMetaObject::invokeMethod(m_appHelper, "extractApp", Qt::QueuedConnection, Q_ARG(QString, m_info.path), Q_ARG(QString, targetPath), Q_ARG(QString, packageName));
 }
 
 void AppDetailControl::stopApp(const QString &packageName)
 {
-    QMetaObject::invokeMethod(m_appHelper, "stopApp", Qt::QueuedConnection, packageName);
+    QMetaObject::invokeMethod(m_appHelper, "stopApp", Qt::QueuedConnection,  Q_ARG(QString, packageName));
 }
 
 void AppDetailControl::startApp(const QString &packageName)
 {
-    QMetaObject::invokeMethod(m_appHelper, "startApp", Qt::QueuedConnection, packageName);
+    QMetaObject::invokeMethod(m_appHelper, "startApp", Qt::QueuedConnection,  Q_ARG(QString, packageName));
 }
 
 void AppDetailControl::startActivity(const QString &activity, const QStringList &args)
 {
-    QMetaObject::invokeMethod(m_appHelper, "startActivity", Qt::QueuedConnection, activity, args);
+    QMetaObject::invokeMethod(m_appHelper, "startActivity", Qt::QueuedConnection, Q_ARG(QString,  activity), Q_ARG(QStringList, args));
 }

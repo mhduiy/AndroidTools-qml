@@ -2,7 +2,6 @@
 #define WALLPAPERHELPER_H
 
 #include <QObject>
-#include <qtypes.h>
 #include "../utils/singleton.hpp"
 #include <QTimer>
 

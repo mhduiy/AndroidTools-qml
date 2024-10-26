@@ -60,5 +60,5 @@ void FileTransfer::transmission(const QString &source, const QString &targetDir)
 
     auto cutDevice = ConnectManager::instance()->currentDeviceCode();
     qWarning() << filePath << url.toLocalFile();
-    QMetaObject::invokeMethod(m_handler, "transmission", cutDevice, filePath, targetDir);
+    QMetaObject::invokeMethod(m_handler, "transmission", Q_ARG(QString, cutDevice), Q_ARG(QString, filePath), Q_ARG(QString, targetDir));
 }

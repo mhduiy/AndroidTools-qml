@@ -1,11 +1,5 @@
 #include "wallpaperhelper.h"
 #include <QDebug>
-#include <qcontainerfwd.h>
-#include <qdir.h>
-#include <qfiledialog.h>
-#include <qlogging.h>
-#include <qtmetamacros.h>
-#include <qtypes.h>
 #include "../utils/globalsetting.h"
 #include <QFileDialog>
 #include <QApplication>

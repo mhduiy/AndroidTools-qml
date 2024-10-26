@@ -1,14 +1,9 @@
 #include "flashtools.h"
 #include "../adb/adbtools.h"
-#include <qcontainerfwd.h>
 #include <QProcessEnvironment>
-#include <qlogging.h>
-#include <qprocess.h>
-#include <qtimer.h>
-#include <qtpreprocessorsupport.h>
 #include "../utils/notificationcontroller.h"
 #include <QTimer>
-#include <qurl.h>
+#include <QUrl>
 #include <QDebug>
 
 FlashTools::FlashTools(QObject *parent)
