@@ -18,15 +18,6 @@ ApplicationWindow {
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
     color: "transparent"
 
-    function handleWindowStateChanged(newState) {
-        if (newState === Qt.WindowNoState) {
-            rootRect.scale = 1
-            rootRect.opacity = 1
-            rootRect.prepareDo = Main.PrepareDo.ShowWindow
-        }
-    }
-    onWindowStateChanged: handleWindowStateChanged(windowState)
-
     ColorConstants {
         id: colorConstants
     }
@@ -35,51 +26,14 @@ ApplicationWindow {
         id: notificationBox
     }
 
-    enum PrepareDo {
-        ShowWindow = 0,
-        CloseWindow = 1,
-        MinWindow = 2
-    }
-
     Rectangle {
         id: rootRect
         color: "transparent"
         anchors.fill: parent
-        scale: 0.8
-        opacity: 0.2
-        property int prepareDo: Main.PrepareDo.ShowWindow
 
-        Behavior on opacity {
-            PropertyAnimation {
-                duration: 300
-            }
-        }
-        Behavior on scale {
-            PropertyAnimation {
-                id: applicationCloseOpenAni
-                duration: 500
-                easing.type: Easing.OutBack
-            }
-        }
         Component.onCompleted: {
             rootRect.opacity = 1
             rootRect.scale = 1
-        }
-
-        Connections {
-            target: applicationCloseOpenAni
-            function onRunningChanged(running) {
-                if (!running) {
-                    if (rootRect.prepareDo === Main.PrepareDo.CloseWindow) {
-                        root.close()
-                    } else if (rootRect.prepareDo === Main.PrepareDo.MinWindow) {
-                        root.showMinimized()
-                        rootRect.opacity = 0.8
-                    } else {
-                        root.showNormal()
-                    }
-                }
-            }
         }
 
         Rectangle {
@@ -135,14 +89,10 @@ ApplicationWindow {
                 Layout.maximumHeight: 30
 
                 onRequestCloseWindow: {
-                    rootRect.scale = 0.8
-                    rootRect.opacity = 0
-                    rootRect.prepareDo = Main.PrepareDo.CloseWindow
+                    root.close()
                 }
                 onRequestMinWindow: {
-                    rootRect.scale = 0.8
-                    rootRect.opacity = 0
-                    rootRect.prepareDo = Main.PrepareDo.MinWindow
+                    root.showMinimized()
                 }
 
                 onRequestMoveWindow: {
@@ -218,6 +168,7 @@ ApplicationWindow {
     }
 
     LeftBar {
-        backImage: imageRect
+        anchors.fill: parent
+        backImage: rootRect
     }
 }

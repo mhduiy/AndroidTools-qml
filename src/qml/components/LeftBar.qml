@@ -7,122 +7,135 @@ import QtQuick.Effects
 import Qt5Compat.GraphicalEffects
 
 Item {
-    id: leftSidebar
-    property bool startAniStatus: false
-    width: 220
-    height: Window.height
-    x: hoverHandler.hovered  ? 0 : startAniStatus ?  -width + 80 : -width + 20
-    y: 0
+    id: sideBar
     property var backImage
-    Behavior on x {
-        NumberAnimation {
-            duration: 800
-            easing.type: Easing.OutQuint
-        }
-    }
-    Rectangle {
-        id: backgroundRectangle
-        anchors.margins: 10
+    property int radius: 12
+
+    MultiEffect {
+        id: effect
         anchors.fill: parent
-        radius: 10
-        color: "transparent"
+        source: backImage
+        maskEnabled: true
+        maskSource: markItem
+        autoPaddingEnabled: false
+        blurEnabled: true
+        blur: 0.8
+        blurMax: 64
+    }
 
-        ShaderEffectSource {
-            id: effectSource
-            anchors.fill: parent
-            sourceItem: backImage
-            sourceRect: Qt.rect(leftSidebar.x, leftSidebar.y, leftSidebar.width, leftSidebar.height)
-            visible: false
-        }
-
-        MultiEffect {
-            anchors.fill: effectSource
-            source: effectSource
-            autoPaddingEnabled: false
-            blurEnabled: true
-            blurMax: 64
-        }
+    Item {
+        id: markItem
+        anchors.fill: parent
+        layer.enabled: true
+        layer.smooth: true
+        visible: false
 
         Rectangle {
-            anchors.fill: parent
-            radius: 10
-            color: Qt.rgba(255, 255, 255, 0.3)
-            border.color: Qt.darker("white", 1.8)
+            x: sidebarControl.x + sidebarControlContent.x
+            y: sidebarControl.y + sidebarControlContent.y
+            width: sidebarControlContent.width
+            height: sidebarControlContent.height
+            radius: sideBar.radius
         }
+    }
 
-        ColumnLayout {
-            anchors.fill: parent
-            Layout.alignment: Qt.AlignTop
+
+    Item {
+        id: sidebarControl
+        property bool startAniStatus: false
+        width: 220
+        height: Window.height
+        x: hoverHandler.hovered  ? 0 : startAniStatus ?  -width + 80 : -width + 20
+        y: 0
+
+        Behavior on x {
+            NumberAnimation {
+                duration: 800
+                easing.type: Easing.OutQuint
+            }
+        }
+        Rectangle {
+            id: sidebarControlContent
             anchors.margins: 10
+            anchors.fill: parent
+            radius: sideBar.radius
+            color: Qt.rgba(255, 255, 255, 0.4)
+            border.color: Qt.rgba(0, 0, 0, 0.2)
 
-            RowLayout {
-                spacing: 4
-                Layout.margins: 5
+            ColumnLayout {
+                anchors.fill: parent
                 Layout.alignment: Qt.AlignTop
-                Text {
-                    id: greeterText
-                    font.bold: true
-                    font.pixelSize: 18
-                    color: "#E67E22"
-                    text: "Hi! 下午好"
+                anchors.margins: 10
+
+                RowLayout {
+                    spacing: 4
+                    Layout.margins: 5
+                    Layout.alignment: Qt.AlignTop
+                    Text {
+                        id: greeterText
+                        font.bold: true
+                        font.pixelSize: 18
+                        color: "#E67E22"
+                        text: "Hi! 下午好"
+                    }
+
+                    Item {
+                        Layout.fillWidth: true
+                    }
+
+                    MButton {
+                        text: "无线连接"
+                        btnType: MButton.FBtnType.Ordinary
+                        onClicked: {
+                            wirelessConnectDialog.open()
+                        }
+                    }
+                }
+
+                DeviceListview {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignTop
+                    anchors.margins: 4
+                    Layout.preferredHeight: parent.height * 0.30
                 }
 
                 Item {
                     Layout.fillWidth: true
+                    Layout.fillHeight: true
                 }
 
-                MButton {
-                    text: "无线连接"
-                    btnType: MButton.FBtnType.Ordinary
-                    onClicked: {
-                        wirelessConnectDialog.open()
+                ControlListview {
+                    id: controlListView
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignBottom
+
+                    onCurrentIndexChanged: {
+                        mainStackLayout.currentIndex = currentIndex
                     }
                 }
             }
-
-            DeviceListview {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignTop
-                anchors.margins: 4
-                Layout.preferredHeight: parent.height * 0.30
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
-
-            ControlListview {
-                id: controlListView
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignBottom
-
-                onCurrentIndexChanged: {
-                    mainStackLayout.currentIndex = currentIndex
-                }
-            }
         }
-    }
 
-    HoverHandler {
+        HoverHandler {
 
-        id: hoverHandler
-    }
+            id: hoverHandler
+        }
 
-    Component.onCompleted: {
-        startAniTimer.start()
-    }
+        Component.onCompleted: {
+            startAniTimer.start()
+        }
 
-    Timer {
-        id: startAniTimer
-        interval: 1500
-        repeat : true
-        onTriggered: {
-            if (!startAniStatus) {
-                startAniStatus = true
-                repeat = false
-            } else {
-                startAniStatus = false
+        Timer {
+            id: startAniTimer
+            interval: 1500
+            repeat : true
+            onTriggered: {
+                if (!sidebarControl.startAniStatus) {
+                    sidebarControl.startAniStatus = true
+                    repeat = false
+                } else {
+                    sidebarControl.startAniStatus = false
+                }
             }
         }
     }
@@ -130,15 +143,37 @@ Item {
     Dialog {
         id: wirelessConnectDialog
         title: "开始无线连接"
-        width: 400
-        height: 150
+        width: 450
+        height: 200
         modal: Qt.ApplicationModal
         visible: false
         anchors.centerIn: Overlay.overlay
-
         header: Item {}
 
         background: Item {
+            id: backItem
+            state: wirelessConnectDialog.visible ? "visible" : "hidden"
+
+            Behavior on scale {
+                PropertyAnimation {
+                    duration: 600
+                    easing.type: Easing.OutExpo
+                }
+            }
+
+            states: [
+                State {
+                    name: "visible"
+                    PropertyChanges { target: backItem; scale: 1.0;}
+                    PropertyChanges { target: dialogContent; scale: 1.0; opacity: 1.0}
+                },
+                State {
+                    name: "hidden"
+                    PropertyChanges { target: backItem; scale: 0;}
+                    PropertyChanges { target: dialogContent; scale: 0; opacity: 0}
+                }
+            ]
+
             ShaderEffectSource {
                 id: dialogSource
                 anchors.fill: parent
@@ -152,19 +187,40 @@ Item {
                 source: dialogSource
                 autoPaddingEnabled: false
                 blurEnabled: true
+                maskEnabled: true
+                maskSource: markRect
+                blur: 0.8
                 blurMax: 64
             }
 
             Rectangle {
+                id: markRect
                 anchors.fill: parent
-                radius: 20
-                color: Qt.rgba(255, 255, 255, 0.8)
+                radius: 12
+                color: Qt.rgba(255, 255, 255, 0.3)
                 border.color: Qt.darker("white", 1.8)
+                layer.enabled: true
             }
         }
 
         ColumnLayout {
+            id: dialogContent
             anchors.fill: parent
+            anchors.margins: 10
+
+            Behavior on scale {
+                PropertyAnimation {
+                    duration: 800
+                    easing.type: Easing.OutExpo
+                }
+            }
+
+            Behavior on opacity {
+                PropertyAnimation {
+                    duration: 1000
+                }
+            }
+
             Text {
                 text: "1. 打开开发者模式中的无线调试"
                 font.family: "黑体"
