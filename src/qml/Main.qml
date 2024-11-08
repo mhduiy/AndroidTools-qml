@@ -24,6 +24,7 @@ ApplicationWindow {
 
     MNotificationBox {
         id: notificationBox
+        blurTarget: rootRect
     }
 
     Rectangle {

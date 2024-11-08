@@ -10,7 +10,7 @@ import ADBControl 1.0
 import DetailInfoControl 1.0
 import NotificationController 1.0
 import DeviceControl 1.0
-import QtCharts 2.7
+import RealTimeInfoHelper 1.0
 
 ItemPage {
     id: root
@@ -31,7 +31,6 @@ ItemPage {
     }
 
     function gInfo(key) {
-        console.warn("----", DetailInfoControl.info[key])
         return DetailInfoControl.info[key]
     }
 
@@ -286,8 +285,8 @@ ItemPage {
                     }
                     MonitorBarItem {
                         title: "内存占用"
-                        valueStr: "46"
-                        value: 35
+                        valueStr: RealTimeInfoHelper.memUse
+                        value: RealTimeInfoHelper.memUse
                     }
                     MonitorBarItem {
                         title: "磁盘占用"

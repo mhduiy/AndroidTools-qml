@@ -1,11 +1,15 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 
 import NotificationController
 
 Item {
     id: root
+
+    property var blurTarget
+
     width: 350
     height: 50
     y: 40
@@ -67,10 +71,43 @@ Item {
         id: colorConstants
     }
 
-    Rectangle {
+    Item {
         id: control
         anchors.fill: parent
-        radius: 10
+
+        ShaderEffectSource {
+            id: blurSource
+            anchors.fill: parent
+            sourceItem: root.blurTarget
+            sourceRect: Qt.rect(root.x, root.y, root.width, root.height)
+            visible: false
+        }
+
+        MultiEffect {
+            anchors.fill: blurSource
+            source: blurSource
+            autoPaddingEnabled: false
+            blurEnabled: true
+            maskEnabled: true
+            maskSource: markRect
+            blur: 0.8
+            blurMax: 64
+        }
+
+        Rectangle {
+            id: markRect
+            anchors.fill: parent
+            radius: 12
+            color: {
+                if (NotificationController.type === NotificationController.Info) {
+                    return Qt.rgba(0 / 255, 165 / 255, 255 / 255, 0.3)
+                } else {
+                    return Qt.rgba(214 / 255, 62 / 255, 62 / 255, 0.3)
+                }
+            }
+            border.color: Qt.darker("white", 1.8)
+            layer.enabled: true
+        }
 
         Behavior on scale {
             PropertyAnimation {
@@ -78,18 +115,8 @@ Item {
                 easing.type: Easing.OutExpo
             }
         }
-        Rectangle {
+        Item {
             anchors.fill: parent
-            radius: 10
-            color: {
-                if (NotificationController.type === NotificationController.Info) {
-                    return colorConstants.suggestClickedColor
-                } else {
-                    return colorConstants.warningClickedColor
-                }
-            }
-            border.color: Qt.lighter(color, 1.3)
-            border.width: 1
 
             Item {
                 anchors.fill: parent

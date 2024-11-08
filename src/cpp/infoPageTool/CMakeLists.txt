@@ -10,6 +10,8 @@ set(INFO_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/detailinfocontrol.h
     ${CMAKE_CURRENT_SOURCE_DIR}/infopagetool.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/infopagetool.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/realtimeinfohelper.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/realtimeinfohelper.cpp
     PARENT_SCOPE
 )
 

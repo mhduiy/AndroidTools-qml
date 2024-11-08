@@ -91,6 +91,19 @@
 
 - Qt6
 
+## 拉取子模块
+
+```bash
+git submodule init
+git submodule update --remote
+```
+
+或者
+
+```bash
+git clone --recurse-submodules https://github.com/mhduiy/AndroidTools-qml.git
+```
+
 ## 如何使用
 
 1. 安装ADB => https://developer.android.com/tools/releases/platform-tools?hl=zh-cn
