@@ -172,28 +172,21 @@ ItemPage {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
 
-            MFrame {
+            MWrapper {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 120
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                title: "快速控制"
+                titleRightContent: MButton {
+                    text: "重启ADB"
+                    btnType: MButton.FBtnType.Warning
+                    Layout.alignment: Qt.AlignRight
+                    onClicked: {
+                        ADBControl.restartADB();
+                    }
+                }
                 GridLayout {
                     anchors.fill: parent
-                    anchors.margins: 10
                     columns: 2
-                    Text {
-                        font.bold: true
-                        font.family: "黑体"
-                        font.pixelSize: 20
-                        text: "快速控制"
-                    }
-                    MButton {
-                        text: "重启ADB"
-                        btnType: MButton.FBtnType.Warning
-                        Layout.alignment: Qt.AlignRight
-                        onClicked: {
-                            ADBControl.restartADB();
-                        }
-                    }
                     MButton {
                         text: "重启手机"
                         btnType: MButton.FBtnType.Warning
@@ -265,13 +258,11 @@ ItemPage {
                 }
             }
 
-            MFrame {
+            MWrapper {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 140
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 10
                     Layout.alignment: Qt.AlignTop
                     MonitorBarItem {
                         title: "CPU温度"
@@ -301,13 +292,11 @@ ItemPage {
                 }
             }
 
-            MFrame {    // 当前活动信息
+            MWrapper {    // 当前活动信息
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 10
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30

@@ -7,12 +7,12 @@
 
 RealTimeInfoHelper::RealTimeInfoHelper(QObject *parent)
 : QObject(parent)
-, m_woker(new RealTimeInfoWorker(this, this))
-, m_workerThread(new QThread)
+, m_woker(new RealTimeInfoWorker(this))
+, m_workerThread(new QThread(this))
 {
     m_woker->moveToThread(m_workerThread);
     m_workerThread->start();
-    m_woker->startRealTimeCheck();
+    QMetaObject::invokeMethod(m_woker, "startRealTimeCheck", Qt::QueuedConnection);
 }
 
 RealTimeInfoHelper::~RealTimeInfoHelper()

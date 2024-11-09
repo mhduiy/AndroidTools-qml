@@ -24,17 +24,12 @@ ItemPage {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.preferredWidth: 300
             Layout.maximumWidth: 300
-            StandardComponent {
+            MWrapper {
                 Layout.preferredHeight: 130
                 Layout.fillWidth: true
                 title: "音乐控制"
                 description: "控制设备音乐状态"
                 GridLayout {
-                    anchors.fill: parent
-                    anchors.topMargin: parent.titleSpace + 10
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
-                    anchors.bottomMargin: 10
                     columns: 4
                     Repeater {
                         model: 4
@@ -60,17 +55,12 @@ ItemPage {
                     }
                 }
             }
-            StandardComponent {
+            MWrapper {
                 Layout.preferredHeight: 240
                 Layout.fillWidth: true
                 title: "按键模拟"
                 description: "模拟设备按下某个按键，或执行一个操作"
                 GridLayout {
-                    anchors.fill: parent
-                    anchors.topMargin: parent.titleSpace + 10
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
-                    anchors.bottomMargin: 10
                     columns: 3
                     Repeater {
                         model: buttonControlModel.count
@@ -86,17 +76,12 @@ ItemPage {
                 }
 
             }
-            StandardComponent {
+            MWrapper {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 title: "广播控制"
                 description: "模拟发出一个全局广播，可以模拟设备的某一状态"
                 ScrollView {
-                    anchors.fill: parent
-                    anchors.topMargin: parent.titleSpace + 10
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
-                    anchors.bottomMargin: 10
                     ScrollBar.vertical: ScrollBar {
                         policy: ScrollBar.AlwaysOff
                     }
@@ -130,17 +115,12 @@ ItemPage {
 
             ColumnLayout {
                 width: parent.parent.width
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 170
                     title: "电量伪装"
                     description: "控制手机的充电状态，模拟一个虚假的手机电量"
                     GridLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         columns: 2
                         MLineEdit {
                             id: batteryLevelEdit
@@ -196,17 +176,12 @@ ItemPage {
 
                 }
 
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 170
                     title: "分辨率&DPI修改"
                     description: "修改设备的分辨率和显示缩放，可能导致显示异常"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         RowLayout {
                             Layout.fillWidth: true
                             Text {
@@ -275,17 +250,12 @@ ItemPage {
                     }
                 }
 
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 120
+                    Layout.preferredHeight: 130
                     title: "文件传输"
                     description: "支持AndroidTools到设备的文件传输"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         RowLayout {
                             Layout.fillWidth: true
                             MLineEdit {
@@ -320,17 +290,12 @@ ItemPage {
                         }
                     }
                 }
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
                     title: "键盘共享"
                     description: "当设备光标在输入框时，可以在PC上使用键盘控制手机"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         Rectangle {
                             id: textInputEdit
                             Layout.fillWidth: true
@@ -376,17 +341,12 @@ ItemPage {
                         }
                     }
                 }
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 160
+                    Layout.preferredHeight: 170
                     title: "启动activity"
                     description: "手动启动某个活动"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         MLineEdit {
                             id: activityNameEdit
                             Layout.fillWidth: true

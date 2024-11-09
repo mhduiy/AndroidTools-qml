@@ -31,6 +31,8 @@ int main(int argc, char *argv[])
     ADBInterface *interface = ADBInterface::instance(&app);
     interface->startADBService();
 
+    qInfo() << "mainThread: " << QThread::currentThreadId();
+
     // 连接管理放置到子线程
     QThread *thread = new QThread(&app);
     ConnectManager::instance()->moveToThread(thread);

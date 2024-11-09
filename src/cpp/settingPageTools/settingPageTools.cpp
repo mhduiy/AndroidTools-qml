@@ -8,6 +8,7 @@
 #include "wallpaperhelper.h"
 #include "../utils/globalsetting.h"
 #include "../utils/constants.h"
+#include "othersettingshandler.h"
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -126,6 +127,7 @@ SettingPageTools::SettingPageTools(QObject *parent)
 {
     qmlRegisterSingletonInstance("WallPaperModel", 1, 0, "WallPaperModel", m_wallpaperModel);
     qmlRegisterSingletonInstance("WallpaperHelper", 1, 0, "WallpaperHelper", WallpaperHelper::instance(this));
+    qmlRegisterSingletonInstance("OtherSettingsHandler", 1, 0, "OtherSettingsHandler", OtherSettingsHandler::instance(this));
 
     int configWallpaperIndex = GlobalSetting::instance()->readConfig("wallpaper", "index").toInt();
     m_wallpaperModel->setCurrentIndex(configWallpaperIndex);

@@ -24,7 +24,7 @@ void FileTransferHandler::transmission(QString deviceCode, QString source, QStri
 
 FileTransfer::FileTransfer(QObject *parent)
 : QObject(parent)
-, m_handler(new FileTransferHandler(this))
+, m_handler(new FileTransferHandler)
 , m_handleThread(new QThread(this))
 {
     m_handleThread->start();

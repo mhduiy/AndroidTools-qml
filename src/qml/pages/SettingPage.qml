@@ -7,6 +7,7 @@ import "../components/"
 import NotificationController 1.0
 import WallPaperModel 1.0
 import WallpaperHelper 1.0
+import OtherSettingsHandler 1.0
 
 ItemPage {
     ScrollView {
@@ -19,54 +20,21 @@ ItemPage {
             width: parent.parent.width
             spacing: 2
 
-            MFrame {
+            MWrapper {
                 Layout.preferredWidth: parent.width
                 Layout.fillWidth: true
                 Layout.preferredHeight: wallpaperSettingItemTitle.height + wallpaperSettingItemContent.height
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
-                Item {
-                    id: wallpaperSettingItemTitle
-                    width: parent.width
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.leftMargin: 10
-                    height: 60
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.rightMargin: 20
-                        ColumnLayout {
-                            Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignLeading
-                            height: wallpaperSettingItemTitle_Titel.height + wallpaperSettingItemTitle_des.height
-                            Label {
-                                id: wallpaperSettingItemTitle_Titel
-                                text: "壁纸设置"
-                                font.pixelSize: 16
-                            }
-                            Label {
-                                id: wallpaperSettingItemTitle_des
-                                text: "设置AndroidTools的背景壁纸"
-                                font.pixelSize: 12
-                                color: "gray"
-                            }
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                        }
-
-                        MButton {
-                            text: "添加"
-                            Layout.preferredWidth: 60
-                            Layout.maximumWidth: 60
-                            Layout.minimumWidth: 60
-                            width: 60
-                            btnType: MButton.FBtnType.Suggest
-                            onClicked: {
-                                WallpaperHelper.requestAddCustomWallpaper()
-                            }
-                        }
+                title: "壁纸设置"
+                description: "设置AndroidTools的背景壁纸"
+                titleRightContent: MButton {
+                    text: "添加"
+                    Layout.preferredWidth: 60
+                    Layout.maximumWidth: 60
+                    Layout.minimumWidth: 60
+                    width: 60
+                    btnType: MButton.FBtnType.Suggest
+                    onClicked: {
+                        WallpaperHelper.requestAddCustomWallpaper()
                     }
                 }
 
@@ -80,7 +48,6 @@ ItemPage {
                     ListView {
                         id: wallpaperListView
                         anchors.fill: parent
-                        anchors.margins: 10
                         model: WallPaperModel
                         spacing: 4
                         orientation: ListView.Horizontal
@@ -171,40 +138,50 @@ ItemPage {
             SettingItem {
                 title: "壁纸不透明度"
                 description: "设置壁纸白色遮罩的透明度"
-                controlItemWidth: 200
-                controlItem: Component {
-                    Slider {
-                        id: slider
-                        width: 200
-                        from: 0
-                        value: WallpaperHelper.opacity
-                        to: 1
-                        snapMode: Slider.NoSnap
-                        stepSize: 0.05
+                controlItem: Slider {
+                    id: slider
+                    width: 200
+                    from: 0
+                    value: WallpaperHelper.opacity
+                    to: 1
+                    snapMode: Slider.NoSnap
+                    stepSize: 0.05
 
-                        onValueChanged: {
-                            WallpaperHelper.opacity = value
-                        }
+                    onValueChanged: {
+                        WallpaperHelper.opacity = value
                     }
                 }
             }
             SettingItem {
                 title: "壁纸模糊度"
                 description: "设置壁纸的模糊半径"
-                controlItemWidth: 200
-                controlItem: Component {
-                    Slider {
-                        id: slider
-                        width: 200
-                        from: 0
-                        value: WallpaperHelper.blurRadius
-                        to: 50
-                        snapMode: Slider.NoSnap
-                        stepSize: 1
+                controlItem: Slider {
+                    width: 200
+                    from: 0
+                    value: WallpaperHelper.blurRadius
+                    to: 50
+                    snapMode: Slider.NoSnap
+                    stepSize: 1
 
-                        onValueChanged: {
-                            WallpaperHelper.blurRadius = value
-                        }
+                    onValueChanged: {
+                        WallpaperHelper.blurRadius = value
+                    }
+                }
+            }
+
+            SettingItem {
+                title: "模块背景透明度"
+                description: "设置每一个功能模块区域的透明度"
+                controlItem: Slider {
+                    width: 200
+                    from: 0
+                    value: OtherSettingsHandler.wrapperOpacity
+                    to: 1
+                    snapMode: Slider.NoSnap
+                    stepSize: 0.01
+
+                    onValueChanged: {
+                        OtherSettingsHandler.wrapperOpacity = value
                     }
                 }
             }
@@ -212,11 +189,8 @@ ItemPage {
             SettingItem {
                 title: "夜间模式"
                 description: "将所有控件设置为深色主题"
-                controlItemWidth: 50
-                controlItem: Component {
-                    MSwitchButton {
+                controlItem: MSwitchButton {
 
-                    }
                 }
             }
 
@@ -225,14 +199,12 @@ ItemPage {
                 SettingItem {
                     title: "夜间模式"
                     description: "将所有控件设置为深色主题"
-                    controlItemWidth: 30
-                    controlItem: Component {
-                        MLoadIndicator {
-                            id: loadIndicator
-                            Component.onCompleted: {
-                                loadIndicator.start()
-                            }
+                    controlItem: MLoadIndicator {
+                        id: loadIndicator
+                        Component.onCompleted: {
+                            loadIndicator.start()
                         }
+
                     }
                 }
             }

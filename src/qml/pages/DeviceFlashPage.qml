@@ -26,14 +26,11 @@ ItemPage {
             font.bold: true
         }
 
-        MFrame {
+        MWrapper {
             Layout.preferredHeight: 30
             Layout.fillWidth: true
-            wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+            padding: 0
             RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 5
-                anchors.rightMargin: 5
                 Text {
                     text: "请将设备重启到FASTBOOT模式，当前设备: "
                 }
@@ -97,18 +94,13 @@ ItemPage {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 350
                 Layout.maximumWidth: 350
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 120
+                    Layout.preferredHeight: 130
                     title: "临时启动BOOT镜像"
                     description: "传输boot镜像临时启动，不刷入，常用于twrp刷入的第一步"
 
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -139,17 +131,11 @@ ItemPage {
                         }
                     }
                 }
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 120
+                    Layout.preferredHeight: 110
                     title: "刷写分区"
-                    description: "选择指定分区进行刷写"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -190,17 +176,11 @@ ItemPage {
                         }
                     }
                 }
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 120
+                    Layout.preferredHeight: 110
                     title: "清除分区"
-                    description: "指定分区清除全部数据"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         MLineEdit {
                             id: clearPartEdit
                             placeholderText: "分区名"
@@ -218,17 +198,12 @@ ItemPage {
                         }
                     }
                 }
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     title: "执行刷机脚本"
                     description: "某些线刷包刷写通过脚本实现，可以在这里快捷执行"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -269,17 +244,12 @@ ItemPage {
             ColumnLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 120
+                    Layout.preferredHeight: 130
                     title: "小米快捷刷机"
                     description: "小米的线刷包直接在这里刷写即可"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -307,17 +277,12 @@ ItemPage {
                         }
                     }
                 }
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 120
+                    Layout.preferredHeight: 130
                     title: "快捷解包"
                     description: "解压线刷包，可以提取其中某个分区的镜像"
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -364,17 +329,12 @@ ItemPage {
                         }
                     }
                 }
-                StandardComponent {
+                MWrapper {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     title: "友链"
                     description: "收录了部分好用的刷机包下载网站"
                     ScrollView {
-                        anchors.fill: parent
-                        anchors.topMargin: parent.titleSpace + 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        anchors.bottomMargin: 10
                         ScrollBar.vertical: ScrollBar {
                             policy: ScrollBar.AlwaysOff
                         }

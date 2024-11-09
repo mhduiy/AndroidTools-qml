@@ -66,19 +66,11 @@ ItemPage {
         ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            MFrame {
+            MWrapper {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 120
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                title: "实时数据"
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    Text {
-                        text: "实时数据"
-                        font.pixelSize: 16
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    }
-
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -130,13 +122,10 @@ ItemPage {
                     }
                 }
             }
-            MFrame {
+            MWrapper {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 80
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                 GridLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
                     columns: 4
                     MButton {
                         Layout.fillWidth: true
@@ -201,13 +190,10 @@ ItemPage {
                 }
             }
 
-            MFrame {
+            MWrapper {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30

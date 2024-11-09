@@ -6,6 +6,8 @@ set(SETTING_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/settingPageTools.h
     ${CMAKE_CURRENT_SOURCE_DIR}/wallpaperhelper.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/wallpaperhelper.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/othersettingshandler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/othersettingshandler.h
     PARENT_SCOPE
 )
 

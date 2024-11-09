@@ -76,7 +76,6 @@ void WallpaperHelper::writeValueToConfig()
 
 void WallpaperHelper::requestAddCustomWallpaper()
 {
-    qWarning() << "---";
     QStringList filePaths = QFileDialog::getOpenFileNames();
     QFile cacheFile(WALLPAPERCACHEJSONPATH);
     qWarning() << WALLPAPERCACHEJSONPATH;
@@ -88,7 +87,6 @@ void WallpaperHelper::requestAddCustomWallpaper()
 
     for (const QString &filePath : filePaths) {
         QJsonObject wallpaperJson;
-        qWarning() << filePath;
         wallpaperJson.insert("url", QUrl::fromLocalFile(filePath).toString());
         cacheArray.append(wallpaperJson);
     }

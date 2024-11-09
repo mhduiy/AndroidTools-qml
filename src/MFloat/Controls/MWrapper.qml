@@ -1,15 +1,15 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import OtherSettingsHandler
 
 Control {
     id: control
-    property real alpha: 0.65
+    property real alpha: OtherSettingsHandler.wrapperOpacity
     property string title
     property string description
     default property Component content
     property Component titleRightContent
-
     padding: 10
 
     contentItem: ColumnLayout {

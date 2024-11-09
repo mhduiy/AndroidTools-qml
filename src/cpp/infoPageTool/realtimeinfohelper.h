@@ -55,6 +55,7 @@ class RealTimeInfoWorker : public QObject
     Q_OBJECT
 public:
     explicit RealTimeInfoWorker(RealTimeInfoHelper *helper, QObject *parent = nullptr);
+public slots:
     void startRealTimeCheck();
     void stopRealTimeCheck();
 

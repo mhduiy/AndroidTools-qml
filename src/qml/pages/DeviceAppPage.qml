@@ -14,39 +14,22 @@ ItemPage {
     RowLayout {
         anchors.fill: parent
 
-        MFrame {
+        MWrapper {
             Layout.minimumWidth: 300
             Layout.preferredWidth: parent.width * 0.4
             Layout.fillHeight: true
-            wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+            title: "软件列表"
+            titleRightContent: ComboBox {
+                id: softListComboBox
+                Layout.minimumWidth: 80
+                model: [
+                    "第三方应用",
+                    "系统应用",
+                    "所有应用"
+                ]
+            }
 
             ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 10
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 40
-                    Text {
-                        text: "软件列表"
-                        font.pixelSize: 18
-                        font.family: "黑体"
-                    }
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    ComboBox {
-                        id: softListComboBox
-                        Layout.minimumWidth: 80
-                        model: [
-                            "第三方应用",
-                            "系统应用",
-                            "所有应用"
-                        ]
-                    }
-                }
-
                 ListView {
                     id: softListView
                     Layout.fillWidth: true
@@ -145,7 +128,7 @@ ItemPage {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        softListView.currentIndex = index
+//                        softListView.currentIndex = index
                         AppDetailControl.updateInfo(model.packageName)
                     }
                 }
@@ -155,26 +138,19 @@ ItemPage {
         ColumnLayout {
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width * 0.5
-            MFrame {
+            MWrapper {
                 Layout.fillWidth: true
                 Layout.preferredHeight: parent.height * 0.5
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                title: "包名"
+                titleRightContent: Text {
+                    text: AppDetailControl.packageName
+                    font.pixelSize: 16
+                    Layout.columnSpan: 5
+                    Layout.fillWidth: true
+                }
 
                 GridLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
                     columns: 6
-                    Text {
-                        text: "包名:"
-                        font.pixelSize: 16
-                        Layout.preferredWidth: 80
-                    }
-                    Text {
-                        text: AppDetailControl.packageName
-                        font.pixelSize: 16
-                        Layout.columnSpan: 5
-                        Layout.fillWidth: true
-                    }
                     Repeater {
                         model: softDetailInfoModel
                         MLabel {
@@ -281,20 +257,12 @@ ItemPage {
                 }
             }
 
-            MFrame {
+            MWrapper {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                wrapperColor: Qt.rgba(255, 255, 255, 0.65)
+                title: "安装软件到设备"
 
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    Text {
-                        text: "安装软件到设备"
-                        font.pixelSize: 18
-                        font.family: "黑体"
-                    }
-
                     ColumnLayout {
                         Layout.fillWidth: true
                         Repeater {
