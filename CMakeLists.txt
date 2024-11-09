@@ -18,8 +18,8 @@ set(SRC_PATHS
     src/main.cpp
 )
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Widgets Gui Network WebSockets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Network WebSockets)
+set(QT_VERSION_MAJOR 6)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Network WebSockets QuickControls2)
 
 include_directories(.)
 
@@ -74,7 +74,7 @@ foreach(MFloat_QRC_FILE ${MFloat_QRC_FILE_LIST})
     )
 endforeach()
 
-qt6_add_qml_module(${PROJECT_NAME}
+qt_add_qml_module(${PROJECT_NAME}
     URI MFloat
     VERSION 1.0
     RESOURCES ${CMAKE_SOURCE_DIR}/src/MFloat/mfloat.qrc
@@ -91,4 +91,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::WebSockets
+    Qt${QT_VERSION_MAJOR}::QuickControls2
 )

@@ -5,6 +5,8 @@
 #include <QThread>
 #include <QQuickItem>
 #include <QElapsedTimer>
+#include <QStyleFactory>
+#include <QQuickStyle>
 
 #include "cpp/adb/connectmanager.h"
 #include "cpp/infoPageTool/infopagetool.h"
@@ -24,6 +26,8 @@ int main(int argc, char *argv[])
     qunsetenv("https_proxy");
 #endif
 
+    QApplication::setStyle(QStyleFactory::create("fusion"));    //应用Qt原生样式
+    QQuickStyle::setStyle("Fusion");
     QElapsedTimer loaderTimer;
     loaderTimer.start();
 
