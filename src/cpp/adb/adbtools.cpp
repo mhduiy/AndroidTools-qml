@@ -16,7 +16,10 @@
 #define ADBPATH "adb"
 #define FASTBOOTPATH "fastboot"
 
-#elif defined(Q_OS_LINUX)
+#else
+
+#define ADBPATH "adb"
+#define FASTBOOTPATH "fastboot"
 
 #endif
 
