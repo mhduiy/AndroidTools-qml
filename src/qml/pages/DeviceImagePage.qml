@@ -4,6 +4,9 @@ import QtQuick.Layouts
 import MFloat
 import NotificationController 1.0
 import DeviceControl 1.0
+import MirrorScene 1.0
+import Resource 1.0
+import ScrcpyConfig 1.0
 
 ItemPage {
     id: root
@@ -21,47 +24,53 @@ ItemPage {
             radius: 10
             color: "black"
 
-//            MirrorScene {
-//                id: video
-//                anchors.fill: parent
-//                anchors.margins: 5
+           MirrorScene {
+               id: video
+               anchors.fill: parent
+               anchors.margins: 5
+               visible: true
 
-//                property int enum_WINDOW_HOME: 0
-//                property int enum_WINDOW_MIRROR_PORTRATE: 1
-//                property int enum_WINDOW_MIRROR_LANDSCAPE: 2
-//                property int enum_WINDOW_MIRROR_FULLSCREEN: 3
-//                property int enum_WINDOW_MIRROR_MUSIC: 4
-//                property int enum_WINDOW_MIRROR_SMALL: 5
+               property int enum_WINDOW_HOME: 0
+               property int enum_WINDOW_MIRROR_PORTRATE: 1
+               property int enum_WINDOW_MIRROR_LANDSCAPE: 2
+               property int enum_WINDOW_MIRROR_FULLSCREEN: 3
+               property int enum_WINDOW_MIRROR_MUSIC: 4
+               property int enum_WINDOW_MIRROR_SMALL: 5
 
-//                onCppGenerateEvents: {
-//                    switch (request) {
-//                    case "MIRROR_START":
-//                        mirrorApp.close()
-//                        Resource.mirror = 1
-//                        Resource.scene = enum_WINDOW_MIRROR_PORTRATE
-//                        break
-//                    case "MIRROR_FINISHED":
-//                        Resource.mirror = 0
-//                        break
-//                    case "FRAME_SIZE_CHANGED":
-//                        break
-//                    case "DISPLAY_ORIENTATION_CHANGED":
+               Component.onCompleted: {
+                    console.warn("||||||||||||")
+               }
 
-//                        if (Resource.orientation === 0) {
-//                            // Portrait orientation is vertical
-//                            Resource.scene = enum_WINDOW_MIRROR_PORTRATE
-//                        } else if (Resource.orientation === 1) {
-//                            //Landscape orientation is horizontal
-//                            console.log("enum_WINDOW_MIRROR_LANDSCAPE")
-//                            Resource.scene = enum_WINDOW_MIRROR_LANDSCAPE
-//                        }
-//                        break
-//                    case "USB_DEVICE_NAME":
-//                        mirrorApp.setUsbDevice(data)
-//                        break
-//                    }
-//                }
-//            }
+               onCppGenerateEvents: {
+                   switch (request) {
+                   case "MIRROR_START":
+                    //    mirrorApp.close()
+                    console.warn("+++++")
+                       Resource.mirror = 1
+                       Resource.scene = enum_WINDOW_MIRROR_PORTRATE
+                       break
+                   case "MIRROR_FINISHED":
+                       Resource.mirror = 0
+                       break
+                   case "FRAME_SIZE_CHANGED":
+                       break
+                   case "DISPLAY_ORIENTATION_CHANGED":
+
+                       if (Resource.orientation === 0) {
+                           // Portrait orientation is vertical
+                           Resource.scene = enum_WINDOW_MIRROR_PORTRATE
+                       } else if (Resource.orientation === 1) {
+                           //Landscape orientation is horizontal
+                           console.log("enum_WINDOW_MIRROR_LANDSCAPE")
+                           Resource.scene = enum_WINDOW_MIRROR_LANDSCAPE
+                       }
+                       break
+                   case "USB_DEVICE_NAME":
+                    //    mirrorApp.setUsbDevice(data)
+                       break
+                   }
+               }
+           }
         }
         ColumnLayout {
             Layout.fillHeight: true

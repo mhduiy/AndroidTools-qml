@@ -1,12 +1,8 @@
-
 #include <QOpenGLFramebufferObject>
 #include <QQuickWindow>
 #include <QQuickFramebufferObject>
-#include <qlogging.h>
-#include <qpainter.h>
-#include <QImage>
 
-#include "core/include/QtScrcpyCore.h"
+#include "QtScrcpyCore.h"
 #include "MirrorRenderer.h"
 #include "MirrorScene.h"
 #include "service/ServiceManager.h"
@@ -33,8 +29,9 @@ MirrorItemRender::MirrorItemRender() : m_render(0) {
 }
 
 void MirrorItemRender::render() {
+    m_window->beginExternalCommands();
     m_render.paint();
-    // m_window->resetOpenGLState();
+    m_window->endExternalCommands();
 }
 
 QOpenGLFramebufferObject *MirrorItemRender::createFramebufferObject(const QSize &size) {
@@ -73,7 +70,7 @@ MirrorScene::MirrorScene(QQuickItem *parent) : QQuickFramebufferObject(parent) {
 }
 
 void MirrorScene::declareQml() {
-    qmlRegisterType<MirrorScene>("App", 1, 0, "MirrorScene");
+    qmlRegisterType<MirrorScene>("MirrorScene", 1, 0, "MirrorScene");
 }
 
 void MirrorScene::timerEvent(QTimerEvent *event) {
@@ -113,11 +110,11 @@ void MirrorScene::mouseDoubleClickEvent(QMouseEvent *event) {
     mouseProcess(event);
 }
 
-void MirrorScene::wheelEvent(QWheelEvent *) {
+void MirrorScene::wheelEvent(QWheelEvent *event) {
 
     // QWheelEvent wheelEvent(
-    //         event->position(), event->globalPosition(), event->pixelDelta(), event->angleDelta(), event->angleDelta(),
-    //         event->angleDelta(),
+    //         event->pos(), event->globalPosF(), event->pixelDelta(), event->angleDelta(), event->delta(),
+    //         event->orientation(),
     //         event->buttons(), event->modifiers(), event->phase(), event->source(), event->inverted());
 
     // auto device = qsc::IDeviceManage::getInstance().getDevice(m_resourceService->serial());

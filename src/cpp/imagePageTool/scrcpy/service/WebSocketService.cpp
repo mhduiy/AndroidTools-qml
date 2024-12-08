@@ -191,7 +191,7 @@ void WebSocketService::qmlGenerateEvents(QString request, QString data)
 
 void WebSocketService::onDeviceConnected(bool success, const QString &serial, const QString &deviceName, const QSize &size) {
 
-    qDebug() << "onDeviceConnected" << serial << deviceName << size.width();
+    qDebug() << "onDeviceConnected" << serial << deviceName << size.width() << "success:" << success;
 
     if (success) {
         responseToClents(Server::SERVER_RESPONSE::MIRROR_SUCCESS_START);      // notification to users for start mirroring
@@ -212,26 +212,24 @@ void WebSocketService::requestMirrorStart() {
 
     qDebug() << "requestMirrorStart()";
 
-    // this is ok that "original" toUshort is 0
+    quint16 videoSize = 1080;
     qsc::DeviceParams params;
     params.serial = resourceService->serial();
-
-    params.maxSize = resourceService->mirror->resolution;           // 720 - 1080 - 1280 - 1920;
-    params.bitRate = Config::getInstance().getKBitRate() * 1000;    // Mbit/s
-
+    params.maxSize = videoSize;
+    params.bitRate = Config::getInstance().getKBitRate() * 1000;
     // on devices with Android >= 10, the capture frame rate can be limited
     params.maxFps = static_cast<quint32>(Config::getInstance().getMaxFps());
     params.closeScreen = false;
     params.useReverse = true;
     params.display = true;
-    params.renderExpiredFrames = false;
-    params.lockVideoOrientation = -1;
+    params.renderExpiredFrames = Config::getInstance().getRenderExpiredFrames();
+    params.captureOrientationLock = 1;
+    params.captureOrientation = 0;
     params.stayAwake = false;
-    params.recordFile = true;
+    params.recordFile = false;
     params.recordPath = Config::getInstance().getRecordOutPath();
-    qInfo() << "录制路径: " << params.recordPath;
     params.recordFileFormat = "mp4";
-    params.serverLocalPath = Config::getInstance().getProjectPath() + "/res/scrcpy-server";
+    params.serverLocalPath = Config::getInstance().getProjectPath() + "/scrcpy-server";
     params.serverRemotePath = Config::getInstance().getServerPath();
     params.pushFilePath = Config::getInstance().getPushFilePath();
     params.gameScript = "";
@@ -239,7 +237,7 @@ void WebSocketService::requestMirrorStart() {
     params.logLevel = Config::getInstance().getLogLevel();
     params.codecOptions = Config::getInstance().getCodecOptions();
     params.codecName = Config::getInstance().getCodecName();
-
+    params.scid = QRandomGenerator::global()->bounded(1, 10000) & 0x7FFFFFFF;
     qsc::IDeviceManage::getInstance().connectDevice(params);
 }
 

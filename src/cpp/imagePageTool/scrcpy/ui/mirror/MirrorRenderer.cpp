@@ -9,7 +9,7 @@
 MirrorRenderer::MirrorRenderer(QObject *parent) {
     Q_UNUSED(parent);
     m_resourceService = ServiceManager::getInstance().resourceService();
-    // connect(&qsc::IDeviceManage::getInstance(), &qsc::IDeviceManage::onNewFrame, this, &MirrorRenderer::onFrame);
+    connect(&qsc::IDeviceManage::getInstance(), &qsc::IDeviceManage::onNewFrame, this, &MirrorRenderer::onFrame);
 }
 
 MirrorRenderer::MirrorRenderer() {
@@ -182,7 +182,7 @@ void MirrorRenderer::updateTextureData(const YUVData &data) {
 void MirrorRenderer::paint() {
 
     glDepthMask(true);
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (!mTextureAlloced) {

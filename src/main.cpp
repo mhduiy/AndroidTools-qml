@@ -7,6 +7,7 @@
 #include <QElapsedTimer>
 #include <QStyleFactory>
 #include <QQuickStyle>
+#include <QQuickWindow>
 
 #include "cpp/adb/connectmanager.h"
 #include "cpp/infoPageTool/infopagetool.h"
@@ -17,6 +18,28 @@
 #include "cpp/settingPageTools/settingPageTools.h"
 #include "cpp/utils/notificationcontroller.h"
 
+bool checkADB() {
+    QProcess process;
+    if (QSysInfo::productType() == "windows") {
+        process.start("where", {"adb"});
+    } else {
+        process.start("which", {"adb"});
+    }
+    process.waitForFinished();
+    QString output = process.readAll().simplified();
+    
+    if (!output.isEmpty() && QFile::exists(output)) {
+        qInfo() << "find adb: " << output;
+
+        qputenv("QTSCRCPY_ADB_PATH", output.toLocal8Bit());
+
+        return true;
+    }
+
+    qWarning() << "can not fount adb!";
+    return false;
+}
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -25,6 +48,10 @@ int main(int argc, char *argv[])
     qunsetenv("http_proxy");
     qunsetenv("https_proxy");
 #endif
+
+    if (!checkADB()) {
+        return 0;
+    }
 
     QApplication::setStyle(QStyleFactory::create("fusion"));    //应用Qt原生样式
     QQuickStyle::setStyle("Fusion");
@@ -69,6 +96,7 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
     qInfo() << "load8" << loaderTimer.elapsed();
 
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
 
     QQmlApplicationEngine engine;
     const QUrl url("qrc:/qml/Main.qml");

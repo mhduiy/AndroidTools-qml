@@ -68,10 +68,10 @@ void ResourceService::qmlToolbarClick(QString request) {
         device->postVolumeDown();
     } else if (request == "arrow-back") {
         device->postGoBack();
-    } else if (request == "screen-on") {
-        device->setScreenPowerMode(true);
-    } else if (request == "screen-off") {
-        device->setScreenPowerMode(false);
+    // } else if (request == "screen-on") {
+    //     device->setScreenPowerMode(true);
+    // } else if (request == "screen-off") {
+    //     device->setScreenPowerMode(false);
     } else if (request == "power") {
         device->postPower();
     } else if (request == "expand-menu") {

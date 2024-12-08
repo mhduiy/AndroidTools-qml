@@ -23,7 +23,7 @@
 #define COMMON_PUSHFILE_DEF "/sdcard/"
 
 #define COMMON_SERVER_VERSION_KEY "ServerVersion"
-#define COMMON_SERVER_VERSION_DEF "1.24"
+#define COMMON_SERVER_VERSION_DEF "3.0.2"
 
 #define COMMON_SERVER_PATH_KEY "ServerPath"
 #define COMMON_SERVER_PATH_DEF "/data/local/tmp/scrcpy-server.jar"
@@ -259,7 +259,7 @@ void Config::setRecordOutPath(const QString &recordOutPath)
 }
 QString Config::getRecordOutPath() const
 {
-    return m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, QDir::homePath()).toString();
+    return m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, QDir::homePath()).toString() + "/Documents";
 }
 
 int Config::getDesktopOpenGL() {
