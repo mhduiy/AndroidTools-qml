@@ -43,9 +43,6 @@ ImagePageTool::ImagePageTool(QObject *parent)
     resourceService = new ResourceService(this);
     ServiceManager::getInstance().setResourceService(resourceService); // Register service to our C++ singleton
 
-    m_broadcast = new Broadcast(); // UDP broadcast to clients can find server data
-    m_broadcast->start();
-
     new WebSocketService(8097, this);
 
     ResourceService::declareQml();
