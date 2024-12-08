@@ -1,9 +1,8 @@
-# 添加源文件
 set(COMPONENTS_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/deivicelistviewmodel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/deivicelistviewmodel.h
-    PARENT_SCOPE
 )
 
-# 添加头文件路径
+target_sources(${EXE_NAME} PRIVATE ${COMPONENTS_SRC})
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

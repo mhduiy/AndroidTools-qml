@@ -1,4 +1,3 @@
-# 添加源文件
 set(INFO_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/adbcontrol.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/adbcontrol.h
@@ -12,8 +11,8 @@ set(INFO_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/infopagetool.h
     ${CMAKE_CURRENT_SOURCE_DIR}/realtimeinfohelper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/realtimeinfohelper.cpp
-    PARENT_SCOPE
 )
 
-# 添加头文件路径
+target_sources(${EXE_NAME} PRIVATE ${INFO_PAGE_SRC})
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

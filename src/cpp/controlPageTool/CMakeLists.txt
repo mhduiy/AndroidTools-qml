@@ -1,4 +1,3 @@
-# 添加源文件
 set(CONTROL_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/batterydisguise.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/batterydisguise.h
@@ -15,8 +14,8 @@ set(CONTROL_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/startactivity.h
     ${CMAKE_CURRENT_SOURCE_DIR}/textinput.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/textinput.h
-    PARENT_SCOPE
 )
 
-# 添加头文件路径
+target_sources(${EXE_NAME} PRIVATE ${CONTROL_PAGE_SRC})
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

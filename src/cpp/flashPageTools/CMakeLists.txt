@@ -1,4 +1,3 @@
-# 添加源文件
 set(FLASH_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/fastbootdevicemanager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastbootdevicemanager.h
@@ -8,8 +7,8 @@ set(FLASH_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/flashtools.h
     ${CMAKE_CURRENT_SOURCE_DIR}/flashUrlHandle.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/flashUrlHandle.h
-    PARENT_SCOPE
 )
 
-# 添加头文件路径
+target_sources(${EXE_NAME} PRIVATE ${FLASH_PAGE_SRC})
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

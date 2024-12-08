@@ -5,6 +5,8 @@ project(AndroidTools VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOMOC ON)
 
+set(EXE_NAME ${PROJECT_NAME})
+
 file(GLOB_RECURSE SRC_PATHS src/cpp/*.cpp src/cpp/*.hpp)
 file(GLOB_RECURSE HEAD_PATHS src/cpp/*.h)
 file(GLOB_RECURSE QML_PATHS src/qml/*.qml)
@@ -23,6 +25,12 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Ne
 
 include_directories(.)
 
+add_executable(${EXE_NAME}
+    ${QRC_SOURCES}
+    ${SRC_PATHS}
+    ${RES_PATHS}
+)
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/adb)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPageTools)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/components)
@@ -33,27 +41,12 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/infoPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/settingPageTools)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/utils)
 
-add_executable(${PROJECT_NAME}
-    ${QRC_SOURCES}
-    ${SRC_PATHS}
-    ${RES_PATHS}
-
-    ${ADB_SRC}
-    ${COMPONENTS_SRC}
-    ${APP_PAGE_SRC}
-    ${CONTROL_PAGE_SRC}
-    ${FLASH_PAGE_SRC}
-    ${IMAGE_PAGE_SRC}
-    ${INFO_PAGE_SRC}
-    ${SETTING_PAGE_SRC}
-    ${UTILS_SRC}
-)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE QT_QML_DEBUG)
+    target_compile_definitions(${EXE_NAME} PRIVATE QT_QML_DEBUG)
 endif()
 
 
-# 遍历所有qml文件
+# MFloat
 file(GLOB_RECURSE QML_PATHS ${CMAKE_SOURCE_DIR}/src/MFloat/*.qml)
 
 foreach(QML_FILE ${QML_PATHS})
@@ -74,7 +67,7 @@ foreach(MFloat_QRC_FILE ${MFloat_QRC_FILE_LIST})
     )
 endforeach()
 
-qt_add_qml_module(${PROJECT_NAME}
+qt_add_qml_module(${EXE_NAME}
     URI MFloat
     VERSION 1.0
     RESOURCES ${CMAKE_SOURCE_DIR}/src/MFloat/mfloat.qrc
@@ -84,7 +77,7 @@ qt_add_qml_module(${PROJECT_NAME}
         ${QML_PATHS}
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
+target_link_libraries(${EXE_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Quick
     Qt${QT_VERSION_MAJOR}::Widgets

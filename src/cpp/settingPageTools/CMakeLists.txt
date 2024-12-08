@@ -1,4 +1,3 @@
-# 添加源文件
 set(SETTING_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/bingwallpaperhander.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/bingwallpaperhander.h
@@ -8,8 +7,8 @@ set(SETTING_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/wallpaperhelper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/othersettingshandler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/othersettingshandler.h
-    PARENT_SCOPE
 )
 
-# 添加头文件路径
+target_sources(${EXE_NAME} PRIVATE ${SETTING_PAGE_SRC})
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

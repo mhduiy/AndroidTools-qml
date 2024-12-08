@@ -1,4 +1,3 @@
-# 添加源文件
 set(UTILS_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/constants.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/constants.h
@@ -10,8 +9,8 @@ set(UTILS_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/notificationcontroller.h
     ${CMAKE_CURRENT_SOURCE_DIR}/singleton.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
-    PARENT_SCOPE
 )
 
-# 添加头文件路径
+target_sources(${EXE_NAME} PRIVATE ${UTILS_SRC})
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
