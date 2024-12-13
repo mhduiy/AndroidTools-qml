@@ -8,6 +8,7 @@ import "./components/"
 import "./pages/"
 import ADBControl 1.0
 import WallpaperHelper 1.0
+import FpsItem 1.0
 
 ApplicationWindow {
     id: root
@@ -25,6 +26,20 @@ ApplicationWindow {
     MNotificationBox {
         id: notificationBox
         blurTarget: rootRect
+    }
+
+    FpsItem {
+        id: fpsItem
+    }
+
+    Text {
+        z: 1000
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.rightMargin: 10
+        text: "fps:" + fpsItem.fps
+        color: "#0495d5"
     }
 
     Rectangle {

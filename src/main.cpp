@@ -17,6 +17,7 @@
 #include "cpp/imagePageTool/imagePageTool.h"
 #include "cpp/settingPageTools/settingPageTools.h"
 #include "cpp/utils/notificationcontroller.h"
+#include "cpp/components/fpsitem.h"
 
 bool checkADB() {
     QProcess process;
@@ -96,7 +97,14 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
     qInfo() << "load8" << loaderTimer.elapsed();
 
+    qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
+
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+
+    QSurfaceFormat format;
+    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    format.setSwapInterval(0);
+    QSurfaceFormat::setDefaultFormat(format);
 
     QQmlApplicationEngine engine;
     const QUrl url("qrc:/qml/Main.qml");
