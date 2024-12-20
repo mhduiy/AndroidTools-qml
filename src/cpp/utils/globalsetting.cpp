@@ -20,6 +20,7 @@ GlobalSetting::GlobalSetting(QObject *parent) : QObject(parent) {
         dir.mkpath(cacheDir);
     }
 
+    qDebug() << "config file:" << cacheDir + "/config.ini";
     settings = new QSettings(cacheDir + "/config.ini", QSettings::IniFormat);
 }
 
@@ -37,8 +38,10 @@ bool GlobalSetting::checkConfig(const QString &title, const QString &key, const 
     settings->beginGroup(title);
     if (!settings->contains(key)) {
         settings->setValue(key, defaultValue);
+        settings->endGroup();
         return false;
     }
+    settings->endGroup();
     return true;
 }
 

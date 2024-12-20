@@ -187,25 +187,22 @@ ItemPage {
             }
 
             SettingItem {
-                title: "夜间模式"
-                description: "将所有控件设置为深色主题"
+                title: "OpenGL渲染模式"
+                description: "强制使用OpenGL渲染，如果设备镜像功能不可用，可尝试开启此开关，重启应用生效"
                 controlItem: MSwitchButton {
-
+                    status: OtherSettingsHandler.useOpenGL
+                    onStatusChanged: {
+                        console.warn("=======", status)
+                        OtherSettingsHandler.useOpenGL = status
+                    }
                 }
             }
 
-            Repeater {
-                model: 16
-                SettingItem {
-                    title: "夜间模式"
-                    description: "将所有控件设置为深色主题"
-                    controlItem: MLoadIndicator {
-                        id: loadIndicator
-                        Component.onCompleted: {
-                            loadIndicator.start()
-                        }
+            SettingItem {
+                title: "夜间模式"
+                description: "将所有控件设置为深色主题, 此功能开发中..."
+                controlItem: MSwitchButton {
 
-                    }
                 }
             }
         }

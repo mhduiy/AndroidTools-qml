@@ -98,7 +98,6 @@ void WallPaperModel::setCurrentIndex(int index)
     m_currentIndex = index;
     emit currentItemChanged(url);
     emit currentIndexChanged(index);
-    qWarning() << "****" << url;
     WallpaperHelper::instance()->setWallPaper(url);
     GlobalSetting::instance()->writeConfig("wallpaper", "url", url);
     GlobalSetting::instance()->writeConfig("wallpaper", "index", QString::number(index));
@@ -171,7 +170,6 @@ void SettingPageTools::onRequestRefreshWallpaperList()
         QJsonObject imageObj = it.toObject();
         QString fileNameUrl = imageObj["url"].toString();
         QUrl url = QUrl(fileNameUrl);
-        qWarning() << url << url.toLocalFile();
         if (!QFile::exists(url.toLocalFile())) {
             continue;
         }

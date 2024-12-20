@@ -18,6 +18,7 @@
 #include "cpp/settingPageTools/settingPageTools.h"
 #include "cpp/utils/notificationcontroller.h"
 #include "cpp/components/fpsitem.h"
+#include "cpp/utils/globalsetting.h"
 
 bool checkADB() {
     QProcess process;
@@ -39,6 +40,15 @@ bool checkADB() {
 
     qWarning() << "can not fount adb!";
     return false;
+}
+
+bool forceOpenGL()
+{
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    QSurfaceFormat format;
+    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    format.setSwapInterval(0);
+    QSurfaceFormat::setDefaultFormat(format);
 }
 
 int main(int argc, char *argv[])
@@ -99,12 +109,12 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
 
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
-
-    QSurfaceFormat format;
-    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
-    format.setSwapInterval(0);
-    QSurfaceFormat::setDefaultFormat(format);
+    GlobalSetting::instance()->checkConfig("other", "useOpenGL", QVariant::fromValue(false));
+    bool useOpenGL = GlobalSetting::instance()->readConfig("other", "useOpenGL").toBool();
+    if (useOpenGL) {
+        qInfo() << "force use OpenGL";
+        forceOpenGL();
+    }
 
     QQmlApplicationEngine engine;
     const QUrl url("qrc:/qml/Main.qml");
