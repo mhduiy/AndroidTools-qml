@@ -43,7 +43,7 @@ ItemPage {
                     width: parent.width
                     anchors.left: parent.left
                     anchors.top: wallpaperSettingItemTitle.bottom
-                    height: 150
+                    implicitHeight: 150
 
                     ListView {
                         id: wallpaperListView
