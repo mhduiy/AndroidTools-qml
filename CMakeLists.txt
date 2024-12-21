@@ -32,13 +32,13 @@ add_executable(${EXE_NAME}
 )
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/adb)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPageTools)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/components)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/controlPageTool)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/flashPageTools)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/flashPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/imagePageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/infoPageTool)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/settingPageTools)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/settingPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/utils)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

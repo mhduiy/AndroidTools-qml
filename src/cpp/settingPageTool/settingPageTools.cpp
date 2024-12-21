@@ -13,6 +13,10 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
+static auto constexpr Wallpaper_Section = "wallpaper";
+static auto constexpr Url_Key = "url";
+static auto constexpr Index_key = "index";
+
 WallPaperModel::WallPaperModel(QObject *parent)
     : QAbstractListModel(parent)
 {
@@ -99,8 +103,8 @@ void WallPaperModel::setCurrentIndex(int index)
     emit currentItemChanged(url);
     emit currentIndexChanged(index);
     WallpaperHelper::instance()->setWallPaper(url);
-    GlobalSetting::instance()->writeConfig("wallpaper", "url", url);
-    GlobalSetting::instance()->writeConfig("wallpaper", "index", QString::number(index));
+    AppSettings->writeConfig(Wallpaper_Section, Url_Key, url);
+    AppSettings->writeConfig(Wallpaper_Section, Index_key, QString::number(index));
 }
 
 QHash<int, QByteArray> WallPaperModel::roleNames() const
@@ -128,7 +132,7 @@ SettingPageTools::SettingPageTools(QObject *parent)
     qmlRegisterSingletonInstance("WallpaperHelper", 1, 0, "WallpaperHelper", WallpaperHelper::instance(this));
     qmlRegisterSingletonInstance("OtherSettingsHandler", 1, 0, "OtherSettingsHandler", OtherSettingsHandler::instance(this));
 
-    int configWallpaperIndex = GlobalSetting::instance()->readConfig("wallpaper", "index").toInt();
+    int configWallpaperIndex = AppSettings->readConfig(Wallpaper_Section, Index_key, 0).toInt();
     m_wallpaperModel->setCurrentIndex(configWallpaperIndex);
 
     // 默认壁纸和每日bing壁纸

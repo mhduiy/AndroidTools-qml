@@ -92,6 +92,5 @@ private:
     static QString s_configPath;
     QPointer<QSettings> m_settings;
     QPointer<QSettings> m_userData;
-    QPointer<GlobalSetting> m_globalSetting;
     QString projectPath;
 };

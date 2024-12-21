@@ -1,5 +1,5 @@
 #include "flashPageTool.h"
-#include "src/cpp/flashPageTools/flashtools.h"
+#include "src/cpp/flashPageTool/flashtools.h"
 #include <QtQml>
 
 FlashPageTool::FlashPageTool(QObject *parent)

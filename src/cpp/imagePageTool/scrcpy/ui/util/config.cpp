@@ -115,7 +115,6 @@ Config::Config(QObject *parent) : QObject(parent) {
     if(!dir.exists(configDir)) {
         dir.mkpath(configDir);
     }
-    m_globalSetting = GlobalSetting::instance();
     m_settings = new QSettings(configDir + "/config.ini", QSettings::IniFormat);
     m_userData = new QSettings(configDir + "/userdata.ini", QSettings::IniFormat);
 
@@ -125,10 +124,10 @@ Config::Config(QObject *parent) : QObject(parent) {
 void Config::initConfig()
 {
     // maxFps
-    m_globalSetting->checkConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF);
+    AppSettings->checkConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF);
     // bitRate
-    m_globalSetting->checkConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, COMMON_BITRATE_DEF);
-    m_globalSetting->checkConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, QDir::homePath());
+    AppSettings->checkConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, COMMON_BITRATE_DEF);
+    AppSettings->checkConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, QDir::homePath());
 }
 
 Config &Config::getInstance() {
@@ -230,36 +229,36 @@ QString Config::getServerVersion() {
 
 void Config::setMaxFps(int maxFps) {
     maxFps = qBound(10, maxFps, 165);
-    m_globalSetting->writeConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, maxFps);
+    AppSettings->writeConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, maxFps);
     emit maxFpsChanged(maxFps);
 }
 
 int Config::getMaxFps() const 
 {
-    int maxFps = m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF).toUInt();
+    int maxFps = AppSettings->readConfig(GROUP_SCRCPY, COMMON_MAX_FPS_KEY, COMMON_MAX_FPS_DEF).toUInt();
     return qBound(10, maxFps, 165);
 }
 
 void Config::setKBitRate(int kBitRate)
 {
     kBitRate = qBound(100, kBitRate, 100000);    // 0.1Mbps ~ 100Mbps
-    m_globalSetting->writeConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, kBitRate);
+    AppSettings->writeConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, kBitRate);
     emit kBitRateChanged(kBitRate);
 }
 int Config::getKBitRate() const
 {
-    int kBitRate = m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, COMMON_BITRATE_DEF).toUInt();
+    int kBitRate = AppSettings->readConfig(GROUP_SCRCPY, COMMON_BITRATE_KEY, COMMON_BITRATE_DEF).toUInt();
     return qBound(100, kBitRate, 100000);
 }
 
 void Config::setRecordOutPath(const QString &recordOutPath)
 {
-    m_globalSetting->writeConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, recordOutPath);
+    AppSettings->writeConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, recordOutPath);
     emit recordOutPathChanged(recordOutPath);
 }
 QString Config::getRecordOutPath() const
 {
-    return m_globalSetting->readConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, QDir::homePath()).toString() + "/Documents";
+    return AppSettings->readConfig(GROUP_SCRCPY, COMMON_RECORD_KEY, QDir::homePath()).toString() + "/Documents";
 }
 
 int Config::getDesktopOpenGL() {

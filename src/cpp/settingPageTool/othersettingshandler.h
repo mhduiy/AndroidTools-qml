@@ -21,11 +21,7 @@ signals:
     void wrapperOpacityChanged(double value);
     void useOpenGLChanged(bool value);
 
-private slots:
-    void syncConfig();
-
 private:
     double m_wrapperOpacity;
     bool m_useOpenGL;
-    QTimer *m_triggerTimer;
 };

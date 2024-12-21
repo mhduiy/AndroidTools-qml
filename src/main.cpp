@@ -12,10 +12,10 @@
 #include "cpp/adb/connectmanager.h"
 #include "cpp/infoPageTool/infopagetool.h"
 #include "cpp/controlPageTool/controlPageTool.h"
-#include "cpp/appPageTools/appPagetool.h"
-#include "cpp/flashPageTools/flashPageTool.h"
+#include "cpp/appPageTool/appPagetool.h"
+#include "cpp/flashPageTool/flashPageTool.h"
 #include "cpp/imagePageTool/imagePageTool.h"
-#include "cpp/settingPageTools/settingPageTools.h"
+#include "cpp/settingPageTool/settingPageTools.h"
 #include "cpp/utils/notificationcontroller.h"
 #include "cpp/components/fpsitem.h"
 #include "cpp/utils/globalsetting.h"
@@ -42,7 +42,7 @@ bool checkADB() {
     return false;
 }
 
-bool forceOpenGL()
+void forceOpenGL()
 {
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     QSurfaceFormat format;
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
 
-    GlobalSetting::instance()->checkConfig("other", "useOpenGL", QVariant::fromValue(false));
+    AppSettings->checkConfig("other", "useOpenGL", QVariant::fromValue(false));
     bool useOpenGL = GlobalSetting::instance()->readConfig("other", "useOpenGL").toBool();
     if (useOpenGL) {
         qInfo() << "force use OpenGL";

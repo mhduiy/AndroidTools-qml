@@ -2,7 +2,7 @@
 #include "../adb/connectmanager.h"
 #include "../adb/adbinterface.h"
 #include "../utils/utils.hpp"
-#include "src/cpp/appPageTools/appHelper.h"
+#include "src/cpp/appPageTool/appHelper.h"
 #include <QVariant>
 #include <QStandardPaths>
 #include <QDir>
