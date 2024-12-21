@@ -22,11 +22,7 @@ ItemPage {
             titleRightContent: ComboBox {
                 id: softListComboBox
                 Layout.minimumWidth: 80
-                model: [
-                    "第三方应用",
-                    "系统应用",
-                    "所有应用"
-                ]
+                model: ["第三方应用", "系统应用", "所有应用"]
             }
 
             ColumnLayout {
@@ -42,27 +38,27 @@ ItemPage {
                 }
             }
         }
-        Component{
+        Component {
             id: softListDelegate
             Rectangle {
                 id: wrapper
                 width: ListView.view.width
-                height: 40
+                height: 50
                 border.width: 1
                 color: {
-                    if (ListView.isCurrentItem) {
+                    if (model.packageName === AppDetailControl.packageName) {
                         return Qt.rgba(0, 0, 0, 0.3);
                     } else if (listMouseArea.containsMouse) {
                         return Qt.rgba(0, 0, 0, 0.15);
                     } else {
-                        return "transparent"
+                        return "transparent";
                     }
                 }
                 border.color: {
                     if (model.state === 1) {
-                        return "red"
+                        return "red";
                     } else {
-                        return "gray"
+                        return "gray";
                     }
                 }
 
@@ -74,16 +70,23 @@ ItemPage {
                     }
                 }
 
-                Image {
+                Rectangle {
                     id: softListImage
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 5
                     width: 30
                     height: 30
-                    source: "qrc:/res/successIcon.png"
-                    sourceSize: Qt.size(2 * width, 2 * height)
-                    asynchronous: true
+                    radius: width / 2
+                    color: "#008c8c"
+                    Text {
+                        anchors.fill: parent
+                        text: model.packageName[0].toUpperCase()
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: 14
+                    }
                 }
 
                 Text {
@@ -106,11 +109,11 @@ ItemPage {
                         hMargin: 4
                         text: {
                             if (model.state === 0) {
-                                return "启用"
+                                return "启用";
                             } else if (model.state === 1) {
-                                return "禁用"
+                                return "禁用";
                             } else {
-                                return "未知"
+                                return "未知";
                             }
                         }
                         Layout.alignment: Qt.AlignRight
@@ -128,8 +131,7 @@ ItemPage {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-//                        softListView.currentIndex = index
-                        AppDetailControl.updateInfo(model.packageName)
+                        AppDetailControl.updateInfo(model.packageName);
                     }
                 }
             }
@@ -141,117 +143,141 @@ ItemPage {
             MWrapper {
                 Layout.fillWidth: true
                 Layout.preferredHeight: parent.height * 0.5
-                title: "包名"
-                titleRightContent: Text {
-                    text: AppDetailControl.packageName
-                    font.pixelSize: 16
-                    Layout.columnSpan: 5
-                    Layout.fillWidth: true
-                }
 
-                GridLayout {
-                    columns: 6
-                    Repeater {
-                        model: softDetailInfoModel
-                        MLabel {
-                            text: model.name
-                            Layout.row: index / 3 + 1
-                            Layout.column: (index % 3) * 2
-                            Layout.preferredWidth: 60
-                            rectColor: colorConstants.suggestClickedColor
-                            vMargin: 4
-                            hMargin: 4
+                ColumnLayout {
+                    RowLayout {
+                        Layout.preferredHeight: 120
+                        Layout.fillWidth: true
+                        spacing: 20
+                        Rectangle {
+                            Layout.preferredWidth: 110
+                            Layout.preferredHeight: 110
+                            color: "black"
+                            radius: 18
+                            opacity: 0.8
+                            Text {
+                                anchors.fill: parent
+                                text: AppDetailControl.packageName[0].toUpperCase()
+                                color: "white"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: 38
+                            }
+                        }
+
+                        ColumnLayout {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            spacing: 5
+                            Text {
+                                text: AppDetailControl.packageName === "" ? "请选择应用" : AppDetailControl.packageName
+                                font.pixelSize: 16
+                                horizontalAlignment: Text.AlignRight
+                            }
+                            Repeater {
+                                model: softDetailInfoModel
+                                RowLayout {
+                                    Text {
+                                        text: model.name
+                                        font.pixelSize: 12
+                                        horizontalAlignment: Text.AlignRight
+                                        color: "gray"
+                                    }
+                                    Text {
+                                        text: model.info
+                                        font.pixelSize: 12
+                                        color: "gray"
+                                    }
+                                }
+                            }
                         }
                     }
 
-                    Repeater {
-                        model: softDetailInfoModel
-                        Text {
-                            text: model.info
-                            Layout.row: index / 3 + 1
-                            Layout.column: (index % 3) * 2 + 1
+                    GridLayout {
+                        columns: 6
+                        rowSpacing: 10
+                        columnSpacing: 20
+                        uniformCellHeights: true
+                        uniformCellWidths: true
+                        MButton {
+                            text: "提取软件"
+                            btnType: MButton.FBtnType.Ordinary
+                            Layout.columnSpan: 2
+                            Layout.fillWidth: true
+                            onClicked: {
+                                AppDetailControl.extractApp(AppDetailControl.packageName, "");
+                            }
+                        }
+
+                        MButton {
+                            text: "冻结软件"
+                            btnType: MButton.FBtnType.Ordinary
+                            Layout.columnSpan: 2
+                            Layout.fillWidth: true
+                            onClicked: {
+                                AppDetailControl.freezeApp(AppDetailControl.packageName);
+                            }
+                        }
+
+                        MButton {
+                            text: "解冻软件"
+                            btnType: MButton.FBtnType.Ordinary
+                            Layout.columnSpan: 2
+                            Layout.fillWidth: true
+                            onClicked: {
+                                AppDetailControl.unfreezeApp(AppDetailControl.packageName);
+                            }
+                        }
+
+                        MButton {
+                            text: "卸载软件"
+                            btnType: MButton.FBtnType.Warning
+                            Layout.columnSpan: 2
+                            Layout.fillWidth: true
+                            onClicked: {
+                                AppDetailControl.uninstallApp(AppDetailControl.packageName);
+                            }
+                        }
+
+                        MButton {
+                            text: "清除数据"
+                            btnType: MButton.FBtnType.Warning
+                            Layout.columnSpan: 2
+                            Layout.fillWidth: true
+                            onClicked: {
+                                AppDetailControl.clearData(AppDetailControl.packageName);
+                            }
+                        }
+
+                        MButton {
+                            text: "强行停止"
+                            btnType: MButton.FBtnType.Warning
+                            Layout.columnSpan: 2
+                            Layout.fillWidth: true
+                            onClicked: {
+                                AppDetailControl.stopApp(AppDetailControl.packageName);
+                            }
+                        }
+
+                        MLineEdit {
+                            Layout.columnSpan: 2
+                            placeholderText: "启动activty"
                             Layout.fillWidth: true
                         }
-                    }
-
-                    MButton {
-                        text: "提取软件"
-                        btnType: MButton.FBtnType.Ordinary
-                        Layout.columnSpan: 2
-                        Layout.fillWidth: true
-                        onClicked: {
-                            AppDetailControl.extractApp(AppDetailControl.packageName, "")
+                        MLineEdit {
+                            Layout.columnSpan: 2
+                            placeholderText: "启动参数"
+                            Layout.fillWidth: true
                         }
-                    }
-
-                    MButton {
-                        text: "冻结软件"
-                        btnType: MButton.FBtnType.Ordinary
-                        Layout.columnSpan: 2
-                        Layout.fillWidth: true
-                        onClicked: {
-                            AppDetailControl.freezeApp(AppDetailControl.packageName)
-                        }
-                    }
-
-                    MButton {
-                        text: "解冻软件"
-                        btnType: MButton.FBtnType.Ordinary
-                        Layout.columnSpan: 2
-                        Layout.fillWidth: true
-                        onClicked: {
-                            AppDetailControl.unfreezeApp(AppDetailControl.packageName)
-                        }
-                    }
-
-                    MButton {
-                        text: "卸载软件"
-                        btnType: MButton.FBtnType.Warning
-                        Layout.columnSpan: 2
-                        Layout.fillWidth: true
-                        onClicked: {
-                            AppDetailControl.uninstallApp(AppDetailControl.packageName)
-                        }
-                    }
-
-                    MButton {
-                        text: "清除数据"
-                        btnType: MButton.FBtnType.Warning
-                        Layout.columnSpan: 2
-                        Layout.fillWidth: true
-                        onClicked: {
-                            AppDetailControl.clearData(AppDetailControl.packageName)
-                        }
-                    }
-
-                    MButton {
-                        text: "强行停止"
-                        btnType: MButton.FBtnType.Warning
-                        Layout.columnSpan: 2
-                        Layout.fillWidth: true
-                        onClicked: {
-                            AppDetailControl.stopApp(AppDetailControl.packageName)
-                        }
-                    }
-
-                    MLineEdit {
-                        Layout.columnSpan: 2
-                        placeholderText: "启动activty"
-                        Layout.fillWidth: true
-                    }
-                    MLineEdit {
-                        Layout.columnSpan: 2
-                        placeholderText: "启动参数"
-                        Layout.fillWidth: true
-                    }
-                    MButton{
-                        text: "启动"
-                        btnType: MButton.FBtnType.Suggest
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 40
-                        Layout.columnSpan: 2
-                        onClicked: {
-                            AppDetailControl.startApp(AppDetailControl.packageName)
+                        MButton {
+                            text: "启动"
+                            btnType: MButton.FBtnType.Suggest
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: 40
+                            Layout.columnSpan: 2
+                            onClicked: {
+                                AppDetailControl.startApp(AppDetailControl.packageName);
+                            }
                         }
                     }
                 }
@@ -298,7 +324,7 @@ ItemPage {
                             text: "选择路径"
                             btnType: MButton.FBtnType.Ordinary
                             onClicked: {
-                                installAppSelectAppDialog.open()
+                                installAppSelectAppDialog.open();
                             }
                         }
                     }
@@ -308,7 +334,7 @@ ItemPage {
                         text: "开始安装"
                         btnType: MButton.FBtnType.Suggest
                         onClicked: {
-                            AppDetailControl.installApp(appPackagePathEdit.editItem.text)
+                            AppDetailControl.installApp(appPackagePathEdit.editItem.text);
                         }
                     }
                 }
@@ -332,59 +358,66 @@ ItemPage {
             info: "-"
         }
         ListElement {
-            name: "目标SDK:"
-            info: "-"
-        }
-        ListElement {
-            name: "最小SDK:"
-            info: "-"
-        }
-        ListElement {
-            name: "APPID"
+            name: "支持SDK:"
             info: "-"
         }
 
         Component.onCompleted: {
-            softDetailInfoModel.get(0).info = AppDetailControl.versionCode
-            softDetailInfoModel.get(1).info = AppDetailControl.installDate
-            softDetailInfoModel.get(2).info = AppDetailControl.installUser
-            softDetailInfoModel.get(3).info = AppDetailControl.targetSdk
-            softDetailInfoModel.get(4).info = AppDetailControl.minSdk
-            softDetailInfoModel.get(5).info = AppDetailControl.appId
-            AppDetailControl.valueChanged.connect(function() {
-                console.log("88888888888", AppDetailControl.appId)
-                softDetailInfoModel.get(0).info = AppDetailControl.versionCode
-                softDetailInfoModel.get(1).info = AppDetailControl.installDate
-                softDetailInfoModel.get(2).info = AppDetailControl.installUser
-                softDetailInfoModel.get(3).info = AppDetailControl.targetSdk
-                softDetailInfoModel.get(4).info = AppDetailControl.minSdk
-                softDetailInfoModel.get(5).info = AppDetailControl.appId
+            softDetailInfoModel.get(0).info = AppDetailControl.versionCode;
+            softDetailInfoModel.get(1).info = AppDetailControl.installDate;
+            softDetailInfoModel.get(2).info = AppDetailControl.installUser;
+            softDetailInfoModel.get(3).info = AppDetailControl.minSdk + "-" + AppDetailControl.targetSdk;
+            AppDetailControl.valueChanged.connect(function () {
+                softDetailInfoModel.get(0).info = AppDetailControl.versionCode;
+                softDetailInfoModel.get(1).info = AppDetailControl.installDate;
+                softDetailInfoModel.get(2).info = AppDetailControl.installUser;
+                softDetailInfoModel.get(3).info = AppDetailControl.minSdk + "-" + AppDetailControl.targetSdk;
             });
         }
     }
     ListModel {
         id: softDetailBtnModel
-        ListElement { name: "提取软件" }
-        ListElement { name: "冻结软件" }
-        ListElement { name: "解冻软件" }
-        ListElement { name: "卸载软件" }
-        ListElement { name: "清除数据" }
-        ListElement { name: "强行停止" }
+        ListElement {
+            name: "提取软件"
+        }
+        ListElement {
+            name: "冻结软件"
+        }
+        ListElement {
+            name: "解冻软件"
+        }
+        ListElement {
+            name: "卸载软件"
+        }
+        ListElement {
+            name: "清除数据"
+        }
+        ListElement {
+            name: "强行停止"
+        }
     }
 
     ListModel {
         id: installSoftOptionModel
-        ListElement { name: "允许覆盖安装" }
-        ListElement { name: "安装到sdcard" }
-        ListElement { name: "允许降级安装" }
-        ListElement { name: "授予所有运行时权限" }
+        ListElement {
+            name: "允许覆盖安装"
+        }
+        ListElement {
+            name: "安装到sdcard"
+        }
+        ListElement {
+            name: "允许降级安装"
+        }
+        ListElement {
+            name: "授予所有运行时权限"
+        }
     }
     FileDialog {
         id: installAppSelectAppDialog
         title: "Select a File"
         fileMode: FileDialog.OpenFile
         onAccepted: {
-            appPackagePathEdit.editItem.text = installAppSelectAppDialog.currentFile
+            appPackagePathEdit.editItem.text = installAppSelectAppDialog.currentFile;
         }
     }
 }
