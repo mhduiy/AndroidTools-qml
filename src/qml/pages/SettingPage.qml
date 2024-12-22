@@ -199,6 +199,14 @@ ItemPage {
             }
 
             SettingItem {
+                title: "重启adb服务"
+                description: "若设备连接后程序无任何响应，可尝试重启adb服务解决"
+                controlItem: MButton {
+                    text: "重启"
+                }
+            }
+
+            SettingItem {
                 title: "夜间模式"
                 description: "将所有控件设置为深色主题, 此功能开发中..."
                 controlItem: MSwitchButton {

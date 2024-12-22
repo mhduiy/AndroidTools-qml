@@ -49,8 +49,7 @@ Item {
         property: "rotation"
         from: 0
         to: 360
-        duration: 1500
+        duration: 1000
         loops: Animation.Infinite
-        easing.type: Easing.OutBack
     }
 }

@@ -7,6 +7,7 @@
         <file>qml/components/BatteryRect.qml</file>
         <file>qml/components/SettingItem.qml</file>
         <file>qml/components/TitleBar.qml</file>
+        <file>qml/components/MonitorItem.qml</file>
         <file>qml/pages/DeviceInfoPage.qml</file>
         <file>qml/pages/DeviceControlPage.qml</file>
         <file>qml/pages/DeviceAppPage.qml</file>
