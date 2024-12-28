@@ -11,7 +11,7 @@ public:
     explicit AppHelper(QObject *parent = nullptr);
 
 public slots:
-    void installApp(const QString &Path);
+    void installApp(const QString &Path, bool r = false, bool s = false, bool d = false, bool g = false);
     void clearData(const QString &packageName);
     void uninstallApp(const QString &packageName);
     void freezeApp(const QString &packageName);

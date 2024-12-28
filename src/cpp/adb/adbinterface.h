@@ -134,7 +134,7 @@ public:
     QList<AppListInfo> getSoftListInfo(const QString &deviceCode);
     AppDetailInfo getAppDetailInfo(const QString &deviceCode, const QString &packageName);
 
-    bool installApp(const QString &deviceCode, const QString &path);                                   //安装软件
+    bool installApp(const QString &deviceCode, const QString &path, bool r, bool s, bool d, bool g); // 安装软件
     bool clearData(const QString &deviceCode, const QString &packageName);                             //清除数据
     bool unfreezeApp(const QString &deviceCode, const QString &packageName);                           //解冻软件
     bool freezeApp(const QString &deviceCode, const QString &packageName);                             //冻结软件

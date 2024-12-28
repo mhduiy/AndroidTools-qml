@@ -30,7 +30,7 @@ public:
     QVariant getAppId() {return m_info.appid;} ;
 
     Q_INVOKABLE void updateInfo(const QString &packageName);
-    Q_INVOKABLE void installApp(const QString &Path);
+    Q_INVOKABLE void installApp(const QString &Path, bool r = false, bool s = false, bool d = false, bool g = false);
     Q_INVOKABLE void clearData(const QString &packageName);
     Q_INVOKABLE void uninstallApp(const QString &packageName);
     Q_INVOKABLE void freezeApp(const QString &packageName);

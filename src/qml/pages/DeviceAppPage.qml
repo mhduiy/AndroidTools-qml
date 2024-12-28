@@ -284,6 +284,8 @@ ItemPage {
             }
 
             MWrapper {
+                id: installWrapper
+                property var flags: [false, false, false, false]
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 title: "安装软件到设备"
@@ -308,6 +310,11 @@ ItemPage {
                                 }
                                 MSwitchButton {
                                     Layout.preferredWidth: 50
+                                    status: installWrapper.flags[index] 
+
+                                    onStatusChanged: {
+                                        installWrapper.flags[index] = status
+                                    }
                                 }
                             }
                         }
@@ -334,7 +341,7 @@ ItemPage {
                         text: "开始安装"
                         btnType: MButton.FBtnType.Suggest
                         onClicked: {
-                            AppDetailControl.installApp(appPackagePathEdit.editItem.text);
+                            AppDetailControl.installApp(appPackagePathEdit.editItem.text, installWrapper.flags[0], installWrapper.flags[1], installWrapper.flags[2], installWrapper.flags[3]);
                         }
                     }
                 }

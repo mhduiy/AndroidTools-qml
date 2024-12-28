@@ -38,10 +38,10 @@ void AppDetailControl::updateInfo(const QString &packageName)
     QMetaObject::invokeMethod(m_appHelper, "updateDetailInfo", Qt::QueuedConnection, Q_ARG(QString, packageName));
 }
 
-void AppDetailControl::installApp(const QString &path)
+void AppDetailControl::installApp(const QString &path, bool r, bool s, bool d, bool g)
 {
     qWarning() << "main Thread" << QThread::currentThreadId();
-    QMetaObject::invokeMethod(m_appHelper, "installApp", Qt::QueuedConnection,  Q_ARG(QString, path));
+    QMetaObject::invokeMethod(m_appHelper, "installApp", Qt::QueuedConnection, Q_ARG(QString, path), Q_ARG(bool, r), Q_ARG(bool, s), Q_ARG(bool, d), Q_ARG(bool, g));
 }
 
 void AppDetailControl::clearData(const QString &packageName)

@@ -284,10 +284,28 @@ AppDetailInfo ADBInterface::getAppDetailInfo(const QString &deviceCode, const QS
 }
 
 
-bool ADBInterface::installApp(const QString &deviceCode, const QString &path)
+bool ADBInterface::installApp(const QString &deviceCode, const QString &path,
+                              bool r, bool s, bool d, bool g)
 {
     QStringList args;
     args << "-s" << deviceCode << "install" << path;
+
+    if (r) {
+        args << "-r";
+    }
+
+    if (s) {
+        args << "-s";
+    }
+
+    if (d) {
+        args << "-d";
+    }
+
+    if (g) {
+        args << "-g";
+    }
+
     m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
     return true;
 }

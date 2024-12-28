@@ -12,7 +12,7 @@ AppHelper::AppHelper(QObject *parent)
 
 }
 
-void AppHelper::installApp(const QString &path)
+void AppHelper::installApp(const QString &path, bool r, bool s, bool d, bool g)
 {
     const QString &deviceCode = ConnectManager::instance()->currentDeviceCode();
     QString filePath;
@@ -26,8 +26,9 @@ void AppHelper::installApp(const QString &path)
     if (!QFile::exists(filePath)) {
         NotificationController::instance()->send("安装失败", "安装文件不合法", NotificationController::Error);
     }
+
     NotificationController::instance()->send("正在安装", "开始安装，请耐心等待");
-    ADBInterface::instance()->installApp(deviceCode, filePath);
+    ADBInterface::instance()->installApp(deviceCode, filePath, r, s, d, g);
     NotificationController::instance()->send("安装成功", "安装执行完成");
     emit requestUpdateSoftList();
 }
