@@ -22,6 +22,8 @@
 
 bool checkADB() {
     QProcess process;
+    QString trueADBPath;
+
     if (QSysInfo::productType() == "windows") {
         process.start("where", {"adb"});
     } else {
@@ -29,15 +31,19 @@ bool checkADB() {
     }
     process.waitForFinished();
     QString output = process.readAll().simplified();
-    
+
     if (!output.isEmpty() && QFile::exists(output)) {
-        qInfo() << "find adb: " << output;
-
-        qputenv("QTSCRCPY_ADB_PATH", output.toLocal8Bit());
-
-        return true;
+        trueADBPath = output;
+    } else {
+        trueADBPath = ADB_PATH;
     }
 
+    if (!trueADBPath.isEmpty()) {
+        qInfo() << "find adb: " << trueADBPath;
+        qputenv("QTSCRCPY_ADB_PATH", trueADBPath.toLocal8Bit());
+        return true;
+    }
+    
     qWarning() << "can not fount adb!";
     return false;
 }

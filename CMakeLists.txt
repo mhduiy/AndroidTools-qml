@@ -42,6 +42,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/settingPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/utils)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message("Enable Qml Debug")
     target_compile_definitions(${EXE_NAME} PRIVATE QT_QML_DEBUG)
 endif()
 

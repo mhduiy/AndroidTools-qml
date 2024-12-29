@@ -13,15 +13,19 @@ set(QSC_DEPLOY_PATH ${CMAKE_BINARY_DIR}/lib)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/scrcpy/core)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # ffmpeg
+    set(FFMPEG_PATH "F:\\Soft\\libffmpeg_7.1_msvc17_x64")
+    target_include_directories(${EXE_NAME} PRIVATE ${FFMPEG_PATH}\\include)
+    target_link_directories(${EXE_NAME} PRIVATE ${FFMPEG_PATH}\\lib)
+endif()
+
 find_program(ADB_PATH adb)
 if(ADB_PATH)
     message(STATUS "Found adb at: ${ADB_PATH}")
+    target_compile_definitions(${EXE_NAME} PRIVATE ADB_PATH="${ADB_PATH}")
 else()
     message(FATAL_ERROR "adb not found on your system")
-endif()
-
-if(ADB_PATH)
-    add_definitions(-DADB_PATH="${ADB_PATH}")
 endif()
 
 # MacOS
