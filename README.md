@@ -31,7 +31,7 @@ A cross platform Android toolbox developed using Qt based on ADB tools, previous
 - [x] Display of basic equipment information, model, serial number, etc
 - [x] Real time battery information
 - [x] Front end application management
-- [ ] CPU, GPU and other monitoring strips
+- [x] CPU and other monitoring strips
 
 #### Equipment control
 
@@ -51,7 +51,7 @@ A cross platform Android toolbox developed using Qt based on ADB tools, previous
 - [x] Extract software, freeze and unfreeze (disabled function of old Android)
 - [x] Start the software or increase the capacity
 - [x] Install software
-- [ ] Advanced installation, downgrade installation, overwrite installation, installation to location SD card, etc
+- [x] Advanced installation, downgrade installation, overwrite installation, installation to location SD card, etc
 
 #### Flashing tool
 
@@ -59,19 +59,19 @@ A cross platform Android toolbox developed using Qt based on ADB tools, previous
 - [x] Temporary boot up
 - [x] Clear/flash specified partition
 - [ ] Execution of flashing scripts (supports cross platform)
-- [x] Quick flashing for Xiaomi devices
+- [ ] Quick flashing for Xiaomi devices
 - [ ] Unpacking of line brush package/card brush package
-- [x] Convert wire brush package to card brush package
-- [x] Convert card brush package to wire brush package
-- [x] Friend Chain
-- [ ]Quick patch installation of Magisk
+- [ ] Convert wire brush package to card brush package
+- [ ] Convert card brush package to wire brush package
+- [ ] Friend Chain
+- [ ] Quick patch installation of Magisk
 
 #### Device image
 
 - [x] Device screen projection
 - [x] Device screenshot
-- [ ] Screen projection parameter control
-- [ ] Simulate Click
+- [x] Screen projection parameter control
+- [x] Simulate Click
 - [ ] Recording macros
 
 #### Setting up
@@ -79,8 +79,8 @@ A cross platform Android toolbox developed using Qt based on ADB tools, previous
 - [x] Persistent storage
 - [ ] Switching between dark and light colors
 - [x] Blurriness and Transparency of Wallpaper
-- [ ]ADB detection interval
-- [ ] Element Transparency
+- [ ] ADB detection interval
+- [x] Element Transparency
 
 #### Other
 
