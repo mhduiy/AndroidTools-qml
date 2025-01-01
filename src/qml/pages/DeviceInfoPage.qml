@@ -15,33 +15,6 @@ import RealTimeInfoHelper 1.0
 ItemPage {
     id: root
     state: "pageShow"
-    property var monitorMap: [
-        {
-            "name": "CPU占用"
-        },
-        {
-            "name": "CPU温度"
-        },
-        {
-            "name": "GPU占用"
-        },
-        {
-            "name": "电池温度"
-        },
-        {
-            "name": "电池电压"
-        },
-        {
-            "name": "电池电流"
-        },
-        {
-            "name": "电池功率"
-        },
-        {
-            "name": "FPS"
-        },
-    ]
-
     ColorConstants {
         id: colorConstants
     }
@@ -206,6 +179,7 @@ ItemPage {
 
                                             Item {
                                                 Layout.preferredWidth: 5
+                                                Layout.preferredHeight: 30
                                             }
 
                                             Text {
@@ -216,7 +190,7 @@ ItemPage {
 
                                             Rectangle {
                                                 Layout.fillWidth: true
-                                                Layout.preferredHeight: 1
+                                                Layout.preferredHeight: 2
                                                 color: Qt.rgba(255, 255, 255, 0.7)
                                             }
 
@@ -322,114 +296,30 @@ ItemPage {
                     }
                     MonitorItem {
                         title: "电池电量"
+                        minY: 25
+                        maxY: 25
+                        cutValue: BatteryControl.level
                     }
                     MonitorItem {
                         title: "电池温度"
+                        minY: 25
+                        maxY: 25
+                        cutValue: BatteryControl.temperature
                     }
                     MonitorItem {
                         title: "电池电压"
+                        minY: 25
+                        maxY: 25
+                        cutValue: BatteryControl.voltage
                     }
                     MonitorItem {
                         title: "内存占用"
+                        minY: 25
+                        maxY: 25
+                        cutValue: RealTimeInfoHelper.memUse
                     }
                 }
             }
-
-            // MWrapper {
-            //     Layout.fillWidth: true
-            //     Layout.preferredHeight: 160
-            //     title: "电池信息"
-            //     ColumnLayout {
-            //         BatteryRect {
-            //             Layout.fillWidth: true
-            //             Layout.preferredHeight: 40
-            //             level: BatteryControl.level
-            //         }
-
-            //         GridLayout {
-            //             Layout.fillWidth: true
-            //             columns: 4
-            //             Repeater {
-            //                 model: batteryModel
-            //                 MLabel {
-            //                     rectColor: colorConstants.suggestClickedColor
-            //                     text: model.name
-            //                     Layout.row: index / 2
-            //                     Layout.column: index % 2 == 1 ? 2 : 0
-            //                 }
-            //             }
-            //             Repeater {
-            //                 model: batteryModel
-            //                 Label {
-            //                     text: model.info
-            //                     Layout.row: index / 2
-            //                     Layout.column: index % 2 == 1 ? 3 : 1
-            //                     Layout.fillWidth: true
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-        }
-    }
-
-    ListModel {
-        id: batteryModel
-
-        ListElement {
-            name: "充电模式"
-            info: "-"
-        }
-        ListElement {
-            name: "健康度"
-            info: "-"
-        }
-        ListElement {
-            name: "电压"
-            info: "-"
-        }
-        ListElement {
-            name: "电流"
-            info: "-"
-        }
-        ListElement {
-            name: "功率"
-            info: "-"
-        }
-        ListElement {
-            name: "温度"
-            info: "-"
-        }
-
-        Component.onCompleted: {
-            BatteryControl.chargeModeChanged.connect(function (mode) {
-                var str = "正在放电";
-                if (mode === 0) {
-                    str = "常规充电";
-                } else if (mode === 1) {
-                    str = "USB充电";
-                } else if (mode === 2) {
-                    str = "无线充电";
-                } else if (mode === 3) {
-                    str = "Dock充电";
-                }
-                batteryModel.get(0).info = str;
-            });
-            BatteryControl.healthChanged.connect(function (health) {
-                batteryModel.get(1).info = health + "%";
-            });
-            BatteryControl.voltageChanged.connect(function (voltage) {
-                batteryModel.get(2).info = voltage + "mV";
-            });
-            BatteryControl.currentChanged.connect(function (current) {
-                batteryModel.get(3).info = current + "mA";
-            });
-            BatteryControl.powerChanged.connect(function (power) {
-                batteryModel.get(4).info = power + "w";
-            });
-            BatteryControl.temperatureChanged.connect(function (temperature) {
-                batteryModel.get(5).info = parseFloat(temperature).toFixed(1);
-            });
         }
     }
 }

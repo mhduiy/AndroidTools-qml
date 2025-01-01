@@ -95,7 +95,7 @@ void RealTimeInfoWorker::refreshMemUse()
         return;
     }
     QStringList args;
-    args << "-s" << "" << "shell" << "cat /proc/meminfo";
+    args << "-s" << cutDevice << "shell" << "cat /proc/meminfo";
     QStringList ret = ADBTools::instance()->executeCommand(ADBTools::ADB, args).split('\n');
     int memTotal = 0;
     int memAvailable = 0;

@@ -10,12 +10,12 @@ class BatteryControl : public QObject
     Q_OBJECT
     SINGLETON(BatteryControl)
     Q_PROPERTY(quint8 level READ getLevel WRITE setLevel NOTIFY levelChanged)
-    Q_PROPERTY(int chargeMode READ getLevel WRITE setLevel NOTIFY chargeModeChanged)
-    Q_PROPERTY(quint8 health READ getLevel WRITE setLevel NOTIFY healthChanged)
-    Q_PROPERTY(uint voltage READ getLevel WRITE setLevel NOTIFY voltageChanged)
-    Q_PROPERTY(uint current READ getLevel WRITE setLevel NOTIFY currentChanged)
-    Q_PROPERTY(float power READ getLevel WRITE setLevel NOTIFY powerChanged)
-    Q_PROPERTY(float temperature READ getLevel WRITE setLevel NOTIFY temperatureChanged)
+    Q_PROPERTY(int chargeMode READ getChargeMode WRITE setChargeMode NOTIFY chargeModeChanged)
+    Q_PROPERTY(quint8 health READ gethealth WRITE sethealth NOTIFY healthChanged)
+    Q_PROPERTY(uint voltage READ getVoltage WRITE setVoltage NOTIFY voltageChanged)
+    Q_PROPERTY(uint current READ getCurrent WRITE setCurrent NOTIFY currentChanged)
+    Q_PROPERTY(float power READ getPower WRITE setPower NOTIFY powerChanged)
+    Q_PROPERTY(float temperature READ getTemperature WRITE setTemperature NOTIFY temperatureChanged)
 
 public:
     void updateBatteryInfo();
@@ -24,7 +24,7 @@ public:
     void setLevel(quint8 level) {m_level = level; emit levelChanged(level);};
 
     int getChargeMode() const {return m_chargeMode;}
-    void setChargeMode(ChargingType chargeMode) {m_chargeMode = chargeMode; emit chargeModeChanged(chargeMode);};
+    void setChargeMode(int chargeMode) {m_chargeMode = chargeMode; emit chargeModeChanged(chargeMode);};
 
     quint8 gethealth() const {return m_health;}
     void sethealth(quint8 health) {m_health = health; emit healthChanged(health);};
@@ -52,7 +52,7 @@ signals:
 
 private:
     quint8 m_level;
-    ChargingType m_chargeMode;
+    int m_chargeMode;
     quint8 m_health;
     uint m_voltage;
     uint m_current;
