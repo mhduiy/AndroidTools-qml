@@ -73,7 +73,7 @@
 #### 设置
 
 - [x] 持久化存储
-- [ ] 深浅色切换
+- [x] 深浅色切换
 - [x] 壁纸的模糊和透明度
 - [ ] ADB检测间隔
 - [x] 元素透明度
@@ -114,17 +114,11 @@ git clone --recurse-submodules https://github.com/mhduiy/AndroidTools-qml.git
 
 ## 其他展示图
 
-![alt text](doc/image.png)
-
-![alt text](doc/image-1.png)
-
-![alt text](doc/image-2.png)
-
-![alt text](doc/image-3.png)
-
-![alt text](doc/image-4.png)
-
-![alt text](doc/image-5.png)
+![](doc/1.png)
+![](doc/2.png)
+![](doc/5.png)
+![](doc/3.png)
+![](doc/4.png)
 
 ## 致谢
 

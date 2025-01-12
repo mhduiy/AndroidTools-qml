@@ -77,7 +77,7 @@ A cross platform Android toolbox developed using Qt based on ADB tools, previous
 #### Setting up
 
 - [x] Persistent storage
-- [ ] Switching between dark and light colors
+- [x] Switching between dark and light colors
 - [x] Blurriness and Transparency of Wallpaper
 - [ ] ADB detection interval
 - [x] Element Transparency
@@ -105,17 +105,11 @@ prerequisite
 
 ## Other Display Images
 
-![alt text](doc/image.png)
-
-![alt text](doc/image-1.png)
-
-![alt text](doc/image-2.png)
-
-![alt text](doc/image-3.png)
-
-![alt text](doc/image-4.png)
-
-![alt text](doc/image-5.png)
+![](doc/1.png)
+![](doc/2.png)
+![](doc/5.png)
+![](doc/3.png)
+![](doc/4.png)
 
 ## Thank
 
