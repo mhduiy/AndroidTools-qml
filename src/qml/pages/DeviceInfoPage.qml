@@ -116,21 +116,33 @@ ItemPage {
                                 text: "关机"
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Warning
+                                onClicked: {
+                                    DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Poweroff)
+                                }
                             }
                             MButton {
                                 text: "重启"
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Suggest
+                                onClicked: {
+                                    DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Reboot)
+                                }
                             }
                             MButton {
                                 text: "Recovery"
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Ordinary
+                                onClicked: {
+                                    DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToRec)
+                                }
                             }
                             MButton {
                                 text: "FastBoot"
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Ordinary
+                                onClicked: {
+                                    DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToFB)
+                                }
                             }
                         }
                     }

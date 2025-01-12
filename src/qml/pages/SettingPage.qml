@@ -8,6 +8,7 @@ import NotificationController 1.0
 import WallPaperModel 1.0
 import WallpaperHelper 1.0
 import OtherSettingsHandler 1.0
+import ADBControl 1.0
 
 ItemPage {
     ScrollView {
@@ -203,6 +204,9 @@ ItemPage {
                 description: "若设备连接后程序无任何响应，可尝试重启adb服务解决"
                 controlItem: MButton {
                     text: "重启"
+                    onClicked: {
+                        ADBControl.restartADB()
+                    }
                 }
             }
 
