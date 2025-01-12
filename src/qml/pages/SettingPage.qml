@@ -189,6 +189,17 @@ ItemPage {
             }
 
             SettingItem {
+                title: "夜间模式"
+                description: "将所有控件设置为深色主题"
+                controlItem: MSwitchButton {
+                    status: App.themeType
+                    onStatusChanged: {
+                        App.themeType = status
+                    }
+                }
+            }
+
+            SettingItem {
                 title: "OpenGL渲染模式"
                 description: "强制使用OpenGL渲染，如果设备镜像功能不可用，可尝试开启此开关，重启应用生效"
                 controlItem: MSwitchButton {
@@ -206,17 +217,6 @@ ItemPage {
                     text: "重启"
                     onClicked: {
                         ADBControl.restartADB()
-                    }
-                }
-            }
-
-            SettingItem {
-                title: "夜间模式"
-                description: "将所有控件设置为深色主题"
-                controlItem: MSwitchButton {
-                    status: App.themeType
-                    onStatusChanged: {
-                        App.themeType = status
                     }
                 }
             }
