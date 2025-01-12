@@ -13,6 +13,11 @@ Item {
         anchors.fill: parent
         clip: true
         model: DeviceListviewModel
+        highlightMoveDuration: 300
+        highlight: Rectangle {
+            color: Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.6)
+            radius: 10
+        }
         delegate: lvDelegate
         spacing: 10
 
@@ -27,13 +32,11 @@ Item {
             width: ListView.view.width
             height: 75
             radius: 10
-            border.width: 1
-            border.color: "gray"
-            color: ListView.isCurrentItem ? Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.65) : Qt.rgba(255,255,255, 0.65)
+            color: Qt.rgba(255,255,255, ListView.isCurrentItem ? 0 : 0.4)
 
             Behavior on color {
                 PropertyAnimation {
-                    duration: 100
+                    duration: 300
                 }
             }
 

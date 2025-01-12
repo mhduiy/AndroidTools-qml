@@ -17,6 +17,12 @@ ListView {
         "设置",
     ]
     delegate: lvDelegate
+    highlightMoveDuration: 300
+    focus: true
+    highlight: Rectangle {
+        color: Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.6)
+        radius: 6
+    }
     spacing: 10
 
     Component {
@@ -26,10 +32,10 @@ ListView {
             width: ListView.view.width
             height: 40
             radius: 6
-            color: ListView.isCurrentItem ? Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.5) : Qt.rgba(255,255,255, 0.3)
+            color: Qt.rgba(255,255,255, ListView.isCurrentItem ? 0 : 0.3)
             Behavior on color {
                 PropertyAnimation {
-                    duration: 100
+                    duration: 300
                 }
             }
             Text {
