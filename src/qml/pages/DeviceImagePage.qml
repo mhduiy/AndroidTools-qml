@@ -7,6 +7,7 @@ import DeviceControl 1.0
 import MirrorScene 1.0
 import Resource 1.0
 import ScrcpyConfig 1.0
+import App
 
 ItemPage {
     id: root
@@ -23,6 +24,7 @@ ItemPage {
             Layout.minimumWidth: 270
             radius: 10
             color: "black"
+            border.color: App.borderColor
 
            MirrorScene {
                id: video
@@ -92,7 +94,7 @@ ItemPage {
                             Layout.fillWidth: true
                         }
 
-                        Text {
+                        Label {
                             Layout.preferredWidth: 100
                             text: "123Mbps"
                         }
@@ -108,7 +110,7 @@ ItemPage {
                         Item {
                             Layout.fillWidth: true
                         }
-                        Text {
+                        Label {
                             Layout.preferredWidth: 100
                             text: "60fps"
                         }
@@ -124,7 +126,7 @@ ItemPage {
                         Item {
                             Layout.fillWidth: true
                         }
-                        Text {
+                        Label {
                             Layout.preferredWidth: 100
                             text: "1920, 1080"
                         }
@@ -206,7 +208,7 @@ ItemPage {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-                        Text {
+                        Label {
                             text: "帧率限制"
                         }
                         Item {
@@ -234,7 +236,7 @@ ItemPage {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-                        Text {
+                        Label {
                             text: "码率限制"
                         }
                         Item {
@@ -262,7 +264,7 @@ ItemPage {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-                        Text {
+                        Label {
                             text: "屏幕截图"
                         }
                         Item {
@@ -287,7 +289,7 @@ ItemPage {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-                        Text {
+                        Label {
                             text: "屏幕录制"
                         }
                         Item {
@@ -315,7 +317,7 @@ ItemPage {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-                        Text {
+                        Label {
                             text: "按键宏录制"
                         }
                         Item {
@@ -336,7 +338,7 @@ ItemPage {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-                        Text {
+                        Label {
                             text: "执行宏"
                         }
                         Item {
@@ -357,7 +359,7 @@ ItemPage {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-                        Text {
+                        Label {
                             text: "宏重复执行"
                         }
                         Item {
@@ -371,7 +373,7 @@ ItemPage {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-                        Text {
+                        Label {
                             text: "宏执行间隔"
                         }
                         Item {

@@ -5,6 +5,7 @@ import MFloat
 import ADBControl
 import QtQuick.Effects
 import Qt5Compat.GraphicalEffects
+import App
 
 Item {
     id: sideBar
@@ -59,8 +60,14 @@ Item {
             anchors.margins: 10
             anchors.fill: parent
             radius: sideBar.radius
-            color: Qt.rgba(255, 255, 255, 0.4)
-            border.color: Qt.rgba(0, 0, 0, 0.2)
+            color: App.midColor
+            border.color: App.borderColor
+
+            Behavior on color {
+                ColorAnimation {
+                    duration: 200
+                }
+            }
 
             ColumnLayout {
                 anchors.fill: parent
@@ -197,9 +204,14 @@ Item {
                 id: markRect
                 anchors.fill: parent
                 radius: 12
-                color: Qt.rgba(255, 255, 255, 0.3)
-                border.color: Qt.darker("white", 1.8)
+                color: App.midColor
+                border.color: App.borderColor
                 layer.enabled: true
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 200
+                    }
+                }
             }
         }
 
@@ -221,12 +233,12 @@ Item {
                 }
             }
 
-            Text {
+            Label {
                 text: "1. 打开开发者模式中的无线调试"
                 font.family: "黑体"
                 font.pixelSize: 16
             }
-            Text {
+            Label {
                 text: "2. 点击使用配对码配对设备，并填写IP和配对码"
                 wrapMode: Text.WrapAnywhere
                 font.family: "黑体"
@@ -252,7 +264,7 @@ Item {
                     }
                 }
             }
-            Text {
+            Label {
                 text: "3. 返回上一级，查看IP和端口，并填写"
                 font.family: "黑体"
                 font.pixelSize: 16

@@ -9,6 +9,7 @@ import WallPaperModel 1.0
 import WallpaperHelper 1.0
 import OtherSettingsHandler 1.0
 import ADBControl 1.0
+import App
 
 ItemPage {
     ScrollView {
@@ -193,7 +194,6 @@ ItemPage {
                 controlItem: MSwitchButton {
                     status: OtherSettingsHandler.useOpenGL
                     onStatusChanged: {
-                        console.warn("=======", status)
                         OtherSettingsHandler.useOpenGL = status
                     }
                 }
@@ -212,9 +212,12 @@ ItemPage {
 
             SettingItem {
                 title: "夜间模式"
-                description: "将所有控件设置为深色主题, 此功能开发中..."
+                description: "将所有控件设置为深色主题"
                 controlItem: MSwitchButton {
-
+                    status: App.themeType
+                    onStatusChanged: {
+                        App.themeType = status
+                    }
                 }
             }
         }

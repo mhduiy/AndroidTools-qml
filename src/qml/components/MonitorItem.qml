@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtCharts
 import MFloat
+import App
 
 MWrapper {
     id: root
@@ -47,8 +48,8 @@ MWrapper {
                 max: root.maxX
                 labelsVisible: false
                 gridVisible: false
-                color: Qt.rgba(0, 0, 0, 0.4)
-                labelsColor: color
+                color: App.windowTextColor
+                labelsColor: App.windowTextColor
                 labelsFont.bold: true
                 titleVisible: false
                 lineVisible: false
@@ -59,9 +60,9 @@ MWrapper {
                 min: root.minY
                 max: root.maxY
                 tickCount: 5 
-                gridLineColor: Qt.rgba(0, 0, 0, 0.1)
-                color: Qt.rgba(0, 0, 0, 0.4)
-                labelsColor: color
+                gridLineColor: App.borderColor
+                color: App.windowTextColor
+                labelsColor: App.windowTextColor
                 labelsFont.bold: true
             }
             SplineSeries {

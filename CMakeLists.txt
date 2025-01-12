@@ -32,6 +32,7 @@ add_executable(${EXE_NAME}
 )
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/adb)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/app)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/components)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/controlPageTool)

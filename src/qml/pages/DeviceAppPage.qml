@@ -5,6 +5,7 @@ import QtQuick.Dialogs
 import MFloat
 import SoftListModel 1.0
 import AppDetailControl 1.0
+import App
 
 ItemPage {
     id: root
@@ -169,7 +170,7 @@ ItemPage {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             spacing: 5
-                            Text {
+                            Label {
                                 text: AppDetailControl.packageName === "" ? "请选择应用" : AppDetailControl.packageName
                                 font.pixelSize: 16
                                 horizontalAlignment: Text.AlignRight
@@ -177,16 +178,16 @@ ItemPage {
                             Repeater {
                                 model: softDetailInfoModel
                                 RowLayout {
-                                    Text {
+                                    Label {
                                         text: model.name
                                         font.pixelSize: 12
                                         horizontalAlignment: Text.AlignRight
-                                        color: "gray"
+                                        color: App.windowTextAssitColor
                                     }
-                                    Text {
+                                    Label {
                                         text: model.info
                                         font.pixelSize: 12
-                                        color: "gray"
+                                        color: App.windowTextAssitColor
                                     }
                                 }
                             }
@@ -299,7 +300,7 @@ ItemPage {
                                 Layout.fillWidth: true
                                 Layout.preferredWidth: 30
                                 spacing: 10
-                                Text {
+                                Label {
                                     text: model.name
                                     font.pixelSize: 12
                                     horizontalAlignment: Text.AlignHCenter

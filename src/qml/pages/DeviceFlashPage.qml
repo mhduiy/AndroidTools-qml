@@ -31,10 +31,10 @@ ItemPage {
             Layout.fillWidth: true
             padding: 0
             RowLayout {
-                Text {
+                Label {
                     text: "请将设备重启到FASTBOOT模式，当前设备: "
                 }
-                Text {
+                Label {
                     text: FastBootDeviceManager.currentDeviceCode === "" ? "无设备连接" : FastBootDeviceManager.currentDeviceCode
                 }
 

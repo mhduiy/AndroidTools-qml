@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import App
 
 Rectangle {
     id: titleBar
@@ -16,6 +17,12 @@ Rectangle {
             property int leftMargin: 0
             property real lettleSpace: 0
             text: "AndroidTools"
+            color: App.windowTextColor
+            Behavior on color {
+                ColorAnimation{
+                    duration: 200
+                }
+            }
             Layout.leftMargin: leftMargin
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -130,7 +137,7 @@ Rectangle {
                 anchors.fill: parent
                 onPaint: {
                     var ctx = getContext("2d");
-                    ctx.strokeStyle = colorConstants.ordinaryClickedColor
+                    ctx.strokeStyle = App.normalColorWeight3
                     ctx.lineWidth = 4;
                     ctx.beginPath();
                     ctx.moveTo(10, 15);
@@ -167,7 +174,7 @@ Rectangle {
                 anchors.fill: parent
                 onPaint: {
                     var ctx = getContext("2d");
-                    ctx.strokeStyle = colorConstants.warningClickedColor
+                    ctx.strokeStyle = App.warningColorWeight3
                     ctx.lineWidth = 4;
                     ctx.beginPath();
                     ctx.moveTo(10, 20);

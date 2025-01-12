@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import App
 
 Item {
     id: root
@@ -23,10 +24,6 @@ Item {
     property int fontSize: 12
     signal clicked
 
-    ColorConstants {
-        id: colorConstants
-    }
-
     Rectangle {
         id: btnRect
         width: root.width
@@ -38,19 +35,19 @@ Item {
         property int mouseClickCenterX: 0
         property int mouseClickCenterY: 0
         property var backgroundColorMap: [
-            { key: MButton.FBtnType.Ordinary, value: colorConstants.ordinaryBackColor},
-            { key: MButton.FBtnType.Suggest, value: colorConstants.suggestBackColor},
-            { key: MButton.FBtnType.Warning, value: colorConstants.warningBackColor}
+            { key: MButton.FBtnType.Ordinary, value: App.normalColorWeight1 },
+            { key: MButton.FBtnType.Suggest, value: App.suggestColorWeight1 },
+            { key: MButton.FBtnType.Warning, value: App.warningColorWeight1 }
         ]
         property var hoverColorMap: [
-            { key: MButton.FBtnType.Ordinary, value: colorConstants.ordinaryHoverColor},
-            { key: MButton.FBtnType.Suggest, value: colorConstants.suggestHoverColor},
-            { key: MButton.FBtnType.Warning, value: colorConstants.warningHoverColor}
+            { key: MButton.FBtnType.Ordinary, value: App.normalColorWeight2 },
+            { key: MButton.FBtnType.Suggest, value: App.suggestColorWeight2 },
+            { key: MButton.FBtnType.Warning, value: App.warningColorWeight2 }
         ]
         property var clickedColorMap: [
-            { key: MButton.FBtnType.Ordinary, value: colorConstants.ordinaryClickedColor},
-            { key: MButton.FBtnType.Suggest, value: colorConstants.suggestClickedColor},
-            { key: MButton.FBtnType.Warning, value: colorConstants.warningClickedColor}
+            { key: MButton.FBtnType.Ordinary, value: App.normalColorWeight3 },
+            { key: MButton.FBtnType.Suggest, value: App.suggestColorWeight3 },
+            { key: MButton.FBtnType.Warning, value: App.warningColorWeight3 }
         ]
 
         color: {
@@ -61,8 +58,12 @@ Item {
             }
         }
 
-        border.width: 2
-        border.color: clickedColorMap[btnType].value
+        Behavior on color {
+            ColorAnimation{
+                duration: 200
+            }
+        }
+    
         radius: 10
 
         Behavior on color {
@@ -108,6 +109,11 @@ Item {
             color: btnRect.clickedColorMap[btnRect.btnType].value
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
+            Behavior on color {
+                ColorAnimation{
+                    duration: 200
+                }
+            }
         }
 
         Rectangle {

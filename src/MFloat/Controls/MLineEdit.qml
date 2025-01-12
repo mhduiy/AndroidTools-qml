@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import App
 
 Item {
 
@@ -11,32 +12,31 @@ Item {
     property alias editItem: edit
     property string placeholderText: ""
 
-    ColorConstants {
-        id: colorConstants
-    }
-
     Rectangle {
         id: warpper
         anchors.fill: parent
-        color: colorConstants.ordinaryBackColor
+        color: App.normalColorWeight1
         radius: 10
-        border.width: 2
-        border.color: colorConstants.ordinaryClickedColor
-
         state: "unInput"
+
+        Behavior on color {
+            ColorAnimation{
+                duration: 200
+            }
+        }
 
         states: [
             State {
                 name: "unInput"
-                PropertyChanges { target: placeholderItemRect; color: edit.length !== 0 ? colorConstants.ordinaryClickedColor: "transparent"; x: edit.length !== 0 ? 15 : 5; y: edit.length !== 0 ? (-((placeholderItem.height + 5) / 2)) : (root.height / 2 - placeholderItemRect.height / 2)}
-                PropertyChanges { target: placeholderItem; color: edit.length !== 0 ? "white" : "gray"}
-                PropertyChanges { target: warpper; color: colorConstants.ordinaryBackColor; border.color: colorConstants.ordinaryClickedColor}
+                PropertyChanges { target: placeholderItemRect; color: edit.length !== 0 ? App.baseColor: "transparent"; x: edit.length !== 0 ? 15 : 5; y: edit.length !== 0 ? (-((placeholderItem.height + 5) / 2)) : (root.height / 2 - placeholderItemRect.height / 2)}
+                PropertyChanges { target: placeholderItem; color: App.windowTextColor}
+                PropertyChanges { target: warpper; color: App.normalColorWeight1;}
             },
             State {
                 name: "input"
-                PropertyChanges { target: placeholderItemRect; color: colorConstants.suggestClickedColor; x: 15; y: -((placeholderItem.height + 5) / 2)}
-                PropertyChanges { target: placeholderItem; color: "white"}
-                PropertyChanges { target: warpper; color: colorConstants.suggestBackColor; border.color: colorConstants.suggestClickedColor}
+                PropertyChanges { target: placeholderItemRect; color: App.suggestColorWeight3; x: 15; y: -((placeholderItem.height + 5) / 2)}
+                PropertyChanges { target: placeholderItem; color: App.windowTextColor}
+                PropertyChanges { target: warpper; color: App.suggestColorWeight2;}
             }
         ]
 
@@ -61,7 +61,7 @@ Item {
             id: placeholderItemRect
             height: placeholderItem.height + 5
             width: placeholderItem.width + 5
-            color: colorConstants.ordinaryClickedColor
+            color: App.normalColorWeight3
             radius: 5
             Text {
                 id: placeholderItem
@@ -69,8 +69,14 @@ Item {
                 clip: true
                 text: placeholderText
                 verticalAlignment: Text.AlignVCenter
-                color: "white"
+                color: App.windowTextColor
                 font.pixelSize: 10
+
+                Behavior on color {
+                    ColorAnimation{
+                        duration: 200
+                    }
+                }
             }
         }
 
@@ -80,6 +86,12 @@ Item {
             anchors.margins: 5
             clip: true
             verticalAlignment: Text.AlignVCenter
+            color: App.windowTextColor
+            Behavior on color {
+                ColorAnimation{
+                    duration: 200
+                }
+            }
 
             onFocusChanged: {
                 if (focus) {

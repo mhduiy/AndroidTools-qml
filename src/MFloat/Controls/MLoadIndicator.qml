@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import App
 
 Item {
     width: 30
@@ -18,8 +19,8 @@ Item {
         opacity: 0.0
         onPaint: {
             var ctx = getContext("2d");
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = App.normalColorWeight3;
+            ctx.lineWidth = 1;
             ctx.imageSmoothingEnabled = true;
             antialiasing: true
 
@@ -32,7 +33,7 @@ Item {
             ctx.stroke();
 
             var smallRadius = 4;
-            ctx.fillStyle = "black";
+            ctx.fillStyle = App.normalColorWeight3;
             ctx.beginPath();
             ctx.arc(centerX, 10, smallRadius, 0, 2 * Math.PI);
             ctx.fill();

@@ -1,4 +1,5 @@
 import QtQuick
+import App
 
 Item {
     id: root
@@ -7,15 +8,9 @@ Item {
 
     property bool status: false
 
-    ColorConstants {
-        id: colorConstants
-    }
-
     Rectangle {
         anchors.fill: parent
-        color: status ? colorConstants.suggestBackColor : colorConstants.ordinaryBackColor
-        border.width: 2
-        border.color: status ? colorConstants.suggestClickedColor : colorConstants.ordinaryClickedColor
+        color: status ? App.suggestColorWeight1 : App.normalColorWeight1
         radius: width / 2
 
         Behavior on color {
@@ -37,7 +32,7 @@ Item {
             width: height
             radius: width / 2
             scale: 1.0
-            color: status ? colorConstants.suggestClickedColor : colorConstants.ordinaryClickedColor
+            color: status ? App.suggestColorWeight3 : App.adjustColorOpacity(App.normalColorWeight3, 0.6)
 
             Component.onCompleted: {
                 x = status ? parent.width - width - 3 : 3

@@ -184,7 +184,7 @@ ItemPage {
                     ColumnLayout {
                         RowLayout {
                             Layout.fillWidth: true
-                            Text {
+                            Label {
                                 text: "分辨率"
                             }
                             Item {
@@ -196,7 +196,7 @@ ItemPage {
                                 placeholderText: "width"
                                 editItem.text: ResolutionControl.screenWidth
                             }
-                            Text {
+                            Label {
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                                 Layout.preferredWidth: 20
@@ -211,7 +211,7 @@ ItemPage {
                         }
                         RowLayout {
                             Layout.fillWidth: true
-                            Text {
+                            Label {
                                 text: "DPI"
                             }
                             Item {

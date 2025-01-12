@@ -9,6 +9,7 @@ import "./pages/"
 import ADBControl 1.0
 import WallpaperHelper 1.0
 import FpsItem 1.0
+import App
 
 ApplicationWindow {
     id: root
@@ -19,10 +20,6 @@ ApplicationWindow {
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
     color: "transparent"
 
-    ColorConstants {
-        id: colorConstants
-    }
-
     MNotificationBox {
         id: notificationBox
         blurTarget: rootRect
@@ -31,6 +28,8 @@ ApplicationWindow {
     FpsItem {
         id: fpsItem
     }
+
+    palette.windowText: App.windowTextColor
 
     Text {
         z: 1000
@@ -92,7 +91,14 @@ ApplicationWindow {
             Rectangle{
                 anchors.fill: parent
                 radius: 10
+                color: App.baseColor
                 opacity: WallpaperHelper.opacity
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 200
+                    }
+                }
             }
         }
 

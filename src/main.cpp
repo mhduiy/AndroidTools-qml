@@ -19,6 +19,7 @@
 #include "cpp/utils/notificationcontroller.h"
 #include "cpp/components/fpsitem.h"
 #include "cpp/utils/globalsetting.h"
+#include "cpp/app/appglobal.h"
 
 bool checkADB() {
     QProcess process;
@@ -114,6 +115,7 @@ int main(int argc, char *argv[])
     qInfo() << "load8" << loaderTimer.elapsed();
 
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
+    qmlRegisterSingletonInstance("App", 1, 0, "App", App);
 
     AppSettings->checkConfig("other", "useOpenGL", QVariant::fromValue(false));
     bool useOpenGL = GlobalSetting::instance()->readConfig("other", "useOpenGL").toBool();

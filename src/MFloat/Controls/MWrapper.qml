@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import OtherSettingsHandler
+import App
 
 Control {
     id: control
@@ -24,9 +25,15 @@ Control {
                     visible: active
                     Layout.alignment: Qt.AlignTop
                     sourceComponent: Text {
+                        color: App.windowTextColor
                         text: control.title
                         font.bold: true
                         font.pixelSize: 18
+                        Behavior on color {
+                            ColorAnimation{
+                                duration: 200
+                            }
+                        }
                     }
                 }
 
@@ -35,9 +42,14 @@ Control {
                     visible: active
                     Layout.alignment: Qt.AlignTop
                     sourceComponent: Text {
+                        color: App.windowTextAssitColor
                         text: control.description
                         font.pixelSize: 12
-                        opacity: 0.6
+                        Behavior on color {
+                            ColorAnimation{
+                                duration: 200
+                            }
+                        }
                     }
                 }
             }
@@ -60,8 +72,18 @@ Control {
 
     background: Rectangle {
         radius: 10
-        color: Qt.rgba(255, 255, 255, alpha)
-        border.color: colorConstants.ordinaryHoverColor
+        color: Qt.rgba(255, 255, 255, control.alpha)
+        border.color: App.borderColor
         border.width: 1
+        Behavior on color {
+            ColorAnimation{
+                duration: 200
+            }
+        }
+        Behavior on border.color {
+            ColorAnimation{
+                duration: 200
+            }
+        }
     }
 }

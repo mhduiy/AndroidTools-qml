@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Effects
 
 import NotificationController
+import App
 
 Item {
     id: root

@@ -11,6 +11,7 @@ import DetailInfoControl 1.0
 import NotificationController 1.0
 import DeviceControl 1.0
 import RealTimeInfoHelper 1.0
+import App
 
 ItemPage {
     id: root
@@ -53,7 +54,7 @@ ItemPage {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.alignment: Qt.AlignLeft
-                        Text {
+                        Label {
                             text: {
                                 let title = DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER];
                                 if (title === "" || title === undefined) {
@@ -94,13 +95,13 @@ ItemPage {
                                 },
                             ]
                             RowLayout {
-                                Text {
+                                Label {
                                     text: modelData.key
-                                    color: "#008c8c"
+                                    color: App.windowTextAssitColor
                                 }
-                                Text {
+                                Label {
                                     text: modelData.value
-                                    color: "gray"
+                                    color: App.windowTextAssitColor
                                 }
                             }
                         }
@@ -169,11 +170,11 @@ ItemPage {
                                 property var titles: ["设备信息", "处理器", "系统信息", "屏幕", "其他信息"]
                                 model: texts.length
                                 ColumnLayout {
-                                    Text {
+                                    Label {
                                         text: deviceDetailInfoRep.titles[index]
                                         font.bold: true
                                         font.pixelSize: 18
-                                        color: colorConstants.ordinaryClickedColor
+                                        color: App.windowTextColor
                                     }
                                     Repeater {
                                         id: rep
@@ -194,19 +195,18 @@ ItemPage {
                                                 Layout.preferredHeight: 30
                                             }
 
-                                            Text {
+                                            Label {
                                                 text: deviceDetailInfoRep.texts[rep.repIndex][index]
-                                                opacity: 0.4
                                                 font.pixelSize: 14
                                             }
 
                                             Rectangle {
                                                 Layout.fillWidth: true
-                                                Layout.preferredHeight: 2
-                                                color: Qt.rgba(255, 255, 255, 0.7)
+                                                Layout.preferredHeight: 1
+                                                color: App.windowTextAssitColor
                                             }
 
-                                            Text {
+                                            Label {
                                                 visible: deviceDetailInfoRep.values[rep.repIndex][index] !== undefined
                                                 text: deviceDetailInfoRep.values[rep.repIndex][index]
                                             }
@@ -253,7 +253,7 @@ ItemPage {
                             RowLayout {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
-                                Text {
+                                Label {
                                     font.bold: true
                                     font.pixelSize: 20
                                     text: "前台应用"
@@ -281,7 +281,7 @@ ItemPage {
                                     rectColor: colorConstants.suggestClickedColor
                                     text: "窗口标识符"
                                 }
-                                Text {
+                                Label {
                                     Layout.fillWidth: true
                                     text: CutActivityControl.identifier
                                 }
@@ -290,7 +290,7 @@ ItemPage {
                                     rectColor: colorConstants.suggestClickedColor
                                     text: "前台包名"
                                 }
-                                Text {
+                                Label {
                                     Layout.fillWidth: true
                                     text: CutActivityControl.cutPackageName
                                 }
