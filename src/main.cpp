@@ -20,6 +20,7 @@
 #include "cpp/components/fpsitem.h"
 #include "cpp/utils/globalsetting.h"
 #include "cpp/app/appglobal.h"
+#include "src/cpp/utils/constants.h"
 
 bool checkADB() {
     QProcess process;
@@ -117,7 +118,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
     qmlRegisterSingletonInstance("App", 1, 0, "App", App);
 
-    AppSettings->checkConfig("other", "useOpenGL", QVariant::fromValue(false));
+    AppSettings->checkConfig("other", "useOpenGL", DEFAULT_USE_OPENGL);
     bool useOpenGL = GlobalSetting::instance()->readConfig("other", "useOpenGL").toBool();
     if (useOpenGL) {
         qInfo() << "force use OpenGL";

@@ -44,6 +44,14 @@ Item {
             }
         }
     }
+
+    Connections {
+        target: App
+        function onThemeTypeChanged() {
+            canvas.requestPaint()
+        }
+    }
+
     RotationAnimation {
         id: rotationAnimation
         target: canvas

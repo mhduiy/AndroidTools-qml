@@ -1,4 +1,5 @@
 #include "appglobal.h"
+#include "src/cpp/utils/constants.h"
 #include "src/cpp/utils/globalsetting.h"
 #include <QDebug>
 
@@ -30,7 +31,7 @@ const QColor DarkBorderColor = QColor(255, 255, 255, 0.2 * 255);
 AppGlobal::AppGlobal(QObject *parent)
     : QObject(parent)
 {
-    m_themeType = (ThemeType)AppSettings->readConfig(Other_Section, Theme_Type_Key, ThemeType::Light).toInt();
+    m_themeType = (ThemeType)AppSettings->readConfig(Other_Section, Theme_Type_Key, DEFAULT_APP_THEME_TYPE).toInt();
     reload();
 }
 

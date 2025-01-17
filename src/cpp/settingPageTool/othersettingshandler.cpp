@@ -1,5 +1,6 @@
 #include "othersettingshandler.h"
 #include "../utils/globalsetting.h"
+#include "src/cpp/utils/constants.h"
 
 static auto constexpr Other_Section = "other";
 static auto constexpr Wrapper_opacity_key = "wrapperOpacity";
@@ -8,10 +9,10 @@ static auto constexpr Use_OpenGL_Key = "useOpenGL";
 OtherSettingsHandler::OtherSettingsHandler(QObject *parent)
     : QObject(parent)
 {
-    double configWrapperOpacity = AppSettings->readConfig(Other_Section, Wrapper_opacity_key, 0.3).toDouble();
+    double configWrapperOpacity = AppSettings->readConfig(Other_Section, Wrapper_opacity_key, DEFAULT_WRAPPER_OPACITY).toDouble();
     setWrapperOpacity(configWrapperOpacity);
 
-    bool useOpenGL = AppSettings->readConfig(Other_Section, Use_OpenGL_Key, false).toBool();
+    bool useOpenGL = AppSettings->readConfig(Other_Section, Use_OpenGL_Key, DEFAULT_USE_OPENGL).toBool();
     setUseOpenGL(useOpenGL);
 }
 

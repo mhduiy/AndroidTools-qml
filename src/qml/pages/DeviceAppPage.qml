@@ -20,7 +20,7 @@ ItemPage {
             Layout.preferredWidth: parent.width * 0.4
             Layout.fillHeight: true
             title: "软件列表"
-            titleRightContent: ComboBox {
+            titleRightContent: MComboBox {
                 id: softListComboBox
                 Layout.minimumWidth: 80
                 model: ["第三方应用", "系统应用", "所有应用"]

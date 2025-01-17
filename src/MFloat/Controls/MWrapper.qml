@@ -72,7 +72,7 @@ Control {
 
     background: Rectangle {
         radius: 10
-        color: Qt.rgba(255, 255, 255, control.alpha)
+        color: App.adjustColorOpacity(App.baseColor, control.alpha)
         border.color: App.borderColor
         border.width: 1
         Behavior on color {

@@ -51,7 +51,7 @@ ItemPage {
                         id: wallpaperListView
                         anchors.fill: parent
                         model: WallPaperModel
-                        spacing: 4
+                        spacing: 5
                         orientation: ListView.Horizontal
                         clip: true
                         focus: true
@@ -140,7 +140,7 @@ ItemPage {
             SettingItem {
                 title: "壁纸不透明度"
                 description: "设置壁纸白色遮罩的透明度"
-                controlItem: Slider {
+                controlItem: MSlider {
                     id: slider
                     width: 200
                     from: 0
@@ -157,7 +157,7 @@ ItemPage {
             SettingItem {
                 title: "壁纸模糊度"
                 description: "设置壁纸的模糊半径"
-                controlItem: Slider {
+                controlItem: MSlider {
                     width: 200
                     from: 0
                     value: WallpaperHelper.blurRadius
@@ -174,7 +174,7 @@ ItemPage {
             SettingItem {
                 title: "模块背景透明度"
                 description: "设置每一个功能模块区域的透明度"
-                controlItem: Slider {
+                controlItem: MSlider {
                     width: 200
                     from: 0
                     value: OtherSettingsHandler.wrapperOpacity

@@ -14,8 +14,8 @@ WallpaperHelper::WallpaperHelper(QObject *parent)
     , m_triggerTimer(new QTimer(this))
 {
     GlobalSetting::instance()->checkConfig("wallpaper", "url", "qrc:/res/backgroundImage.jpeg");
-    GlobalSetting::instance()->checkConfig("wallpaper", "opacity", 0.2);
-    GlobalSetting::instance()->checkConfig("wallpaper", "blurRadius", 10);
+    GlobalSetting::instance()->checkConfig("wallpaper", "opacity", DEFAULT_WALLPAPER_OPACITY);
+    GlobalSetting::instance()->checkConfig("wallpaper", "blurRadius", DEFAULT_WALLPAPER_BLUR_RADIUS);
     // 获取壁纸配置
     QString cutWallpaperUrl = GlobalSetting::instance()->readConfig("wallpaper", "url").toString();
     if (cutWallpaperUrl.isEmpty()) {
@@ -24,9 +24,9 @@ WallpaperHelper::WallpaperHelper(QObject *parent)
         setWallPaper(cutWallpaperUrl);
     }
 
-    qreal wallpaperOpacity =  GlobalSetting::instance()->readConfig("wallpaper", "opacity", 0.2).toReal();
+    qreal wallpaperOpacity =  GlobalSetting::instance()->readConfig("wallpaper", "opacity", DEFAULT_WALLPAPER_OPACITY).toReal();
     setOpacity(wallpaperOpacity);
-    int wallpaperBlurRadius = GlobalSetting::instance()->readConfig("wallpaper", "blurRadius", 10).toInt();
+    int wallpaperBlurRadius = GlobalSetting::instance()->readConfig("wallpaper", "blurRadius", DEFAULT_WALLPAPER_BLUR_RADIUS).toInt();
     setBlurRadius(wallpaperBlurRadius);
 
     connect(m_triggerTimer, &QTimer::timeout, this, &WallpaperHelper::writeValueToConfig);

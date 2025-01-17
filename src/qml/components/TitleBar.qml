@@ -134,6 +134,7 @@ Rectangle {
             Layout.fillHeight: true
             color: "transparent"
             Canvas {
+                id: minCanvas
                 anchors.fill: parent
                 onPaint: {
                     var ctx = getContext("2d");
@@ -145,6 +146,14 @@ Rectangle {
                     ctx.stroke();
                 }
             }
+
+            Connections {
+                target: App
+                function onThemeTypeChanged() {
+                    minCanvas.requestPaint()
+                }
+            }
+
             Behavior on scale {
                 NumberAnimation {
                     duration: 300
@@ -171,6 +180,7 @@ Rectangle {
             Layout.fillHeight: true
             color: "transparent"
             Canvas {
+                id: closeCanvas
                 anchors.fill: parent
                 onPaint: {
                     var ctx = getContext("2d");
@@ -184,6 +194,14 @@ Rectangle {
                     ctx.stroke();
                 }
             }
+
+            Connections {
+                target: App
+                function onThemeTypeChanged() {
+                    closeCanvas.requestPaint()
+                }
+            }
+
             Behavior on scale {
                 NumberAnimation {
                     duration: 300
