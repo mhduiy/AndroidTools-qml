@@ -11,6 +11,7 @@ class ConnectManager : public QObject
 {
     Q_OBJECT
     SINGLETON(ConnectManager)
+    Q_PROPERTY(QString currentDeviceCode READ currentDeviceCode WRITE setCurrentDeviceCode NOTIFY currentDeviceChanged FINAL)
 public:
     QString currentDeviceCode();
     bool setCurrentDeviceCode(const QString &code);

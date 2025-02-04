@@ -33,6 +33,7 @@ QString ConnectManager::currentDeviceCode()
 bool ConnectManager::setCurrentDeviceCode(const QString &code)
 {
     if (code.isEmpty()) {
+        m_currentDeviceCode = "";
         emit currentDeviceChanged(code);
         qInfo() << "set current device: " << "Empty";
         return true;
@@ -100,6 +101,11 @@ void ConnectManager::refreshDevice()
             m_deviceListviewModel->removeRow(m_deviceCodeSet[i]);
             emit deviceDisconnected(m_deviceCodeSet[i]);
             m_deviceCodeSet.remove(i);
+            if (m_deviceCodeSet.count()) {
+                setCurrentDeviceCode(m_deviceCodeSet.first());
+            } else {
+                setCurrentDeviceCode("");
+            }
             continue;
         }
 

@@ -12,6 +12,7 @@ import NotificationController 1.0
 import DeviceControl 1.0
 import RealTimeInfoHelper 1.0
 import App
+import ConnectManager
 
 ItemPage {
     id: root
@@ -56,12 +57,18 @@ ItemPage {
                         Layout.alignment: Qt.AlignLeft
                         Label {
                             text: {
-                                let title = DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER];
-                                if (title === "" || title === undefined) {
-                                    title = "请连接设备";
-                                    return title;
+                                let title
+                                if (ConnectManager.currentDeviceCode === "") {
+                                    title = "请连接设备"
+                                } else {
+                                    title = DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER];
+                                    if (title === "" || title === undefined) {
+                                        title = "请连接设备";
+                                        return title;
+                                    }
+                                    title = title + " " + (DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME] === "" ? DetailInfoControl.info[DetailInfoControl.DETA_MODEL] : DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME]);
                                 }
-                                title = title + " " + (DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME] === "" ? DetailInfoControl.info[DetailInfoControl.DETA_MODEL] : DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME]);
+
                                 return title;
                             }
                             font.pixelSize: 22

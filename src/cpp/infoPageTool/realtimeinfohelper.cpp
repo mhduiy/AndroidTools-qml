@@ -108,6 +108,9 @@ void RealTimeInfoWorker::refreshMemUse()
             break;
         }
     }
-    int precent = memAvailable * 100 / memTotal;
+    int precent = 0;
+    if (memTotal != 0) {
+        precent = memAvailable * 100 / memTotal;
+    }
     QMetaObject::invokeMethod(m_helper, "setMemUse", Qt::QueuedConnection, Q_ARG(int, 100 - precent));
 }
