@@ -14,7 +14,8 @@ ADBInterface::ADBInterface(QObject *parent) : QObject(parent)
 
 bool ADBInterface::startADBService()
 {
-    m_adbTools->executeCommand(ADBTools::ADB, {"start-server"});
+    qInfo() << "request start adb service";
+    m_adbTools->executeCommand(ADBTools::ADB, {"start-server"}, "", 10000);
     QStringList retStrList = m_adbTools->executeCommand(ADBTools::ADB, {"version"}).split('\n');
     for (QString &lineInfo : retStrList) {
         if (lineInfo.contains("Android Debug Bridge version")) {
