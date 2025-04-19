@@ -179,6 +179,11 @@ ApplicationWindow {
                         Layout.fillHeight: true
                     }
 
+                    LogPage {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                    }
+
                     SettingPage {
                         Layout.fillWidth: true
                         Layout.fillHeight: true

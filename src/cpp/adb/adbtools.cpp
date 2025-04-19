@@ -3,6 +3,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QMutexLocker>
+#include "adblog.h"
 
 #define PREFIX ""
 
@@ -61,6 +62,9 @@ QString ADBTools::executeCommand(APP app, const QStringList &args, const QString
     QString ret = pro.readAllStandardOutput();
     if(ret.isEmpty()) {
         ret = pro.readAllStandardError();
+        ADBLogModel::instance()->commitLog(ADBLogType::Error, ret);
+    } else {
+        ADBLogModel::instance()->commitLog(ADBLogType::Info, ret);
     }
     return ret;
 }

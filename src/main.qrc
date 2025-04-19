@@ -14,6 +14,7 @@
         <file>qml/pages/DeviceFlashPage.qml</file>
         <file>qml/pages/DeviceImagePage.qml</file>
         <file>qml/pages/SettingPage.qml</file>
+        <file>qml/pages/LogPage.qml</file>
         <file>res/backgroundImage.jpeg</file>
         <file>res/closeIcon.png</file>
         <file>res/errorIcon.png</file>

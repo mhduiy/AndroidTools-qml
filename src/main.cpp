@@ -21,6 +21,7 @@
 #include "cpp/utils/globalsetting.h"
 #include "cpp/app/appglobal.h"
 #include "src/cpp/utils/constants.h"
+#include "src/cpp/adb/adblog.h"
 
 bool checkADB() {
     QProcess process;
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
     qmlRegisterSingletonInstance("App", 1, 0, "App", App);
     qmlRegisterSingletonInstance("ConnectManager", 1, 0, "ConnectManager", ConnectManager::instance());
+    qmlRegisterSingletonInstance("ADBLog", 1, 0, "ADBLog", ADBLogModel::instance(&app));
 
     AppSettings->checkConfig("other", "useOpenGL", DEFAULT_USE_OPENGL);
     bool useOpenGL = GlobalSetting::instance()->readConfig("other", "useOpenGL").toBool();

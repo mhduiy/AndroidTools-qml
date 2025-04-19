@@ -14,6 +14,7 @@ ListView {
         "软件管理",
         "刷机工具",
         "设备镜像",
+        "ADB日志",
         "设置",
     ]
     delegate: lvDelegate
