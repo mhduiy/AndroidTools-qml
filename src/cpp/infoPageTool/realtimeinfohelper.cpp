@@ -68,7 +68,7 @@ RealTimeInfoWorker::RealTimeInfoWorker(RealTimeInfoHelper *helper, QObject *pare
 , m_timer(new QTimer(this))
 , m_helper(helper)
 {
-    m_timer->setInterval(2000);
+    m_timer->setInterval(5000);
     m_timer->setSingleShot(false);
     connect(m_timer, &QTimer::timeout, this, &RealTimeInfoWorker::onTimeOut);
 }

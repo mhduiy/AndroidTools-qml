@@ -9,7 +9,7 @@ ConnectManager::ConnectManager(QObject *parent) : QObject(parent)
     qmlRegisterSingletonInstance("DeviceListviewModel", 1, 0, "DeviceListviewModel", m_deviceListviewModel);
 
     m_deviceCheckTimer = new QTimer();
-    m_deviceCheckTimer->setInterval(1500);
+    m_deviceCheckTimer->setInterval(5000);
     connect(m_deviceCheckTimer, &QTimer::timeout, this, &ConnectManager::refreshDevice);
 
     connect(this, &ConnectManager::deviceConnected, [](QString code){

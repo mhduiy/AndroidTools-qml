@@ -86,6 +86,8 @@ DeviceBatteryInfo ADBInterface::getBatteryInfo(const QString &code) const
     batteryInfo.scale = retMap["scale"].toInt();
     batteryInfo.voltage = retMap["voltage"].toInt();
     batteryInfo.temperature = retMap["temperature"].toDouble() / 10.0;
+    // 自测只有Android 15及其以上版本支持
+    batteryInfo.current = retMap["Battery current"].toInt() < 0 ? retMap["Battery current"].toInt() * -1 : retMap["Battery current"].toInt()  ;
     return batteryInfo;
 }
 

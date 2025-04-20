@@ -42,6 +42,7 @@ struct DeviceBatteryInfo {
     int8_t level;
     int8_t scale;
     uint voltage;
+    uint current;
     float temperature;
 };
 

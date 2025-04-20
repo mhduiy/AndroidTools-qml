@@ -73,7 +73,7 @@ MWrapper {
 
             Timer {
                 id: dataTimer
-                interval: 1000
+                interval: 5000
                 running: root.on
                 repeat: true
                 onTriggered: {

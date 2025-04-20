@@ -332,6 +332,12 @@ ItemPage {
                         cutValue: BatteryControl.voltage
                     }
                     MonitorItem {
+                        title: "电池电流"
+                        minY: 25
+                        maxY: 25
+                        cutValue: BatteryControl.current
+                    }
+                    MonitorItem {
                         title: "内存占用"
                         minY: 25
                         maxY: 25

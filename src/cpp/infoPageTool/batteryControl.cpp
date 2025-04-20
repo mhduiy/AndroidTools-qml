@@ -11,7 +11,7 @@ BatteryControl::BatteryControl(QObject *parent) : QObject(parent)
     m_health = 100;
     m_voltage = 5000;
     m_current = 5000;
-    m_power = m_voltage * m_current / 1000000;
+    m_power = m_voltage * m_current / 1000000.0;
     m_temperature = 10.0;
 
     connect(ConnectManager::instance(), &ConnectManager::deviceRefreshFinish, this, &BatteryControl::updateBatteryInfo);
@@ -24,7 +24,7 @@ void BatteryControl::updateBatteryInfo()
     setChargeMode(info.chargingType);
     sethealth(info.health);
     setVoltage(info.voltage);
-    setCurrent(info.maxChargingCut);
-    setPower(m_voltage * m_current / 1000000);
+    setCurrent(info.current);
+    setPower(m_voltage * m_current / 1000000.0);
     setTemperature(info.temperature);
 }
