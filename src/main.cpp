@@ -20,8 +20,9 @@
 #include "cpp/components/fpsitem.h"
 #include "cpp/utils/globalsetting.h"
 #include "cpp/app/appglobal.h"
-#include "src/cpp/utils/constants.h"
-#include "src/cpp/adb/adblog.h"
+#include "cpp/imagePageTool/scrcpy/ui/mirror/imageframeitem.h"
+#include "cpp/utils/constants.h"
+#include "cpp/adb/adblog.h"
 
 bool checkADB() {
     QProcess process;
@@ -42,12 +43,12 @@ bool checkADB() {
     }
 
     if (!trueADBPath.isEmpty()) {
-        qInfo() << "find adb: " << trueADBPath;
+        qInfo() << "find adb:" << trueADBPath;
         qputenv("QTSCRCPY_ADB_PATH", trueADBPath.toLocal8Bit());
         return true;
     }
     
-    qWarning() << "can not fount adb!";
+    qWarning() << "can not found adb!";
     return false;
 }
 
@@ -82,7 +83,7 @@ int main(int argc, char *argv[])
     ADBInterface *interface = ADBInterface::instance(&app);
     interface->startADBService();
 
-    qInfo() << "mainThread: " << QThread::currentThreadId();
+    qInfo() << "mainThread:" << QThread::currentThreadId();
 
     // 连接管理放置到子线程
     QThread *thread = new QThread(&app);
@@ -91,35 +92,20 @@ int main(int argc, char *argv[])
     // 开始检测设备连接
     ConnectManager::instance()->startCheckDevice();
 
-    qInfo() << "load1" << loaderTimer.elapsed();
-    // 加载InfoPage的相关逻辑
     InfoPageTool::instance(&app);
-    qInfo() << "load2" << loaderTimer.elapsed();
-    // 加载ControlPage相关逻辑
     ControlPageTool::instance(&app);
-    qInfo() << "load3" << loaderTimer.elapsed();
-    // 加载AppPage的相关逻辑
     AppPageTool::instance(&app);
-    qInfo() << "load4" << loaderTimer.elapsed();
-    // 加载FlashPage相关逻辑
     FlashPageTool::instance(&app);
-    qInfo() << "load5" << loaderTimer.elapsed();
-    // 加载ImagePage相关逻辑
     ImagePageTool::instance(&app);
-    qInfo() << "load6" << loaderTimer.elapsed();
-    // 加载SettingPage的相关逻辑
     SettingPageTools::instance(&app);
-    qInfo() << "load7" << loaderTimer.elapsed();
-
-    // 注册通知控制管理
     NotificationController::instance(&app);
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
-    qInfo() << "load8" << loaderTimer.elapsed();
-
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
+    qmlRegisterType<ImageFrameItem>( "ImageFrameItem", 1, 0, "ImageFrameItem");
     qmlRegisterSingletonInstance("App", 1, 0, "App", App);
     qmlRegisterSingletonInstance("ConnectManager", 1, 0, "ConnectManager", ConnectManager::instance());
     qmlRegisterSingletonInstance("ADBLog", 1, 0, "ADBLog", ADBLogModel::instance(&app));
+    qInfo() << "核心模块加载完成，用时(ms):" << loaderTimer.elapsed();
 
     AppSettings->checkConfig("other", "useOpenGL", DEFAULT_USE_OPENGL);
     bool useOpenGL = GlobalSetting::instance()->readConfig("other", "useOpenGL").toBool();
@@ -131,7 +117,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     const QUrl url("qrc:/qml/Main.qml");
     engine.load(url);
-    qInfo() << "load9" << loaderTimer.elapsed();
+    qInfo() << "QML界面加载完成，用时(ms):" << loaderTimer.elapsed();
 
     QObject::connect(qApp, &QApplication::aboutToQuit, qApp, [thread]() {
         ConnectManager::instance()->stopCheckDevice();

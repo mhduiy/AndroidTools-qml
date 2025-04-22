@@ -24,7 +24,6 @@ Build-Depends:
  libglu1-mesa-dev,
  mesa-common-dev,
  libvulkan-dev,
- libqt6opengl6-dev,
  libqt6websockets6-dev,
  ppmpeg
 

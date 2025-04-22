@@ -33,8 +33,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(FFMPEG REQUIRED libswscale)
 
-    target_include_directories(${EXE_NAME} PRIVATE ${FFMPEG_INCLUDE_DIRS})
-    target_link_directories(${EXE_NAME} PRIVATE ${FFMPEG_LIBRARY_DIRS})
+    target_include_directories(${EXE_NAME} PRIVATE ${FFMPEG_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/libyuv/include)
+    target_link_directories(${EXE_NAME} PRIVATE ${FFMPEG_LIBRARY_DIRS} ${CMAKE_SOURCE_DIR}/libyuv/build)
 
-    target_link_libraries(${EXE_NAME} PRIVATE ${FFMPEG_LIBRARIES})
+    target_link_libraries(${EXE_NAME} PRIVATE ${FFMPEG_LIBRARIES} yuv)
 endif()

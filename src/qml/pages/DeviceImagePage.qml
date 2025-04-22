@@ -8,6 +8,7 @@ import MirrorScene 1.0
 import Resource 1.0
 import ScrcpyConfig 1.0
 import App
+import ImageFrameItem 1.0
 
 ItemPage {
     id: root
@@ -31,6 +32,12 @@ ItemPage {
                anchors.fill: parent
                anchors.margins: 5
                visible: true
+            //    property var renderer: MirrorRenderer {}
+               ImageFrameItem {
+                    imageFrame: video.image
+                    hasAlphaChannel: false
+                    anchors.fill: parent
+               }
 
                property int enum_WINDOW_HOME: 0
                property int enum_WINDOW_MIRROR_PORTRATE: 1
