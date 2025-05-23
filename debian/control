@@ -25,7 +25,6 @@ Build-Depends:
  mesa-common-dev,
  libvulkan-dev,
  libqt6websockets6-dev,
- ppmpeg
 
 Standards-Version: 0.0.1
 

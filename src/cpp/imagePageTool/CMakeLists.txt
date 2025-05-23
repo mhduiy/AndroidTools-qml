@@ -23,10 +23,10 @@ endif()
 find_program(ADB_PATH adb)
 if(ADB_PATH)
     message(STATUS "Found adb at: ${ADB_PATH}")
-    target_compile_definitions(${EXE_NAME} PRIVATE ADB_PATH="${ADB_PATH}")
 else()
-    message(FATAL_ERROR "adb not found on your system")
+    message("adb not found on your system")
 endif()
+target_compile_definitions(${EXE_NAME} PRIVATE ADB_PATH="${ADB_PATH}")
 
 # MacOS
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")

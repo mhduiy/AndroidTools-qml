@@ -91,3 +91,12 @@ target_link_libraries(${EXE_NAME} PRIVATE
 
     QtScrcpyCore
 )
+
+install(TARGETS ${EXE_NAME}
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/qml DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/res DESTINATION share/${PROJECT_NAME})
