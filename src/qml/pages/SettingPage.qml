@@ -209,6 +209,32 @@ ItemPage {
                     }
                 }
             }
+            
+            SettingItem {
+                title: "设备刷新间隔"
+                description: "设置检测设备连接状态的时间间隔（毫秒）"
+                controlItem: RowLayout {
+                    spacing: 10
+                    MSlider {
+                        id: deviceRefreshSlider
+                        width: 150
+                        from: 1000
+                        value: OtherSettingsHandler.deviceRefreshInterval
+                        to: 10000
+                        snapMode: Slider.NoSnap
+                        stepSize: 500
+                        
+                        onValueChanged: {
+                            OtherSettingsHandler.deviceRefreshInterval = value
+                        }
+                    }
+                    
+                    Text {
+                        text: (deviceRefreshSlider.value / 1000).toFixed(1) + "秒"
+                        color: App.windowTextColor
+                    }
+                }
+            }
 
             SettingItem {
                 title: "重启adb服务"

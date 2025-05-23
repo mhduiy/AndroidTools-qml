@@ -2,6 +2,7 @@
 #include <QtQml>
 #include <QTimer>
 #include "../utils/notificationcontroller.h"
+#include "../settingPageTool/othersettingshandler.h"
 
 ConnectManager::ConnectManager(QObject *parent) : QObject(parent)
 {
@@ -9,8 +10,13 @@ ConnectManager::ConnectManager(QObject *parent) : QObject(parent)
     qmlRegisterSingletonInstance("DeviceListviewModel", 1, 0, "DeviceListviewModel", m_deviceListviewModel);
 
     m_deviceCheckTimer = new QTimer();
-    m_deviceCheckTimer->setInterval(5000);
+    m_deviceCheckTimer->setInterval(OtherSettingsHandler::instance()->deviceRefreshInterval());
     connect(m_deviceCheckTimer, &QTimer::timeout, this, &ConnectManager::refreshDevice);
+    
+    // 当设备刷新时间设置改变时，更新定时器间隔
+    connect(OtherSettingsHandler::instance(), &OtherSettingsHandler::deviceRefreshIntervalChanged, this, [this](int interval) {
+        m_deviceCheckTimer->setInterval(interval);
+    });
 
     connect(this, &ConnectManager::deviceConnected, [](QString code){
         qInfo() << code << " connected";

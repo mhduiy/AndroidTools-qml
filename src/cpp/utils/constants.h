@@ -16,6 +16,7 @@ const static int DEFAULT_WALLPAPER_BLUR_RADIUS = 50;
 const static bool DEFAULT_USE_OPENGL = false; 
 const static double DEFAULT_WRAPPER_OPACITY = 0.4;
 const static int DEFAULT_APP_THEME_TYPE = 0;
+const static int DEFAULT_DEVICE_REFRESH_INTERVAL = 5000;
 
 class constants
 {
