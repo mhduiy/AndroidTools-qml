@@ -5,34 +5,38 @@ on:
     branches:
       - main
 
+env:
+  BUILD_TYPE: Release
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake debhelper dh-make
+    - name: Install dependences
+      run: |
+        sudo apt-get update 
+        sudo apt-get build-dep . -y
 
-      - name: Build project
-        run: |
-          mkdir build
-          cd build
-          cmake ..
-          make
+    - name: Create DEB package
+      run: |
+        dpkg-buildpackage -us -uc -b -j$(nproc)
 
-      - name: Create DEB package
-        run: |
-          mkdir -p debian/source
-          echo "3.0 (native)" > debian/source/format
-          dh_make --createorig --single --yes
-          dpkg-buildpackage -us -uc
+    - name: List DEB files
+      run: |
+        ls -alh ..
 
-      - name: Upload DEB artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: androidtools-qml-deb
-          path: ../*.deb
+    - name: Move DEB files to workspace
+      run: |
+        mkdir -p deb-packages
+        mv ../*.deb deb-packages/
+
+    - name: Upload DEB artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-tools-deb
+        path: deb-packages/*.deb

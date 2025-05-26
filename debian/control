@@ -24,10 +24,8 @@ Build-Depends:
  libglu1-mesa-dev,
  mesa-common-dev,
  libvulkan-dev,
- libqt6websockets6-dev,
-
+ libqt6websockets6-dev
 Standards-Version: 0.0.1
-
 
 Package: android-tools
 Architecture: any
