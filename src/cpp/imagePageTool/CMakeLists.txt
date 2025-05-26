@@ -20,14 +20,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_directories(${EXE_NAME} PRIVATE ${FFMPEG_PATH}\\lib)
 endif()
 
-find_program(ADB_PATH adb)
-if(ADB_PATH)
-    message(STATUS "Found adb at: ${ADB_PATH}")
-else()
-    message("adb not found on your system")
-endif()
-target_compile_definitions(${EXE_NAME} PRIVATE ADB_PATH="${ADB_PATH}")
-
 # MacOS
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     find_package(PkgConfig REQUIRED)

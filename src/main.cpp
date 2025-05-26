@@ -38,8 +38,6 @@ bool checkADB() {
 
     if (!output.isEmpty() && QFile::exists(output)) {
         trueADBPath = output;
-    } else {
-        trueADBPath = ADB_PATH;
     }
 
     if (!trueADBPath.isEmpty()) {
