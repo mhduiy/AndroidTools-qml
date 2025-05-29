@@ -2,7 +2,11 @@
 #define FLASHTOOLS_H
 
 #include <QObject>
-#include <qcontainerfwd.h>
+#include <QDir>
+#include <QFile>
+#include <QTextStream>
+#include <QProcess>
+#include <QProcessEnvironment>
 #include "../utils/singleton.hpp"
 #include "src/cpp/adb/adbtools.h"
 
@@ -19,7 +23,8 @@ public:
     Q_INVOKABLE void unzip(const QString &zipPath, const QString &tarPath);
 
 private:
-    void executeCommand(ADBTools::APP appType, const QStringList &args);
+    void executeCommand(ADBTools::APP appType, const QStringList &args, const QString &workDir = QString());
+    void executeCommand(const QString &command, const QStringList &args, const QString &workDir = QString());
 };
 
 #endif // FLASHTOOLS_H

@@ -93,7 +93,6 @@ void FastBootDeviceManager::handleDeviceChanged()
 
 void FastBootDeviceManager::updateDevices()
 {
-    qWarning() << "刷新设备1";
     m_deviceCheckTool->startCheck();
 }
 
