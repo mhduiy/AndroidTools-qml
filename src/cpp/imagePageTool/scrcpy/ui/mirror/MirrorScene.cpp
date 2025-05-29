@@ -27,8 +27,6 @@ QImage MirrorScene::image() const {
 
 void MirrorScene::onYuvFrame(int width, int height, uint8_t *dataY, uint8_t *dataU, uint8_t *dataV, int linesizeY, int linesizeU, int linesizeV) {
     // YUV420P格式转换为QImage，使用Qt原生方法
-    QElapsedTimer timer;
-    timer.start();
     
     // 创建RGB32格式的图像
     QImage img(width, height, QImage::Format_RGB32);
@@ -75,7 +73,6 @@ void MirrorScene::onYuvFrame(int width, int height, uint8_t *dataY, uint8_t *dat
     QtConcurrent::blockingMap(lines, processLine);
     
     m_image = img;
-    qInfo() << "MirrorScene::onYuvFrame" << width << height << timer.elapsed() << "ms";
 
     emit imageChanged();
 }

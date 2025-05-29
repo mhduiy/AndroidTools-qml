@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt.labs.platform
 import MFloat
 import NotificationController 1.0
 import DeviceControl 1.0
@@ -9,6 +10,7 @@ import Resource 1.0
 import ScrcpyConfig 1.0
 import App
 import ImageFrameItem 1.0
+import ImageDetailTools 1.0
 
 ItemPage {
     id: root
@@ -278,7 +280,7 @@ ItemPage {
                         }
                         MLineEdit {
                             id: shotScreenEdit
-                            editItem.text: "/home/mhduiy/"
+                            editItem.text: StandardPaths.writableLocation(StandardPaths.PicturesLocation).toString().replace(/^file:\/\//, '')
                             Layout.preferredWidth: 140
                             placeholderText: "保存路径"
                         }
