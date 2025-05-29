@@ -8,6 +8,7 @@
 #include "service/ServiceManager.h"
 #include "ui/mirror/MirrorScene.h"
 #include "service/WebSocketService.h"
+#include "src/cpp/utils/constants.h"
 
 ImageDetailTools::ImageDetailTools(QObject *parent)
     : QObject(parent)
@@ -49,6 +50,42 @@ ImagePageTool::ImagePageTool(QObject *parent)
     MirrorScene::declareQml();
     Config::declareQml();
 
+    checkScrcpyServer();
+
     qmlRegisterSingletonInstance("Resource", 1, 0, "Resource", resourceService);
     qmlRegisterSingletonInstance("ImageDetailTools", 1, 0, "ImageDetailTools", ImageDetailTools::instance(this));
+}
+
+void ImagePageTool::checkScrcpyServer()
+{
+    if (!QFile::exists(SCRCPYSERVERPATH)) {
+        // 确保目标目录存在
+        QFileInfo fileInfo(SCRCPYSERVERPATH);
+        QDir dir = fileInfo.dir();
+        if (!dir.exists()) {
+            dir.mkpath(".");
+        }
+
+        QFile resourceFile(":/res/scrcpy-server");
+        if (!resourceFile.exists()) {
+            qWarning() << "Resource file does not exist!";
+            return;
+        }
+        if (!resourceFile.open(QIODevice::ReadOnly)) {
+            qWarning() << "Cannot open resource file:" << resourceFile.error();
+            return;
+        }
+        QFile targetFile(SCRCPYSERVERPATH);
+        if (!targetFile.open(QIODevice::WriteOnly)) {
+            qWarning() << "Cannot open target file:" << targetFile.error();
+            return;
+        }
+        QByteArray data = resourceFile.readAll();
+        if (targetFile.write(data) == -1) {
+            qWarning() << "Failed to write file:" << targetFile.error();
+            return;
+        }
+        resourceFile.close();
+        targetFile.close();    
+    }
 }

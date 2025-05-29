@@ -22,8 +22,8 @@ class ImagePageTool : public QObject
 {
     Q_OBJECT
     SINGLETON(ImagePageTool)
-public:
-
+private:
+    void checkScrcpyServer();
 
 private:
     ResourceService *resourceService = nullptr;

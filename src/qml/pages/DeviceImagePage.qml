@@ -172,7 +172,6 @@ ItemPage {
                         btnType: MButton.FBtnType.Suggest
                         onClicked:  {
                             Resource.qmlRequest("REQUEST_MIRROR_START", "")
-                            NotificationController.send("请求连接", "连接请求已经发送", 0, 3000)
                         }
                     }
                     MButton {

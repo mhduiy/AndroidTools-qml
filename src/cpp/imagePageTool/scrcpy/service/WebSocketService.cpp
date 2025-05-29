@@ -1,5 +1,7 @@
 #include "WebSocketService.h"
 #include "service/include/server.h"
+#include "src/cpp/utils/constants.h"
+#include "src/cpp/utils/notificationcontroller.h"
 #include "ui/util/config.h"
 #include "src/cpp/adb/connectmanager.h"
 #include <qlogging.h>
@@ -212,6 +214,13 @@ void WebSocketService::requestMirrorStart() {
 
     qDebug() << "requestMirrorStart()";
 
+    if (!QFile::exists(SCRCPYSERVERPATH)) {
+        qWarning() << "scrcpy-server not found";
+        NotificationController::instance()->send("连接失败", "scrcpy-server未找到", NotificationController::NotificationType::Warning);
+    }
+
+    qWarning() << "scrcpy-server:" << SCRCPYSERVERPATH << QFile::exists(SCRCPYSERVERPATH);
+
     quint16 videoSize = 1080;
     qsc::DeviceParams params;
     params.serial = resourceService->serial();
@@ -229,7 +238,7 @@ void WebSocketService::requestMirrorStart() {
     params.recordFile = false;
     params.recordPath = Config::getInstance().getRecordOutPath();
     params.recordFileFormat = "mp4";
-    params.serverLocalPath = Config::getInstance().getProjectPath() + "/scrcpy-server";
+    params.serverLocalPath = SCRCPYSERVERPATH;
     params.serverRemotePath = Config::getInstance().getServerPath();
     params.pushFilePath = Config::getInstance().getPushFilePath();
     params.gameScript = "";
