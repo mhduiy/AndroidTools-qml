@@ -13,6 +13,9 @@ set(QSC_DEPLOY_PATH ${CMAKE_BINARY_DIR}/lib)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/scrcpy/core)
 
+# 链接QtScrcpyCore库
+target_link_libraries(${EXE_NAME} PRIVATE QtScrcpyCore)
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     # ffmpeg
     set(FFMPEG_PATH "F:\\Soft\\libffmpeg_7.1_msvc17_x64")

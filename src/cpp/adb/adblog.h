@@ -3,7 +3,7 @@
 #include <QAbstractListModel>
 #include <QMutex>
 
-#include "src/cpp/utils/singleton.hpp"
+#include "src/cpp/utils/defutils.hpp"
 enum ADBLogType {
     Info = 0,
     Error

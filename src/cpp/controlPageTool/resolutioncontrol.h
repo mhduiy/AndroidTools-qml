@@ -2,8 +2,9 @@
 #define RESOLUTIONCONTROL_H
 
 #include <QObject>
-#include "../utils/singleton.hpp"
-#include "../infoPageTool/detailinfocontrol.h"
+#include <QThread>
+#include "../utils/defutils.hpp"
+#include "../adb/connectmanager.h"
 
 class ResolutionControl : public QObject
 {
@@ -31,12 +32,13 @@ signals:
     void resolutionHeightChanged(quint16);
     void screenDPIChanged(quint16);
 
+private slots:
+    void onDeviceInfoChanged();
+
 private:
     quint16 m_screenHeight;
     quint16 m_scrennWidth;
     quint16 m_deviceDpi;
-    DetailInfoUpdateHelper *m_detailInfohelper;
-    QThread *m_thread;
 };
 
 #endif // RESOLUTIONCONTROL_H

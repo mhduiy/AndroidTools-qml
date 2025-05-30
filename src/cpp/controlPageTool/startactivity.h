@@ -2,7 +2,7 @@
 #define STARTACTIVITY_H
 
 #include <QObject>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 
 class StartActivity : public QObject
 {

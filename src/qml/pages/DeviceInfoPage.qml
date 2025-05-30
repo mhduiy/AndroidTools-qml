@@ -4,13 +4,8 @@ import QtQuick.Layouts
 import MFloat
 
 import "../components"
-import BatteryControl 1.0
-import CutActivityControl 1.0
-import ADBControl 1.0
-import DetailInfoControl 1.0
 import NotificationController 1.0
 import DeviceControl 1.0
-import RealTimeInfoHelper 1.0
 import App
 import ConnectManager
 
@@ -21,11 +16,7 @@ ItemPage {
         id: colorConstants
     }
 
-    function gInfo(key) {
-        return DetailInfoControl.info[key];
-    }
-
-    property var monitorItems: [0, 1]
+    property var currentDevice: ConnectManager.cutADBDevice
 
     RowLayout {
         anchors.fill: parent
@@ -46,7 +37,7 @@ ItemPage {
 
                         BatteryRect {
                             anchors.fill: parent
-                            level: BatteryControl.level
+                            level: currentDevice ? currentDevice.batteryLevel : 0
                         }
                     }
 
@@ -57,19 +48,22 @@ ItemPage {
                         Layout.alignment: Qt.AlignLeft
                         Label {
                             text: {
-                                let title
-                                if (ConnectManager.currentDeviceCode === "") {
-                                    title = "请连接设备"
-                                } else {
-                                    title = DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER];
-                                    if (title === "" || title === undefined) {
-                                        title = "请连接设备";
-                                        return title;
-                                    }
-                                    title = title + " " + (DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME] === "" ? DetailInfoControl.info[DetailInfoControl.DETA_MODEL] : DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME]);
+                                if (!currentDevice) {
+                                    return "请连接设备"
                                 }
-
-                                return title;
+                                
+                                let title = currentDevice.manufacturer || ""
+                                if (title === "") {
+                                    return "请连接设备"
+                                }
+                                
+                                // 优先显示设备名，其次是型号
+                                let deviceName = currentDevice.deviceName || currentDevice.model || ""
+                                if (deviceName !== "") {
+                                    title += " " + deviceName
+                                }
+                                
+                                return title
                             }
                             font.pixelSize: 22
                             font.bold: true
@@ -86,19 +80,19 @@ ItemPage {
                             model: [
                                 {
                                     key: "设备序列号:",
-                                    value: DetailInfoControl.info[DetailInfoControl.DETA_SERIALNUMBER]
+                                    value: currentDevice ? currentDevice.serialNumber : ""
                                 },
                                 {
                                     key: "CPU:",
-                                    value: DetailInfoControl.info[DetailInfoControl.DETA_CPUINFO]
+                                    value: currentDevice ? currentDevice.cpuInfo : ""
                                 },
                                 {
                                     key: "安卓版本:",
-                                    value: DetailInfoControl.info[DetailInfoControl.DETA_ANDROIDVERSION]
+                                    value: currentDevice ? currentDevice.androidVersion : ""
                                 },
                                 {
                                     key: "分辨率:",
-                                    value: DetailInfoControl.info[DetailInfoControl.DETA_RESOLVING]
+                                    value: currentDevice ? currentDevice.resolution : ""
                                 },
                             ]
                             RowLayout {
@@ -124,32 +118,44 @@ ItemPage {
                                 text: "关机"
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Warning
+                                enabled: currentDevice !== null
                                 onClicked: {
-                                    DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Poweroff)
+                                    if (currentDevice) {
+                                        currentDevice.control(1, 6) // CTRL_Key, Poweroff
+                                    }
                                 }
                             }
                             MButton {
                                 text: "重启"
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Suggest
+                                enabled: currentDevice !== null
                                 onClicked: {
-                                    DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.Reboot)
+                                    if (currentDevice) {
+                                        currentDevice.control(1, 7) // CTRL_Key, Reboot
+                                    }
                                 }
                             }
                             MButton {
                                 text: "Recovery"
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Ordinary
+                                enabled: currentDevice !== null
                                 onClicked: {
-                                    DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToRec)
+                                    if (currentDevice) {
+                                        currentDevice.control(1, 8) // CTRL_Key, RebootToRec
+                                    }
                                 }
                             }
                             MButton {
                                 text: "FastBoot"
                                 Layout.fillWidth: true
                                 btnType: MButton.FBtnType.Ordinary
+                                enabled: currentDevice !== null
                                 onClicked: {
-                                    DeviceControl.control(DeviceControl.CTRL_Key, DeviceControl.RebootToFB)
+                                    if (currentDevice) {
+                                        currentDevice.control(1, 9) // CTRL_Key, RebootToFB
+                                    }
                                 }
                             }
                         }
@@ -167,13 +173,45 @@ ItemPage {
                         ScrollBar.vertical.policy: ScrollBar.AlwaysOff
                         ColumnLayout {
                             width: scrollView.availableWidth
-                            // 设备Title
                             spacing: 10
 
                             Repeater {
                                 id: deviceDetailInfoRep
-                                property var texts: [["厂商", "品牌", "型号", "设备名", "设备代号"], ["CPU信息", "最大频率", "核心数"], ["系统", "安卓版本", "sdk版本"], ["尺寸", "分辨率", "DPI"], ["MAC地址", "IP地址", "内存容量"]]
-                                property var values: [[DetailInfoControl.info[DetailInfoControl.DETA_MANUFACTURER], DetailInfoControl.info[DetailInfoControl.DETA_BRAND], DetailInfoControl.info[DetailInfoControl.DETA_MODEL], DetailInfoControl.info[DetailInfoControl.DETA_DEVICENAME], DetailInfoControl.info[DetailInfoControl.DETA_DEVICECODE]], [DetailInfoControl.info[DetailInfoControl.DETA_CPUINFO], DetailInfoControl.info[DetailInfoControl.DATE_MAXFREP], DetailInfoControl.info[DetailInfoControl.DATE_MAXCORENUM]], ["未知", DetailInfoControl.info[DetailInfoControl.DETA_ANDROIDVERSION], DetailInfoControl.info[DetailInfoControl.DETA_SDKVERSION]], ["未知", DetailInfoControl.info[DetailInfoControl.DETA_RESOLVING], DetailInfoControl.info[DetailInfoControl.DETA_DPI]], [DetailInfoControl.info[DetailInfoControl.DETA_MACADDR], DetailInfoControl.info[DetailInfoControl.DETA_IPADDR], DetailInfoControl.info[DetailInfoControl.DETA_MEMORY]]]
+                                property var texts: [
+                                    ["厂商", "品牌", "型号", "设备名", "设备代号"], 
+                                    ["CPU信息", "最大频率", "核心数"], 
+                                    ["系统", "安卓版本", "SDK版本"], 
+                                    ["分辨率", "DPI"], 
+                                    ["MAC地址", "IP地址", "内存容量"]
+                                ]
+                                property var values: [
+                                    [
+                                        currentDevice ? currentDevice.manufacturer : "",
+                                        currentDevice ? currentDevice.brand : "",
+                                        currentDevice ? currentDevice.model : "",
+                                        currentDevice ? currentDevice.deviceName : "",
+                                        currentDevice ? currentDevice.deviceCode : ""
+                                    ],
+                                    [
+                                        currentDevice ? currentDevice.cpuInfo : "",
+                                        currentDevice ? currentDevice.maxFreq : "",
+                                        currentDevice ? currentDevice.maxCoreNum : ""
+                                    ],
+                                    [
+                                        currentDevice ? currentDevice.systemInfo : "未知",
+                                        currentDevice ? currentDevice.androidVersion : "",
+                                        currentDevice ? currentDevice.sdkVersion : ""
+                                    ],
+                                    [
+                                        currentDevice ? currentDevice.resolution : "",
+                                        currentDevice ? currentDevice.dpi : ""
+                                    ],
+                                    [
+                                        currentDevice ? currentDevice.macAddr : "",
+                                        currentDevice ? currentDevice.ipAddr : "",
+                                        currentDevice ? currentDevice.memory : ""
+                                    ]
+                                ]
                                 property var titles: ["设备信息", "处理器", "系统信息", "屏幕", "其他信息"]
                                 model: texts.length
                                 ColumnLayout {
@@ -214,13 +252,13 @@ ItemPage {
                                             }
 
                                             Label {
-                                                visible: deviceDetailInfoRep.values[rep.repIndex][index] !== undefined
+                                                visible: deviceDetailInfoRep.values[rep.repIndex][index] !== ""
                                                 text: deviceDetailInfoRep.values[rep.repIndex][index]
                                             }
 
                                             MLoadIndicator {
                                                 scale: 0.8
-                                                visible: deviceDetailInfoRep.values[rep.repIndex][index] === undefined
+                                                visible: deviceDetailInfoRep.values[rep.repIndex][index] === ""
                                                 Component.onCompleted: {
                                                     start();
                                                 }
@@ -273,9 +311,12 @@ ItemPage {
                                     Layout.preferredWidth: 80
                                     text: "强行停止"
                                     btnType: MButton.FBtnType.Warning
+                                    enabled: currentDevice !== null && currentDevice.currentPackage !== ""
                                     onClicked: {
-                                        CutActivityControl.killCutActivity();
-                                        NotificationController.send("命令已发送", "当前应用已停止", 1, 3000);
+                                        if (currentDevice && currentDevice.currentPackage !== "") {
+                                            currentDevice.killActivity(currentDevice.currentPackage)
+                                            NotificationController.send("命令已发送", "当前应用已停止", 1, 3000);
+                                        }
                                     }
                                 }
                             }
@@ -290,7 +331,7 @@ ItemPage {
                                 }
                                 Label {
                                     Layout.fillWidth: true
-                                    text: CutActivityControl.identifier
+                                    text: currentDevice ? currentDevice.windowCode : ""
                                 }
                                 MLabel {
                                     Layout.preferredWidth: 100
@@ -299,7 +340,7 @@ ItemPage {
                                 }
                                 Label {
                                     Layout.fillWidth: true
-                                    text: CutActivityControl.cutPackageName
+                                    text: currentDevice ? currentDevice.currentPackage : ""
                                 }
                                 MLabel {
                                     Layout.preferredWidth: 100
@@ -308,43 +349,38 @@ ItemPage {
                                 }
                                 Text {
                                     Layout.fillWidth: true
-                                    text: CutActivityControl.cutActivity
+                                    text: currentDevice ? currentDevice.currentActivity : ""
                                 }
                             }
                         }
                     }
                     MonitorItem {
-                        title: "电池电量"
-                        minY: 25
-                        maxY: 25
-                        cutValue: BatteryControl.level
+                        title: "电池电量 (%)"
+                        minY: 0
+                        maxY: 100
+                        cutValue: currentDevice ? currentDevice.batteryLevel : 0
                     }
                     MonitorItem {
-                        title: "电池温度"
-                        minY: 25
-                        maxY: 25
-                        cutValue: BatteryControl.temperature
+                        title: "电池温度 (°C)"
+                        minY: 20
+                        maxY: 50
+                        cutValue: currentDevice ? currentDevice.batteryTemperature : 0
                     }
                     MonitorItem {
-                        title: "电池电压"
-                        minY: 25
-                        maxY: 25
-                        cutValue: BatteryControl.voltage
+                        title: "电池电压 (mV)"
+                        minY: 3000
+                        maxY: 5000
+                        cutValue: currentDevice ? currentDevice.batteryVoltage : 0
                     }
                     MonitorItem {
-                        title: "电池电流"
-                        minY: 25
-                        maxY: 25
-                        cutValue: BatteryControl.current
-                    }
-                    MonitorItem {
-                        title: "内存占用"
-                        minY: 25
-                        maxY: 25
-                        cutValue: RealTimeInfoHelper.memUse
+                        title: "电池电流 (mA)"
+                        minY: 0
+                        maxY: 3000
+                        cutValue: currentDevice ? currentDevice.batteryCurrent : 0
                     }
                 }
             }
         }
     }
 }
+

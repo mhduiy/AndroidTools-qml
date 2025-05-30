@@ -10,7 +10,6 @@
 #include <QQuickWindow>
 
 #include "cpp/adb/connectmanager.h"
-#include "cpp/infoPageTool/infopagetool.h"
 #include "cpp/controlPageTool/controlPageTool.h"
 #include "cpp/appPageTool/appPagetool.h"
 #include "cpp/flashPageTool/flashPageTool.h"
@@ -23,7 +22,10 @@
 #include "cpp/imagePageTool/scrcpy/ui/mirror/imageframeitem.h"
 #include "cpp/utils/constants.h"
 #include "cpp/adb/adblog.h"
+#include "src/cpp/adb/device.h"
+#include "src/cpp/adb/devicehelper.h"
 
+#include <QProcess>
 bool checkADB() {
     QProcess process;
     QString trueADBPath;
@@ -77,31 +79,23 @@ int main(int argc, char *argv[])
     QElapsedTimer loaderTimer;
     loaderTimer.start();
 
-    ADBTools::instance(&app);
-    ADBInterface *interface = ADBInterface::instance(&app);
-    interface->startADBService();
-
     qInfo() << "mainThread:" << QThread::currentThreadId();
 
-    // 连接管理放置到子线程
-    QThread *thread = new QThread(&app);
-    ConnectManager::instance()->moveToThread(thread);
-    thread->start();
-    // 开始检测设备连接
-    ConnectManager::instance()->startCheckDevice();
+    DeviceHelper::instance(qApp)->init();
 
-    InfoPageTool::instance(&app);
     ControlPageTool::instance(&app);
     AppPageTool::instance(&app);
     FlashPageTool::instance(&app);
     ImagePageTool::instance(&app);
     SettingPageTools::instance(&app);
+    
     NotificationController::instance(&app);
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
     qmlRegisterType<ImageFrameItem>( "ImageFrameItem", 1, 0, "ImageFrameItem");
     qmlRegisterSingletonInstance("App", 1, 0, "App", App);
     qmlRegisterSingletonInstance("ConnectManager", 1, 0, "ConnectManager", ConnectManager::instance());
+    qmlRegisterSingletonInstance("DeviceHelper", 1, 0, "DeviceHelper", DeviceHelper::instance());
     qmlRegisterSingletonInstance("ADBLog", 1, 0, "ADBLog", ADBLogModel::instance(&app));
     qInfo() << "核心模块加载完成，用时(ms):" << loaderTimer.elapsed();
 
@@ -116,14 +110,6 @@ int main(int argc, char *argv[])
     const QUrl url("qrc:/qml/Main.qml");
     engine.load(url);
     qInfo() << "QML界面加载完成，用时(ms):" << loaderTimer.elapsed();
-
-    QObject::connect(qApp, &QApplication::aboutToQuit, qApp, [thread]() {
-        ConnectManager::instance()->stopCheckDevice();
-        qInfo() << "等待设备管理线程结束";
-        thread->quit();
-        thread->wait();
-        qInfo() << "设备管理线程结束";
-    });
 
     return app.exec();
 }

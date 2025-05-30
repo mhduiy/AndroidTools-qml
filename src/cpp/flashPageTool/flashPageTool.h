@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include "fastbootdevicemanager.h"
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 #include <QAbstractListModel>
 #include "flashUrlHandle.h"
 

@@ -1,12 +1,12 @@
 #include "appDetailControl.h"
 #include "../adb/connectmanager.h"
-#include "../adb/adbinterface.h"
 #include "../utils/utils.hpp"
 #include "src/cpp/appPageTool/appHelper.h"
 #include <QVariant>
 #include <QStandardPaths>
 #include <QDir>
 #include <QMetaObject>
+#include <QDebug>
 
 AppDetailControl::AppDetailControl(QObject *parent) 
 : QObject(parent)

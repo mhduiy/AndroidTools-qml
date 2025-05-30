@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QAbstractListModel>
-#include "../adb/adbinterface.h"
+#include "../adb/adbdevice.h"
 
 enum SoftListModelRole {
     AppNameRole = Qt::UserRole + 1,

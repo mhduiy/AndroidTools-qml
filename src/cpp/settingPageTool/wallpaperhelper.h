@@ -2,7 +2,7 @@
 #define WALLPAPERHELPER_H
 
 #include <QObject>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 #include <QTimer>
 
 class WallpaperHelper : public QObject

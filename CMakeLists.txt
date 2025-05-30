@@ -33,14 +33,14 @@ add_executable(${EXE_NAME}
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/adb)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/app)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPageTool)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/utils)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/components)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/common)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/settingPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/controlPageTool)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/flashPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/imagePageTool)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/infoPageTool)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/settingPageTool)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/utils)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message("Enable Qml Debug")
@@ -89,7 +89,7 @@ target_link_libraries(${EXE_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::QuickControls2
     Qt${QT_VERSION_MAJOR}::Concurrent
 
-    QtScrcpyCore
+    # QtScrcpyCore
 )
 
 install(TARGETS ${EXE_NAME}

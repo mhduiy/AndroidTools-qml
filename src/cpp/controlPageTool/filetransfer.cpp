@@ -8,9 +8,10 @@
 #include <qobject.h>
 #include <qobjectdefs.h>
 #include <qthread.h>
+#include <QDebug>
 
 FileTransferHandler::FileTransferHandler(QObject *parent)
-:QObject(parent)
+    : QObject(parent)
 {
 
 }
@@ -20,12 +21,13 @@ void FileTransferHandler::transmission(QString deviceCode, QString source, QStri
     NotificationController::instance()->send("开始传输", "文件很大可能传输失败", NotificationController::Info);
     ADBTools::instance()->executeCommand(ADBTools::ADB, {"-s", deviceCode, "push", source, targetDir}, "", INT32_MAX);
     NotificationController::instance()->send("传输完成", "传输完成", NotificationController::Info);
+    emit workFinish();
 }
 
 FileTransfer::FileTransfer(QObject *parent)
-: QObject(parent)
-, m_handler(new FileTransferHandler)
-, m_handleThread(new QThread(this))
+    : QObject(parent)
+    , m_handler(new FileTransferHandler)
+    , m_handleThread(new QThread(this))
 {
     m_handleThread->start();
     m_handler->moveToThread(m_handleThread);
@@ -56,9 +58,12 @@ void FileTransfer::transmission(const QString &source, const QString &targetDir)
 
     if (!QFile::exists(filePath)) {
         NotificationController::instance()->send("传输失败", "待传输文件不合法", NotificationController::Error);
+        return;
     }
 
-    auto cutDevice = ConnectManager::instance()->currentDeviceCode();
+    auto device = ConnectManager::instance()->cutADBDevice();
+    if (!device) return;
+    auto cutDevice = device->code();
     qWarning() << filePath << url.toLocalFile();
     QMetaObject::invokeMethod(m_handler, "transmission", Q_ARG(QString, cutDevice), Q_ARG(QString, filePath), Q_ARG(QString, targetDir));
-}
+} 

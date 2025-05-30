@@ -1,6 +1,5 @@
 #include "imagePageTool.h"
 #include <qobject.h>
-#include "src/cpp/adb/adbinterface.h"
 #include "src/cpp/adb/connectmanager.h"
 #include "src/cpp/utils/notificationcontroller.h"
 #include "src/cpp/utils/utils.hpp"
@@ -18,15 +17,15 @@ ImageDetailTools::ImageDetailTools(QObject *parent)
 
 void ImageDetailTools::shotScreen(const QString &outPath)
 {
-    const QString &deviceCode =  ConnectManager::instance()->currentDeviceCode();
-    if (deviceCode.isEmpty()) {
+    auto device = ConnectManager::instance()->cutADBDevice();
+    if (!device) {
         NotificationController::instance()->send("截图失败", "当前无设备连接", NotificationController::Error, 3000);
         return;
     }
 
-    auto func = [deviceCode, outPath](){
+    auto func = [device, outPath](){
         NotificationController::instance()->send("命令已发送", "正在截图...", NotificationController::Info, 5000);
-        ADBInterface::instance()->shotScreen(deviceCode, outPath);
+        device->shotScreen(outPath);
     };
 
     asyncOperator(func);

@@ -6,7 +6,6 @@ import Qt5Compat.GraphicalEffects
 
 import "./components/"
 import "./pages/"
-import ADBControl 1.0
 import WallpaperHelper 1.0
 import FpsItem 1.0
 import App

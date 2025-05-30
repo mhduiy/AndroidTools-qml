@@ -3,7 +3,7 @@
 
 #include <QtQml>
 #include <QObject>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 
 class ControlPageTool : public QObject
 {

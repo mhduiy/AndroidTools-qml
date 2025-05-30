@@ -11,7 +11,9 @@ BatteryDisguise::BatteryDisguise(QObject *parent) : QObject(parent)
 void BatteryDisguise::setBatteryLevel(quint8 level)
 {
     auto operatorFunc = [level](){
-        const QString cutDevice = ConnectManager::instance()->currentDeviceCode();
+        auto device = ConnectManager::instance()->cutADBDevice();
+        if (!device) return;
+        const QString cutDevice = device->code();
         QStringList args;
         args << "-s" << cutDevice << "shell"
              << "dumpsys" << "battery" << "set" << "level" << QString::number(level);
@@ -24,7 +26,9 @@ void BatteryDisguise::setBatteryLevel(quint8 level)
 void BatteryDisguise::stopCharge()
 {
     auto operatorFunc = [](){
-        const QString cutDevice = ConnectManager::instance()->currentDeviceCode();
+        auto device = ConnectManager::instance()->cutADBDevice();
+        if (!device) return;
+        const QString cutDevice = device->code();
         QStringList args;
         args << "-s" << cutDevice << "shell"
              << "dumpsys" << "battery" << "set" << "status" << "2";
@@ -37,7 +41,9 @@ void BatteryDisguise::stopCharge()
 void BatteryDisguise::restoreCharge()
 {
     auto operatorFunc = [](){
-        const QString cutDevice = ConnectManager::instance()->currentDeviceCode();
+        auto device = ConnectManager::instance()->cutADBDevice();
+        if (!device) return;
+        const QString cutDevice = device->code();
         QStringList args;
         args << "-s" << cutDevice << "shell"
              << "dumpsys" << "battery" << "set" << "status" << "1";
@@ -50,7 +56,9 @@ void BatteryDisguise::restoreCharge()
 void BatteryDisguise::connectButNoCharge()
 {
     auto operatorFunc = [](){
-        const QString cutDevice = ConnectManager::instance()->currentDeviceCode();
+        auto device = ConnectManager::instance()->cutADBDevice();
+        if (!device) return;
+        const QString cutDevice = device->code();
         QStringList args;
         args << "-s" << cutDevice << "shell"
              << "dumpsys" << "battery" << "unplug";
@@ -63,7 +71,9 @@ void BatteryDisguise::connectButNoCharge()
 void BatteryDisguise::restoreAll()
 {
     auto operatorFunc = [](){
-        const QString cutDevice = ConnectManager::instance()->currentDeviceCode();
+        auto device = ConnectManager::instance()->cutADBDevice();
+        if (!device) return;
+        const QString cutDevice = device->code();
         QStringList args;
         args << "-s" << cutDevice << "shell"
              << "dumpsys" << "battery" << "reset";
@@ -71,4 +81,4 @@ void BatteryDisguise::restoreAll()
     };
 
     asyncOperator(operatorFunc);
-}
+} 

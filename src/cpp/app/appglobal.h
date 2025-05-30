@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/cpp/utils/singleton.hpp"
+#include "src/cpp/utils/defutils.hpp"
 #include <QObject>
 #include <QColor>
 

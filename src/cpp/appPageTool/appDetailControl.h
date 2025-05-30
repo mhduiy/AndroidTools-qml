@@ -5,8 +5,8 @@
 #include <QVariant>
 #include <QThread>
 #include "appHelper.h"
-#include "../adb/adbinterface.h"
-#include "../utils/singleton.hpp"
+#include "../adb/adbdevice.h"
+#include "../utils/defutils.hpp"
 
 class AppDetailControl : public QObject
 {

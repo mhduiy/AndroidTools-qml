@@ -7,7 +7,7 @@
 #include <QTextStream>
 #include <QProcess>
 #include <QProcessEnvironment>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 #include "src/cpp/adb/adbtools.h"
 
 class FlashTools : public QObject

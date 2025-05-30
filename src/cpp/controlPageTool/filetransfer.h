@@ -4,7 +4,7 @@
 #include <QObject>
 #include <qthread.h>
 #include <qtmetamacros.h>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 
 class FileTransferHandler : public QObject
 {

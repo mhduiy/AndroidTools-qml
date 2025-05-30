@@ -2,7 +2,7 @@
 #define KEYCONVERT_H
 
 #include <QObject>
-#include "singleton.hpp"
+#include "defutils.hpp"
 
 class KeyConvert : public QObject
 {

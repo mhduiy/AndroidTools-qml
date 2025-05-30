@@ -9,6 +9,7 @@ NotificationController::NotificationController(QObject *parent) : QObject(parent
 
 void NotificationController::send(const QString &title, const QString &content, NotificationType type, int duration)
 {
+    qInfo () << "发送通知:" << title << content << type << duration;
     if (duration < 0) {
         qWarning() << "duration can not less than 0";
         return;

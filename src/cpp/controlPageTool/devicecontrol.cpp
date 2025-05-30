@@ -67,24 +67,11 @@ DeviceControl::DeviceControl(QObject *parent) : QObject(parent)
 
 void DeviceControl::control(ControlType controlType, int controlItem)
 {
-    auto controlFunc = [this, controlType, controlItem](){
-        const QString cutDevice = ConnectManager::instance()->currentDeviceCode();
-        QStringList args{"-s", cutDevice};
-        if (controlType == CTRL_Music) {
-            args << MusicControlArgsMap.value(controlItem).split(' ');
-        } else if (controlType == CTRL_Key) {
-            args << KeyControlArgsMap.value(controlItem).split(' ');
-        } else if (controlType == CTRL_BoardCast) {
-            args << BoardControlArgsMap.value(controlItem).split(' ');
-        } else {
-            return;
-        }
-        if (args.size() <= 2) {
-            NotificationController::instance()->send("索引错误", "，请联系开发者", NotificationController::Error);
-            return;
-        }
-        m_adbtools->executeCommand(ADBTools::ADB, args);
-    };
-
-    asyncOperator(controlFunc);
+    auto device = ConnectManager::instance()->cutADBDevice();
+    if (!device) {
+        NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Error);
+        return;
+    }
+    
+    device->control(controlType, controlItem);
 }

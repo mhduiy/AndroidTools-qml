@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 
 class OtherSettingsHandler : public QObject
 {

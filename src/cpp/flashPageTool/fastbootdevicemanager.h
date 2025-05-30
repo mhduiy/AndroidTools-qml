@@ -6,7 +6,7 @@
 #include <QThread>
 #include "../adb/adbtools.h"
 #include "../utils/notificationcontroller.h"
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 
 class DeviceCheckTool : public QObject
 {

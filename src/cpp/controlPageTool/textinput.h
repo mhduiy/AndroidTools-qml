@@ -2,7 +2,7 @@
 #define TEXTINPUT_H
 
 #include <QObject>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 
 class InputText : public QObject
 {

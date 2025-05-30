@@ -7,7 +7,7 @@
 #include <QNetworkAccessManager>
 #include <QPointer>
 
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 
 #include "bingwallpaperhander.h"
 

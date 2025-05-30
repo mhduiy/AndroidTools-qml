@@ -2,47 +2,65 @@
 #include "../adb/adbtools.h"
 #include "../adb/connectmanager.h"
 #include "../utils/utils.hpp"
+#include <QDebug>
 
 ResolutionControl::ResolutionControl(QObject *parent) : QObject(parent)
 {
-    m_thread = new QThread(this);
-    auto *m_detailInfohelper = new DetailInfoUpdateHelper();
-    m_detailInfohelper->moveToThread(m_thread);
-    m_thread->start();
-    connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, m_detailInfohelper, &DetailInfoUpdateHelper::updateInfo);
-    connect(m_detailInfohelper, &DetailInfoUpdateHelper::updateFinish, this, [this, m_detailInfohelper](){
-        auto infos = m_detailInfohelper->getInfo();
-        auto sizeInfo = infos.value(7).toString().split('x');
-        setResolutionWidth(sizeInfo.first().toUInt());
-        setResolutionHeight(sizeInfo.last().toUInt());
-        setScreenDPI(infos.value(8).toUInt());
-    });
+    // 监听当前设备的详细信息变化
+    connect(ConnectManager::instance(), &ConnectManager::cutADBDeviceChanged, this, &ResolutionControl::onDeviceInfoChanged);
+    
+    // 初始更新一次
+    onDeviceInfoChanged();
 }
 
 ResolutionControl::~ResolutionControl()
 {
-    qInfo() << "ResolutionControl Thread exiting";
-    m_thread->quit();
-    m_thread->wait();
-    qInfo() << "ResolutionControl Thread exited";
+    qInfo() << "ResolutionControl destroyed";
+}
+
+void ResolutionControl::onDeviceInfoChanged()
+{
+    auto device = ConnectManager::instance()->cutADBDevice();
+    if (device && device->detailInfo()) {
+        auto detailInfo = device->detailInfo();
+        
+        // 解析分辨率信息
+        QString resolutionStr = detailInfo->resolving;
+        if (!resolutionStr.isEmpty() && resolutionStr.contains('x')) {
+            auto sizeInfo = resolutionStr.split('x');
+            if (sizeInfo.size() >= 2) {
+                setResolutionWidth(sizeInfo.first().toUInt());
+                setResolutionHeight(sizeInfo.last().toUInt());
+            }
+        }
+        
+        // 设置DPI
+        setScreenDPI(detailInfo->dpi.toUInt());
+    }
 }
 
 void ResolutionControl::setResolutionWidth(quint16 width)
 {
-    m_scrennWidth = width;
-    emit resolutionWidthChanged(width);
+    if (m_scrennWidth != width) {
+        m_scrennWidth = width;
+        emit resolutionWidthChanged(width);
+    }
 }
 
 void ResolutionControl::setResolutionHeight(quint16 height)
 {
-    m_screenHeight = height;
-    emit resolutionHeightChanged(height);
+    if (m_screenHeight != height) {
+        m_screenHeight = height;
+        emit resolutionHeightChanged(height);
+    }
 }
 
 void ResolutionControl::setScreenDPI(quint16 dpi)
 {
-    m_deviceDpi = dpi;
-    emit screenDPIChanged(dpi);
+    if (m_deviceDpi != dpi) {
+        m_deviceDpi = dpi;
+        emit screenDPIChanged(dpi);
+    }
 }
 
 quint16 ResolutionControl::getResolutionWidth() const
@@ -63,8 +81,12 @@ quint16 ResolutionControl::getScreenDPI() const
 void ResolutionControl::set(quint16 width, quint16 height, quint16 dpi)
 {
     auto operatorFunc = [this, width, height, dpi](){
-        const QString cutDevice = ConnectManager::instance()->currentDeviceCode();
+        auto device = ConnectManager::instance()->cutADBDevice();
+        if (!device) return;
+        
+        const QString cutDevice = device->code();
         QStringList args;
+        
         if (width != this->m_scrennWidth || height != this->m_screenHeight) {
             args << "-s" << cutDevice << "shell"
                  << "wm" << "size" << QString("%1x%2").arg(width).arg(height);
@@ -85,8 +107,12 @@ void ResolutionControl::set(quint16 width, quint16 height, quint16 dpi)
 void ResolutionControl::restore()
 {
     auto operatorFunc = [](){
-        const QString cutDevice = ConnectManager::instance()->currentDeviceCode();
+        auto device = ConnectManager::instance()->cutADBDevice();
+        if (!device) return;
+        
+        const QString cutDevice = device->code();
         QStringList args;
+        
         args << "-s" << cutDevice << "shell"
              << "wm" << "size" << "reset";
         ADBTools::instance()->executeCommand(ADBTools::ADB, args);

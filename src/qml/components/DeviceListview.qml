@@ -2,17 +2,18 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
-import DeviceListviewModel 1.0
+import DeviceHelper 1.0
 
 Item {
     height: 400
     width: 20
     id: root
+    
     ListView {
         id: listView
         anchors.fill: parent
         clip: true
-        model: DeviceListviewModel
+        model: DeviceHelper.adbDeviceList
         highlightMoveDuration: 300
         highlight: Rectangle {
             color: Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.6)
@@ -22,7 +23,8 @@ Item {
         spacing: 10
 
         onCurrentIndexChanged: {
-            DeviceListviewModel.setCurrentIndex(currentIndex)
+            // 当前选中的设备可以通过 ConnectManager.cutADBDevice 来管理
+            console.log("选中设备索引:", currentIndex)
         }
     }
 
@@ -51,7 +53,21 @@ Item {
                     Layout.fillWidth: true
                     Text {
                         id: deviceName
-                        text: model.deviceName
+                        text: {
+                            if (modelData) {
+                                // 优先显示制造商和型号
+                                if (modelData.manufacturer && modelData.model) {
+                                    return modelData.manufacturer + " " + modelData.model
+                                } else if (modelData.manufacturer) {
+                                    return modelData.manufacturer + " 设备"
+                                } else if (modelData.deviceName && modelData.deviceName !== "") {
+                                    return modelData.deviceName
+                                } else if (modelData.code) {
+                                    return modelData.code
+                                }
+                            }
+                            return "未知设备"
+                        }
                         font.family: "黑体"
                         font.bold: true
                         font.pixelSize: 14
@@ -63,8 +79,7 @@ Item {
                     }
 
                     MLabel {
-                        // Layout.preferredWidth: 50
-                        text: model.isConnected ? model.isWireless ?  "无线" : "有线" : "历史"
+                        text: (modelData && modelData.isConnected) ? (modelData.isWireless ?  "无线" : "有线") : "历史"
                         textColor: "#ffffff"
                     }
                 }
@@ -87,7 +102,7 @@ Item {
                             rectColor: "#000000"
                         }
                         Label {
-                            text: model.isConnected ? model.isWireless ? model.ip : "有线连接" : "未连接"
+                            text: (modelData && modelData.isConnected) ? (modelData.isWireless && modelData.ip ? modelData.ip : "有线连接") : "未连接"
                             font.pixelSize: 12
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -98,9 +113,10 @@ Item {
                             vMargin: 1
                             hMargin: 3
                             textColor: "#ffffff"
-                            rectColor: "#000000"                        }
+                            rectColor: "#000000"
+                        }
                         Label {
-                            text: model.isConnected ? (model.isCharging ? model.battery + "% +" : model.battery + "%") : "未连接"
+                            text: (modelData && modelData.isConnected) ? (modelData.isCharging ? modelData.batteryLevel + "% +" : modelData.batteryLevel + "%") : "未连接"
                             font.pixelSize: 12
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -114,17 +130,21 @@ Item {
                     MButton {
                         Layout.preferredWidth: 50
                         Layout.alignment: Qt.AlignBottom
-                        btnType: model.isConnected ? MButton.FBtnType.Warning : MButton.FBtnType.Suggest
-                        text: model.isConnected ? "断开" : "立即连接"
+                        btnType: (modelData && modelData.isConnected) ? MButton.FBtnType.Warning : MButton.FBtnType.Suggest
+                        text: (modelData && modelData.isConnected) ? "断开" : "立即连接"
                         z: 1000
                         onClicked: {
-                            DeviceListviewModel.requestDisConnect(model.deviceCode)
+                            if (modelData && modelData.code) {
+                                DeviceHelper.requestDisConnectDevice(modelData.code)
+                            }
                         }
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                DeviceListviewModel.requestDisConnect(model.deviceCode)
-                                console.log("断开连接")
+                                if (modelData && modelData.code) {
+                                    DeviceHelper.requestDisConnectDevice(modelData.code)
+                                    console.log("断开连接:", modelData.code)
+                                }
                             }
                         }
                     }
@@ -135,7 +155,6 @@ Item {
                 propagateComposedEvents: true
                 onClicked: {
                     listView.currentIndex = index
-                    mouse.accepted = false
                 }
             }
         }

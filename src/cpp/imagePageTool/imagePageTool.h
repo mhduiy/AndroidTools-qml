@@ -3,7 +3,7 @@
 #include <QObject>
 #include <qobject.h>
 #include <qtmetamacros.h>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
 
 #include "service/ResourceService.h"
 

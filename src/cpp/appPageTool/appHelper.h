@@ -1,7 +1,8 @@
 #ifndef APPHELPERTHREAD_H
 #define APPHELPERTHREAD_H
 
-#include "src/cpp/adb/adbinterface.h"
+#include "src/cpp/adb/adbdevice.h"
+#include "src/cpp/adb/connectmanager.h"
 #include <QObject>
 
 class AppHelper : public QObject

@@ -7,10 +7,10 @@ set(UTILS_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/keyconvert.h
     ${CMAKE_CURRENT_SOURCE_DIR}/notificationcontroller.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/notificationcontroller.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/singleton.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/defutils.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
 )
 
 target_sources(${EXE_NAME} PRIVATE ${UTILS_SRC})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})

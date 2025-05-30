@@ -2,6 +2,7 @@
 #include "../adb/connectmanager.h"
 #include "appDetailControl.h"
 #include <QtQml>
+#include <QDebug>
 
 AppPageTool::AppPageTool(QObject *parent)
 : QObject(parent)
@@ -15,8 +16,8 @@ AppPageTool::AppPageTool(QObject *parent)
     m_appHandle->moveToThread(m_appHandleThread);
     m_appHandleThread->start();
     connect(AppDetailControl::instance(), &AppDetailControl::requestUpdateSoftList, m_appHandle, &AppInfoHandle::updateListInfo);
-    connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, m_appHandle, &AppInfoHandle::updateListInfo);
-    connect(ConnectManager::instance(), &ConnectManager::currentDeviceChanged, this, [this](){m_softListModel->clearData();});
+    connect(ConnectManager::instance(), &ConnectManager::cutADBDeviceChanged, m_appHandle, &AppInfoHandle::updateListInfo);
+    connect(ConnectManager::instance(), &ConnectManager::cutADBDeviceChanged, this, [this](){m_softListModel->clearData();});
     connect(m_appHandle, &AppInfoHandle::updateListFinish, this, &AppPageTool::updateAppListInfo);
 }
 
@@ -26,7 +27,6 @@ AppPageTool::~AppPageTool()
     m_appHandleThread->quit();
     m_appHandleThread->wait();
     qInfo() << "AppPageTool Thread exited";
-
 }
 
 void AppPageTool::updateAppListInfo()
@@ -44,10 +44,18 @@ AppInfoHandle::AppInfoHandle(QObject *parent) : QObject(parent)
 
 void AppInfoHandle::updateListInfo()
 {
-    auto infos = ADBInterface::instance()->getSoftListInfo(ConnectManager::instance()->currentDeviceCode());
+    auto device = ConnectManager::instance()->cutADBDevice();
+    if (!device) {
+        m_info.clear();
+        emit updateListFinish();
+        return;
+    }
+    
+    auto infos = device->getSoftListInfo();
     m_info = infos;
     emit updateListFinish();
 }
+
 QList<AppListInfo> AppInfoHandle::getInfo()
 {
     return m_info;

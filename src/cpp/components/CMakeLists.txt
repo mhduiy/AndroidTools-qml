@@ -1,6 +1,4 @@
 set(COMPONENTS_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/deivicelistviewmodel.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/deivicelistviewmodel.h
     ${CMAKE_CURRENT_SOURCE_DIR}/fpsitem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fpsitem.h
 )

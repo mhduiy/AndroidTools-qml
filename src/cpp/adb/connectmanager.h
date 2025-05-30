@@ -1,53 +1,43 @@
-#ifndef CONNECTMANAGER_H
-#define CONNECTMANAGER_H
+#pragma once
 
 #include <QObject>
-#include "../utils/singleton.hpp"
-#include "../adb/adbtools.h"
-#include "../adb/adbinterface.h"
-#include "../components/deivicelistviewmodel.h"
+#include <QTimer>
 
+#include "src/cpp/adb/adbdevice.h"
+#include "src/cpp/adb/device.h"
+#include "src/cpp/adb/fastbootdevice.h"
+
+#include "../utils/defutils.hpp"
+
+#define CONNECTMANAGER ConnectManager::instance()
 class ConnectManager : public QObject
 {
     Q_OBJECT
     SINGLETON(ConnectManager)
-    Q_PROPERTY(QString currentDeviceCode READ currentDeviceCode WRITE setCurrentDeviceCode NOTIFY currentDeviceChanged FINAL)
+    DECLARE_PROPERTY(ADBDevice*, cutADBDevice)
+    DECLARE_PROPERTY(FastbootDevice*, cutFastbootDevice)
+    DECLARE_PROPERTY(bool, enableADBCheck)
+    DECLARE_PROPERTY(bool, enableFastbootCheck)
 public:
-    QString currentDeviceCode();
-    bool setCurrentDeviceCode(const QString &code);
-
-    /**
-     * @brief startCheckDevice 开始检测设备
-     */
     void startCheckDevice();
     void stopCheckDevice();
 
-    DeviceBaceInfo getDeviceBaceInfo(const QString &code = "");
-    DeviceBatteryInfo getDeviceBatteryInfo(const QString &code = "");
-    DeviceCutActivityInfo getDeviceCutActivityInfo(const QString &code = "");
+    QVector<QSharedPointer<Device>> devices(ConnectStatus type = C_ADB) const;    
 
 signals:
-    void deviceDisconnected(const QString &code);
-    void deviceConnected(const QString &code);
-
+    void deviceDisconnected(QSharedPointer<Device> device);
+    void deviceConnected(QSharedPointer<Device> device);
     void deviceRefreshFinish();
-    void currentDeviceChanged(const QString &code);
 
 private:
     void refreshDevice();
 
+    QVector<QString> getDeviceList(ConnectStatus type = C_ADB);
+    bool hasDevice(const QString &deviceCode, ConnectStatus type = C_ADB);
+    QSharedPointer<Device> addDevice(const QString &deviceCode, ConnectStatus type = C_ADB);
+
 private:
-    QVector<QString> m_deviceCodeSet;
-    QString m_currentDeviceCode;
-    ADBTools *m_adbTools = ADBTools::instance();
-    ADBInterface *m_adbInterface = ADBInterface::instance();
-
-    QMap<QString, DeviceBaceInfo> m_deviceBaceInfoMap;
-    QMap<QString, DeviceBatteryInfo> m_deviceBatteryInfoMap;
-    QMap<QString, DeviceCutActivityInfo> m_deviceCutActivityInfoMap;
-
-    DeviceListviewModel *m_deviceListviewModel;
+    QVector<QSharedPointer<ADBDevice>> m_adbDeviceList;
+    QVector<QSharedPointer<FastbootDevice>> m_fastbootDeviceList;
     QTimer *m_deviceCheckTimer;
 };
-
-#endif // CONNECTMANAGER_H

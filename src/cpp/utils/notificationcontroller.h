@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include "singleton.hpp"
+#include "defutils.hpp"
 
 class NotificationController : public QObject
 {

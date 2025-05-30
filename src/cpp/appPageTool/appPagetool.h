@@ -3,7 +3,8 @@
 
 #include <QObject>
 #include <QThread>
-#include "../utils/singleton.hpp"
+#include "../utils/defutils.hpp"
+#include "../adb/adbdevice.h"
 #include "softlistmodel.h"
 
 class AppInfoHandle : public QObject
@@ -12,8 +13,9 @@ class AppInfoHandle : public QObject
 public:
     explicit AppInfoHandle(QObject *parent = nullptr);
     QList<AppListInfo> getInfo();
+
+public slots:
     void updateListInfo();
-    // void updatePackageInfo();
 
 signals:
     void updateListFinish();

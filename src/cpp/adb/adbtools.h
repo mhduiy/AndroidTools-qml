@@ -1,9 +1,10 @@
-#ifndef ADBTOOLS_H
-#define ADBTOOLS_H
+#pragma once
 
 #include <QObject>
 #include <QAtomicInt>
 #include <QMutex>
+
+#define ADBTOOL ADBTools::instance()
 
 class ADBTools : public QObject
 {
@@ -18,11 +19,12 @@ public:
     bool isRunning();
 
     static ADBTools *instance(QObject *parent = nullptr);
+
+    void startService();
+    void killService();
 private:
     explicit ADBTools(QObject *parent = nullptr);
     ADBTools() = delete;
     QMutex *m_mutex;
     QAtomicInt m_isRunning = 0;
 };
-
-#endif // ADBTOOLS_H
