@@ -8,6 +8,8 @@
 #include <QAbstractListModel>
 #include "flashUrlHandle.h"
 
+namespace ADT {
+
 enum FlashLinkRole {
     FlashUrlRole = Qt::UserRole + 1,
     FlashTitleRole,
@@ -51,5 +53,7 @@ private:
     FlashLinkModel *m_flashLinkModel;
     FlashUrlHandle *m_flashUrlHandle;
 };
+
+} // namespace ADT
 
 #endif

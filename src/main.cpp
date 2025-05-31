@@ -24,6 +24,7 @@
 #include "cpp/adb/adblog.h"
 #include "src/cpp/adb/device.h"
 #include "src/cpp/adb/devicehelper.h"
+#include "src/cpp/adb/adbdevice.h"
 
 #include <QProcess>
 bool checkADB() {
@@ -81,22 +82,28 @@ int main(int argc, char *argv[])
 
     qInfo() << "mainThread:" << QThread::currentThreadId();
 
-    DeviceHelper::instance(qApp)->init();
+    ADT::DeviceHelper::instance(qApp)->init();
 
-    ControlPageTool::instance(&app);
-    AppPageTool::instance(&app);
-    FlashPageTool::instance(&app);
-    ImagePageTool::instance(&app);
-    SettingPageTools::instance(&app);
+    ADT::ControlPageTool::instance(&app);
+    ADT::AppPageTool::instance(&app);
+    ADT::FlashPageTool::instance(&app);
+    ADT::ImagePageTool::instance(&app);
+    ADT::SettingPageTools::instance(&app);
     
     NotificationController::instance(&app);
+
+    
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
     qmlRegisterType<ImageFrameItem>( "ImageFrameItem", 1, 0, "ImageFrameItem");
     qmlRegisterSingletonInstance("App", 1, 0, "App", App);
-    qmlRegisterSingletonInstance("ConnectManager", 1, 0, "ConnectManager", ConnectManager::instance());
-    qmlRegisterSingletonInstance("DeviceHelper", 1, 0, "DeviceHelper", DeviceHelper::instance());
+    qmlRegisterSingletonInstance("ConnectManager", 1, 0, "ConnectManager", ADT::ConnectManager::instance());
+    qmlRegisterSingletonInstance("DeviceHelper", 1, 0, "DeviceHelper", ADT::DeviceHelper::instance());
     qmlRegisterSingletonInstance("ADBLog", 1, 0, "ADBLog", ADBLogModel::instance(&app));
+    
+    // 注册枚举类到QML
+    qmlRegisterUncreatableMetaObject(ADT::staticMetaObject, "ADT", 1, 0, "ADT", "Access to enums & flags only");
+    
     qInfo() << "核心模块加载完成，用时(ms):" << loaderTimer.elapsed();
 
     AppSettings->checkConfig("other", "useOpenGL", DEFAULT_USE_OPENGL);

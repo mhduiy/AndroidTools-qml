@@ -7,6 +7,8 @@
 #include "src/cpp/adb/device.h"
 #include "src/cpp/adb/fastbootdevice.h"
 
+namespace ADT {
+
 ConnectManager::ConnectManager(QObject *parent)
     : QObject(parent)
     , m_deviceCheckTimer(nullptr)
@@ -58,7 +60,6 @@ QVector<QSharedPointer<Device>> ConnectManager::devices(ConnectStatus type) cons
 
 void ConnectManager::refreshDevice()
 {
-    qWarning() << "开始刷新设备列表";
     if (enableADBCheck()) {
         QVector<QString> adbDevices = getDeviceList(C_ADB);
         // 检查是否有新设备连接(ADB)
@@ -234,3 +235,5 @@ QSharedPointer<Device> ConnectManager::addDevice(const QString &deviceCode, Conn
     device->setisConnected(true);
     return device;
 }
+
+} // namespace ADT

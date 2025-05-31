@@ -3,6 +3,8 @@
 #include "../adb/adbtools.h"
 #include "../utils/utils.hpp"
 
+namespace ADT {
+
 StartActivity::StartActivity(QObject *parent) : QObject(parent)
 {
 
@@ -31,3 +33,5 @@ void StartActivity::start(const QString &activity, const QString &argsStr)
 
     asyncOperator(operatorFunc);
 }
+
+} // namespace ADT

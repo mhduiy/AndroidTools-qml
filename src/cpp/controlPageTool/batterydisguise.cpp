@@ -3,6 +3,8 @@
 #include "../adb/connectmanager.h"
 #include "../utils/utils.hpp"
 
+namespace ADT {
+
 BatteryDisguise::BatteryDisguise(QObject *parent) : QObject(parent)
 {
 
@@ -82,3 +84,5 @@ void BatteryDisguise::restoreAll()
 
     asyncOperator(operatorFunc);
 } 
+
+} // namespace ADT

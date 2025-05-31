@@ -10,6 +10,8 @@
 #include "../utils/defutils.hpp"
 #include "src/cpp/adb/adbtools.h"
 
+namespace ADT {
+
 class FlashTools : public QObject
 {
     Q_OBJECT
@@ -26,5 +28,7 @@ private:
     void executeCommand(ADBTools::APP appType, const QStringList &args, const QString &workDir = QString());
     void executeCommand(const QString &command, const QStringList &args, const QString &workDir = QString());
 };
+
+} // namespace ADT
 
 #endif // FLASHTOOLS_H

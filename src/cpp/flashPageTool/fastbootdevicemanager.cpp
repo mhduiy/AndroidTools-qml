@@ -3,6 +3,8 @@
 #include "../utils/utils.hpp"
 #include "src/cpp/utils/notificationcontroller.h"
 
+namespace ADT {
+
 DeviceCheckTool::DeviceCheckTool(QObject *parent)
     : QObject (parent)
     , m_checkTimer(new QTimer())
@@ -180,3 +182,5 @@ void FastBootDeviceManager::powerOff(const QString &deviceCode)
 
     asyncOperator(operatorFunc);
 }
+
+} // namespace ADT

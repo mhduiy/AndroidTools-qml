@@ -4,9 +4,11 @@
 #include <QObject>
 #include <QVariant>
 #include <QThread>
-#include "appHelper.h"
-#include "../adb/adbdevice.h"
-#include "../utils/defutils.hpp"
+
+#include "src/cpp/adb/adbdevice.h"
+#include "src/cpp/utils/defutils.hpp"
+
+namespace ADT {
 
 class AppDetailControl : public QObject
 {
@@ -19,7 +21,9 @@ class AppDetailControl : public QObject
     Q_PROPERTY(QVariant targetSdk READ getTargetSdk NOTIFY valueChanged)
     Q_PROPERTY(QVariant minSdk READ getMinSdk NOTIFY valueChanged)
     Q_PROPERTY(QVariant appId READ getAppId NOTIFY valueChanged)
+    Q_PROPERTY(SoftListType softListType READ getSoftListType WRITE setSoftListType NOTIFY softListTypeChanged)
 public:
+
     ~AppDetailControl();
     QVariant getPackageName() { return m_info.packageName; };
     QVariant getVersionCode() { return m_info.versionName; } ;
@@ -28,6 +32,8 @@ public:
     QVariant getTargetSdk() { return m_info.targetsdk; } ;
     QVariant getMinSdk() { return m_info.minsdk; } ;
     QVariant getAppId() {return m_info.appid;} ;
+    SoftListType getSoftListType() { return m_softListType; }
+    void setSoftListType(SoftListType type);
 
     Q_INVOKABLE void updateInfo(const QString &packageName);
     Q_INVOKABLE void installApp(const QString &Path, bool r = false, bool s = false, bool d = false, bool g = false);
@@ -42,12 +48,18 @@ public:
     Q_INVOKABLE void startActivity(const QString &activity, const QStringList &args);
 signals:
     void valueChanged(const AppDetailInfo &info);
+    void updateSoftDetailInfoFinish(const AppDetailInfo &info);
     void requestUpdateSoftList();
+    void softListTypeChanged(SoftListType type);
+
+private slots:
+    void onUpdateSoftDetailInfoFinish(const AppDetailInfo &info);
 
 private:
     AppDetailInfo m_info;
-    QThread *m_appHelperThread;
-    AppHelper *m_appHelper;
+    SoftListType m_softListType;
 };
+
+} // namespace ADT
 
 #endif

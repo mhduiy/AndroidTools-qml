@@ -7,6 +7,8 @@
 #include "textinput.h"
 #include "startactivity.h"
 
+namespace ADT {
+
 ControlPageTool::ControlPageTool(QObject *parent) : QObject(parent)
 {
     qmlRegisterSingletonInstance("DeviceControl", 1, 0, "DeviceControl", DeviceControl::instance(this));
@@ -17,3 +19,4 @@ ControlPageTool::ControlPageTool(QObject *parent) : QObject(parent)
     qmlRegisterSingletonInstance("StartActivity", 1, 0, "StartActivity", StartActivity::instance(this));
 }
 
+} // namespace ADT

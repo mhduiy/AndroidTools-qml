@@ -4,6 +4,8 @@
 #include <QObject>
 #include "../utils/defutils.hpp"
 
+namespace ADT {
+
 class InputText : public QObject
 {
     Q_OBJECT
@@ -12,5 +14,7 @@ class InputText : public QObject
 public:
     Q_INVOKABLE void pushKey(Qt::Key);
 };
+
+} // namespace ADT
 
 #endif // TEXTINPUT_H

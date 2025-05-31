@@ -2,6 +2,8 @@
 #include "src/cpp/flashPageTool/flashtools.h"
 #include <QtQml>
 
+namespace ADT {
+
 FlashPageTool::FlashPageTool(QObject *parent)
     : QObject(parent)
     , m_fastBootDeviceManager(FastBootDeviceManager::instance(this))
@@ -93,3 +95,5 @@ QHash<int, QByteArray> FlashLinkModel::roleNames() const
     roles[FlashDescriptionRole] = "description";
     return roles;
 }
+
+} // namespace ADT

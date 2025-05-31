@@ -5,244 +5,116 @@
 #include <QPromise>
 #include <QtConcurrent>
 #include <functional>
-#include "connectmanager.h"
+#include "adbdevice.h"
 #include "../utils/notificationcontroller.h"
 
-template<typename T>
-class DeviceCommand
+// ADB命令执行器
+class ADBCommandExecutor : public QObject
 {
+    Q_OBJECT
+
 public:
-    using CommandFunction = std::function<T(QSharedPointer<ADBDevice>)>;
-    using SuccessCallback = std::function<void(const T&)>;
-    using ErrorCallback = std::function<void(const QString&)>;
+    using SuccessCallback = std::function<void(const ADBCommandResult&)>;
+    using FailureCallback = std::function<void(const ADBCommandResult&)>;
 
-    DeviceCommand(const QString& name, CommandFunction func)
-        : m_name(name), m_function(func) {}
+    explicit ADBCommandExecutor(QObject *parent = nullptr);
 
-    DeviceCommand& withSuccessMessage(const QString& message) {
-        m_successMessage = message;
-        return *this;
-    }
-
-    DeviceCommand& withErrorMessage(const QString& message) {
-        m_errorMessage = message;
-        return *this;
-    }
-
-    DeviceCommand& onSuccess(SuccessCallback callback) {
-        m_successCallback = callback;
-        return *this;
-    }
-
-    DeviceCommand& onError(ErrorCallback callback) {
-        m_errorCallback = callback;
-        return *this;
-    }
-
-    DeviceCommand& withProgressMessage(const QString& message) {
-        m_progressMessage = message;
-        return *this;
-    }
-
-    QFuture<T> execute() {
-        auto device = ConnectManager::instance()->cutADBDevice();
-        
-        if (!device) {
-            NotificationController::instance()->send(
-                "执行失败", 
-                "当前无设备连接", 
-                NotificationController::Error
-            );
-            
-            QPromise<T> promise;
-            promise.start();
-            if (m_errorCallback) {
-                m_errorCallback("当前无设备连接");
-            }
-            promise.finish();
-            return promise.future();
-        }
-
-        if (!m_progressMessage.isEmpty()) {
-            NotificationController::instance()->send(
-                "执行中", 
-                m_progressMessage, 
-                NotificationController::Info
-            );
-        }
-
-        return QtConcurrent::run([this, device]() -> T {
-            try {
-                QSharedPointer<ADBDevice> devicePtr(device, [](ADBDevice*){});
-                T result = m_function(devicePtr);
-                
-                QMetaObject::invokeMethod(QCoreApplication::instance(), [this, result]() {
-                    if (!m_successMessage.isEmpty()) {
-                        NotificationController::instance()->send(
-                            "执行成功", 
-                            m_successMessage, 
-                            NotificationController::Info
-                        );
-                    }
-                    
-                    if (m_successCallback) {
-                        m_successCallback(result);
-                    }
-                }, Qt::QueuedConnection);
-                
-                return result;
-            } catch (const std::exception& e) {
-                QMetaObject::invokeMethod(QCoreApplication::instance(), [this, e]() {
-                    QString errorMsg = QString::fromStdString(e.what());
-                    if (!m_errorMessage.isEmpty()) {
-                        NotificationController::instance()->send(
-                            "执行失败", 
-                            m_errorMessage + ": " + errorMsg, 
-                            NotificationController::Error
-                        );
-                    }
-                    
-                    if (m_errorCallback) {
-                        m_errorCallback(errorMsg);
-                    }
-                }, Qt::QueuedConnection);
-                
-                throw;
-            }
-        });
-    }
+    // 配置命令参数和执行选项
+    ADBCommandExecutor& withArgs(const QStringList& args);
+    ADBCommandExecutor& withWriteData(const QString& writeStr);
+    ADBCommandExecutor& withTimeout(int timeout);
+    
+    // 配置消息
+    ADBCommandExecutor& withSuccessMessage(const QString& message);
+    ADBCommandExecutor& withFailureMessage(const QString& message);
+    ADBCommandExecutor& withProgressMessage(const QString& message);
+    
+    // 配置回调
+    ADBCommandExecutor& onSuccess(SuccessCallback callback);
+    ADBCommandExecutor& onFailure(FailureCallback callback);
+    
+    // 执行命令
+    QFuture<ADBCommandResult> execute();
+    
+    // 便捷方法：同步执行
+    ADBCommandResult executeSync();
+    
+    // 静态便捷方法
+    static QFuture<ADBCommandResult> executeCommand(
+        const QStringList& args,
+        const QString& successMsg = "",
+        const QString& failureMsg = "",
+        SuccessCallback onSuccess = nullptr,
+        FailureCallback onFailure = nullptr
+    );
 
 private:
-    QString m_name;
-    CommandFunction m_function;
+    // 判断命令是否成功
+    bool isCommandSuccessful(const ADBCommandResult& result) const;
+    
+    // 发送通知
+    void sendNotification(const QString& title, const QString& message, 
+                         NotificationController::NotificationType type) const;
+
+private:
+    QStringList m_args;
+    QString m_writeData;
+    int m_timeout = 3000;
+    
     QString m_successMessage;
-    QString m_errorMessage;
+    QString m_failureMessage;
     QString m_progressMessage;
+    
     SuccessCallback m_successCallback;
-    ErrorCallback m_errorCallback;
+    FailureCallback m_failureCallback;
 };
 
 // 便捷的创建函数
-template<typename T>
-DeviceCommand<T> createDeviceCommand(const QString& name, typename DeviceCommand<T>::CommandFunction func) {
-    return DeviceCommand<T>(name, func);
+inline ADBCommandExecutor* createADBCommand() {
+    return new ADBCommandExecutor();
 }
 
-// 特化版本，用于无返回值的命令
-using VoidDeviceCommand = DeviceCommand<void>;
+// 宏定义用于快速创建命令
+#define ADB_COMMAND() (new ADBCommandExecutor())
 
-template<>
-class DeviceCommand<void>
-{
-public:
-    using CommandFunction = std::function<void(QSharedPointer<ADBDevice>)>;
-    using SuccessCallback = std::function<void()>;
-    using ErrorCallback = std::function<void(const QString&)>;
-
-    DeviceCommand(const QString& name, CommandFunction func)
-        : m_name(name), m_function(func) {}
-
-    DeviceCommand& withSuccessMessage(const QString& message) {
-        m_successMessage = message;
-        return *this;
-    }
-
-    DeviceCommand& withErrorMessage(const QString& message) {
-        m_errorMessage = message;
-        return *this;
-    }
-
-    DeviceCommand& onSuccess(SuccessCallback callback) {
-        m_successCallback = callback;
-        return *this;
-    }
-
-    DeviceCommand& onError(ErrorCallback callback) {
-        m_errorCallback = callback;
-        return *this;
-    }
-
-    DeviceCommand& withProgressMessage(const QString& message) {
-        m_progressMessage = message;
-        return *this;
-    }
-
-    QFuture<void> execute()
-    {
-        auto device = ConnectManager::instance()->cutADBDevice();
-        
-        if (!device) {
-            NotificationController::instance()->send(
-                "执行失败", 
-                "当前无设备连接", 
-                NotificationController::Error
-            );
-            
-            if (m_errorCallback) {
-                m_errorCallback("当前无设备连接");
-            }
-            
-            QPromise<void> promise;
-            promise.start();
-            promise.finish();
-            return promise.future();
-        }
-
-        if (!m_progressMessage.isEmpty()) {
-            NotificationController::instance()->send(
-                "执行中", 
-                m_progressMessage, 
-                NotificationController::Info
-            );
-        }
-
-        return QtConcurrent::run([this, device]() {
-            try {
-                // 将原始指针包装为智能指针给CommandFunction使用
-                QSharedPointer<ADBDevice> devicePtr(device, [](ADBDevice*){});
-                m_function(devicePtr);
-                
-                QMetaObject::invokeMethod(QCoreApplication::instance(), [this]() {
-                    if (!m_successMessage.isEmpty()) {
-                        NotificationController::instance()->send(
-                            "执行成功", 
-                            m_successMessage, 
-                            NotificationController::Info
-                        );
-                    }
-                    
-                    if (m_successCallback) {
-                        m_successCallback();
-                    }
-                }, Qt::QueuedConnection);
-                
-            } catch (const std::exception& e) {
-                QMetaObject::invokeMethod(QCoreApplication::instance(), [this, e]() {
-                    QString errorMsg = QString::fromStdString(e.what());
-                    if (!m_errorMessage.isEmpty()) {
-                        NotificationController::instance()->send(
-                            "执行失败", 
-                            m_errorMessage + ": " + errorMsg, 
-                            NotificationController::Error
-                        );
-                    }
-                    
-                    if (m_errorCallback) {
-                        m_errorCallback(errorMsg);
-                    }
-                }, Qt::QueuedConnection);
-                
-                throw;
-            }
-        });
-    }
-
-private:
-    QString m_name;
-    CommandFunction m_function;
-    QString m_successMessage;
-    QString m_errorMessage;
-    QString m_progressMessage;
-    SuccessCallback m_successCallback;
-    ErrorCallback m_errorCallback;
-}; 
+// 预定义的常用命令构建器
+namespace ADBCommands {
+    // 安装APK
+    ADBCommandExecutor* installApp(const QString& apkPath, bool replace = false);
+    
+    // 卸载应用
+    ADBCommandExecutor* uninstallApp(const QString& packageName);
+    
+    // 启动应用
+    ADBCommandExecutor* startApp(const QString& packageName);
+    
+    // 停止应用
+    ADBCommandExecutor* stopApp(const QString& packageName);
+    
+    // 推送文件
+    ADBCommandExecutor* pushFile(const QString& localPath, const QString& remotePath);
+    
+    // 拉取文件
+    ADBCommandExecutor* pullFile(const QString& remotePath, const QString& localPath);
+    
+    // 执行shell命令
+    ADBCommandExecutor* shell(const QString& command);
+    
+    // 重启设备
+    ADBCommandExecutor* reboot(const QString& mode = "");
+    
+    // 按键事件
+    ADBCommandExecutor* keyEvent(int keyCode);
+    
+    // 截图
+    ADBCommandExecutor* screenshot(const QString& outputPath = "");
+    
+    // 清除应用数据
+    ADBCommandExecutor* clearAppData(const QString& packageName);
+    
+    // 获取设备属性
+    ADBCommandExecutor* getDeviceProp(const QString& property);
+    
+    // 启动Activity
+    ADBCommandExecutor* startActivity(const QString& activity, const QStringList& extras = {});
+}

@@ -7,6 +7,8 @@
 
 #include "service/ResourceService.h"
 
+namespace ADT {
+
 class ImageDetailTools : public QObject
 {
     Q_OBJECT
@@ -28,3 +30,5 @@ private:
 private:
     ResourceService *resourceService = nullptr;
 };
+
+} // namespace ADT

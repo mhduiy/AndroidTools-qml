@@ -164,7 +164,7 @@ void WebSocketService::responseToClents(int result) {
 void WebSocketService::qmlGenerateEvents(QString request, QString data)
 {
     if (data.isEmpty()) {
-        auto device = ConnectManager::instance()->cutADBDevice();
+        ADT::ADBDevice *device = ADT::ConnectManager::instance()->cutADBDevice();
         data = device ? device->code() : "";
     }
     if (request == "REQUEST_MIRROR_START") {

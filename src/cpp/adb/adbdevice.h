@@ -5,8 +5,41 @@
 #include <QTimer>
 #include <QThread>
 
+namespace ADT {
+
+Q_NAMESPACE
+
+// 前向声明
+class ADBDevice;
+
+// @brief ADB命令执行结果
+struct CommandResult {
+    bool success = false;           // 命令是否成功执行
+    int exitCode = -1;              // 进程退出码
+    QString output;                 // 标准输出内容
+    QString errorOutput;            // 标准错误输出内容
+    QString command;                // 执行的命令(用于调试)
+    int executionTime = 0;          // 命令执行时间(毫秒)
+    
+    // 构造函数
+    CommandResult() = default;
+    CommandResult(bool _success, int _exitCode, const QString& _output, 
+                    const QString& _errorOutput = "", const QString& _command = "", 
+                    int _executionTime = 0)
+        : success(_success), exitCode(_exitCode), output(_output)
+        , errorOutput(_errorOutput), command(_command), executionTime(_executionTime) {}
+    
+    // 判断是否成功的便捷方法
+    bool isSuccess() const { return success && exitCode == 0; }
+    
+    // 获取所有输出(标准输出优先，如果为空则返回错误输出)
+    QString getAllOutput() const { 
+        return output.isEmpty() ? errorOutput : output; 
+    }
+};
+
 // @brief 设备当前活动信息
-struct DeviceCutActivityInfo {
+struct DeviceActivityInfo {
     QString windowCode;
     QString cutPackage;
     QString cutActivity;
@@ -34,7 +67,7 @@ struct DeviceDetailInfo {
     QString maxCoreNum; // CPU 核心数量
 };
 
-// @brief 应用列表信息
+// @brief 应用详细信息
 struct AppDetailInfo {
     QString packageName;
     QString versionName;
@@ -44,56 +77,55 @@ struct AppDetailInfo {
     QString minsdk;
     QString appid;
     QString path;
-    AppDetailInfo(const QString &_packageName = "", const QString &_versioncode = "", const QString &_installDate = "", const QString &_installUser = "", const QString &_targetsdk = "", const QString &_minsdk = "", const QString _appid = "", const QString &_path = "")
-    : packageName(_packageName)
-    , versionName(_versioncode)
-    , installDate(_installDate)
-    , installUser(_installUser)
-    , targetsdk(_targetsdk)
-    , minsdk(_minsdk)
-    , appid(_appid)
-    , path(_path)
-    {
-
-    }
+    
+    AppDetailInfo(const QString &_packageName = "", const QString &_versioncode = "", 
+                  const QString &_installDate = "", const QString &_installUser = "", 
+                  const QString &_targetsdk = "", const QString &_minsdk = "", 
+                  const QString _appid = "", const QString &_path = "")
+        : packageName(_packageName), versionName(_versioncode), installDate(_installDate)
+        , installUser(_installUser), targetsdk(_targetsdk), minsdk(_minsdk)
+        , appid(_appid), path(_path) {}
 };
 
-enum AppState
-{
-    APP_Enable, APP_Disable, APP_Unkown
+// 重新声明枚举用于QML注册
+enum AppState {
+    Enable, 
+    Disable, 
+    Unknown
 };
+Q_ENUM_NS(AppState)
 
-struct AppListInfo
-{
+struct AppListInfo {
     QString packageName;
     AppState state;
     QString versionCode;
-    AppListInfo(const QString &_name = "", AppState _state = APP_Unkown, const QString &_versionCode = "000000")
-    {
-        packageName = _name;
-        state = _state;
-        versionCode = _versionCode;
-    };
+    
+    AppListInfo(const QString &_name = "", AppState _state = AppState::Unknown, 
+                const QString &_versionCode = "000000")
+        : packageName(_name), state(_state), versionCode(_versionCode) {}
 };
 
+// 重新声明枚举用于QML注册
 enum ControlType {
-    CTRL_Music,
-    CTRL_Key,
-    CTRL_BoardCast
+    Music,
+    Key,
+    Broadcast
 };
-// Q_ENUM(ControlType)
+Q_ENUM_NS(ControlType)
 
-enum MusicControlEnum{
-    PreviouSong = 0,
+// 重新声明枚举用于QML注册
+enum MusicControl {
+    PreviousSong = 0,
     StopPlay,
     PlayAndPause,
     NextSong,
     VolumeReduce,
     VolumeAdd
 };
-// Q_ENUM(MusicControlEnum)
+Q_ENUM_NS(MusicControl)
 
-enum KeyControlEnum{
+// 重新声明枚举用于QML注册
+enum KeyControl {
     Menu = 0,
     Home,
     Back,
@@ -110,24 +142,25 @@ enum KeyControlEnum{
     CursorToBegin,
     CursorToEnd
 };
-// Q_ENUM(KeyControlEnum)
+Q_ENUM_NS(KeyControl)
 
-enum BoardcastControlEnum{
-    NetWorkChanged = 0,
-    ScrennOpened,
-    ScrennOffed,
+// 重新声明枚举用于QML注册
+enum BroadcastControl {
+    NetworkChanged = 0,
+    ScreenOpened,
+    ScreenClosed,
     LowPower,
-    PowerRec,
+    PowerRecovered,
     BootFinish,
     StorageLow,
-    StorageRec,
+    StorageRecovered,
     InstallApp,
     WifiChanged1,
     WifiChanged2,
     BatteryLevelChanged,
     InputMethodChanged,
     PowerConnected,
-    PowerDisConnected,
+    PowerDisconnected,
     SystemSleep,
     StopSleep,
     WallpaperChanged,
@@ -136,11 +169,17 @@ enum BoardcastControlEnum{
     InstallMedia,
     EnablePowerSave
 };
-// Q_ENUM(BoardcastControlEnum)
+Q_ENUM_NS(BroadcastControl)
 
+// 重新声明枚举用于QML注册
 enum ChargingType {
-    AC, USB, Wireless, Dock, None
+    AC, 
+    USB, 
+    Wireless, 
+    Dock, 
+    None
 };
+Q_ENUM_NS(ChargingType)
 
 // @brief 设备电池信息
 struct DeviceBatteryInfo {
@@ -155,6 +194,43 @@ struct DeviceBatteryInfo {
     uint voltage;
     uint current;
     float temperature;
+};
+
+// 重新声明枚举用于QML注册
+enum SoftListType {
+    ThirdParty,
+    System,
+    All
+};
+Q_ENUM_NS(SoftListType)
+
+class ADBDeviceWorker : public QObject
+{
+    Q_OBJECT
+public:
+    explicit ADBDeviceWorker(ADBDevice *device, QObject *parent = nullptr);
+    ~ADBDeviceWorker();
+
+public slots:
+    void refreshFixInfo();
+    void startRefreshRealtimeInfo();
+    void stopRefreshRealtimeInfo();
+
+signals:
+    void fixInfoRefreshed(const DeviceDetailInfo &info);
+    void cutActivityRefreshed(const DeviceActivityInfo &activityInfo);
+    void batteryInfoRefreshed(const DeviceBatteryInfo &batteryInfo);
+
+private slots:
+    void refreshRealtimeInfo();
+
+private:
+    void refreshCutActivityInfo();
+    void refreshBatteryInfo();
+
+private:
+    QTimer *m_refreshTimer;
+    ADBDevice *m_device;
 };
 
 class ADBDevice : public Device
@@ -197,12 +273,6 @@ class ADBDevice : public Device
     Q_PROPERTY(QString windowCode READ windowCode WRITE setWindowCode NOTIFY windowCodeChanged)
     Q_PROPERTY(QString currentPackage READ currentPackage WRITE setCurrentPackage NOTIFY currentPackageChanged)
     Q_PROPERTY(QString currentActivity READ currentActivity WRITE setCurrentActivity NOTIFY currentActivityChanged)
-
-public:
-    // 注册枚举类型到QML
-    Q_ENUM(ChargingType)
-    Q_ENUM(ControlType)
-    Q_ENUM(AppState)
 
 public:
     explicit ADBDevice(QObject *parent = nullptr);
@@ -305,7 +375,7 @@ public:
     void setCurrentActivity(const QString &val);
 
     // 获取应用列表
-    QList<AppListInfo> getSoftListInfo() const;
+    QList<AppListInfo> getSoftListInfo(SoftListType type = SoftListType::All) const;
     // 获取应用详细信息
     AppDetailInfo getAppDetailInfo(const QString &packageName) const;
     // 安装应用
@@ -365,46 +435,11 @@ public:
     // 断开设备连接
     void requestDisConnect() Q_DECL_OVERRIDE;
 
-    // 执行ADB命令
-    Q_INVOKABLE QString executeCommand(const QStringList &args, const QString &writeStr = "", const int timeout = 3000) const;
+    QString executeCommand(const QStringList &args, const QString &writeStr = "", const int timeout = 3000) const;
+    CommandResult executeCommandDetailed(const QStringList &args, const QString &writeStr = "", const int timeout = 3000) const;
     
     // 获取设备属性
     QString getDeviceProp(const QString &deviceCode, const QString &prop);
-
-    // 兼容旧代码的方法
-    QSharedPointer<DeviceDetailInfo> detailInfo() const { return m_detailInfo; }
-    QSharedPointer<DeviceBatteryInfo> batteryInfo() const { return m_batteryInfo; }
-    QSharedPointer<DeviceCutActivityInfo> cutActivityInfo() const { return m_cutActivityInfo; }
-    
-    void setdetailInfo(QSharedPointer<DeviceDetailInfo> val) {
-        if (m_detailInfo != val) {
-            m_detailInfo = val;
-            if (val) {
-                updateDetailInfoFromStruct(*val);
-            }
-            emit detailInfoChanged(val);
-        }
-    }
-    
-    void setbatteryInfo(QSharedPointer<DeviceBatteryInfo> val) {
-        if (m_batteryInfo != val) {
-            m_batteryInfo = val;
-            if (val) {
-                updateBatteryInfoFromStruct(*val);
-            }
-            emit batteryInfoChanged(val);
-        }
-    }
-    
-    void setcutActivityInfo(QSharedPointer<DeviceCutActivityInfo> val) {
-        if (m_cutActivityInfo != val) {
-            m_cutActivityInfo = val;
-            if (val) {
-                updateActivityInfoFromStruct(*val);
-            }
-            emit cutActivityInfoChanged(val);
-        }
-    }
 
 signals:
     // 设备详细信息信号
@@ -444,35 +479,22 @@ signals:
     void currentPackageChanged(const QString &val);
     void currentActivityChanged(const QString &val);
 
-    // 兼容旧代码的信号
-    void detailInfoChanged(QSharedPointer<DeviceDetailInfo> val);
-    void batteryInfoChanged(QSharedPointer<DeviceBatteryInfo> val);
-    void cutActivityInfoChanged(QSharedPointer<DeviceCutActivityInfo> val);
-
 private slots:
-    void onFixInfoRefreshTimeout();
-    void onRealtimeRefreshTimeout();
+    void onFixInfoRefreshed(const DeviceDetailInfo &info);
+    void onCutActivityRefreshed(const DeviceActivityInfo &activityInfo);
+    void onBatteryInfoRefreshed(const DeviceBatteryInfo &batteryInfo);
 
 private:
-    DeviceDetailInfo refreshFixInfo();
-    DeviceBatteryInfo refreshBatteryInfo();
-    DeviceCutActivityInfo refreshCutActivityInfo();
-    void startAutoRefresh();
     void updateDetailInfoFromStruct(const DeviceDetailInfo &info);
     void updateBatteryInfoFromStruct(const DeviceBatteryInfo &info);
-    void updateActivityInfoFromStruct(const DeviceCutActivityInfo &info);
-    
+    void updateActivityInfoFromStruct(const DeviceActivityInfo &info);
+
+    void initWorker();
+
+private:
+    ADBDeviceWorker *m_worker;
+    QThread *m_workerThread;
     ADBTools *m_adbTools;
-    QTimer *m_fixInfoRefreshTimer;      // 固定信息刷新定时器（只刷新一次）
-    QTimer *m_realtimeRefreshTimer;     // 实时信息刷新定时器
-    QThread *m_refreshThread;
-    
-    bool m_fixInfoRefreshed;            // 标记固定信息是否已刷新
-    
-    // 兼容旧代码的共享指针（保持向后兼容）
-    QSharedPointer<DeviceDetailInfo> m_detailInfo;
-    QSharedPointer<DeviceBatteryInfo> m_batteryInfo;
-    QSharedPointer<DeviceCutActivityInfo> m_cutActivityInfo;
 
     // === 设备详细信息成员变量 ===
     QString m_manufacturer;
@@ -511,3 +533,5 @@ private:
     QString m_currentPackage;
     QString m_currentActivity;
 };
+
+} // namespace ADT

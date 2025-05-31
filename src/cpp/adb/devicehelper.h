@@ -8,6 +8,8 @@
 
 #include "src/cpp/utils/defutils.hpp"
 
+namespace ADT {
+
 class DeviceHelper : public QObject
 {
     SINGLETON(DeviceHelper)
@@ -26,3 +28,5 @@ private:
 
     QThread *m_connectionManagerThread = nullptr;
 };
+
+} // namespace ADT

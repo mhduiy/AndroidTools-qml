@@ -11,6 +11,8 @@ import FileTransfer 1.0
 import InputText 1.0
 import StartActivity 1.0
 
+import ADT 1.0
+
 ItemPage {
     id: root
     ColorConstants {
@@ -37,7 +39,7 @@ ItemPage {
                             text: musicControlModel.get(index).name
                             btnType: MButton.FBtnType.Ordinary
                             onClicked: {
-                                DeviceControl.control(DeviceControl.CTRL_Music, index)
+                                DeviceControl.control(ADT.Music, index)
                             }
                         }
                     }
@@ -49,7 +51,7 @@ ItemPage {
                             Layout.fillWidth: true
                             btnType: MButton.FBtnType. Suggest
                             onClicked: {
-                                DeviceControl.control(DeviceControl.CTRL_Music, index + 4)
+                                DeviceControl.control(ADT.Music, index + 4)
                             }
                         }
                     }
@@ -69,7 +71,8 @@ ItemPage {
                             btnType: MButton.FBtnType.Ordinary
                             Layout.fillWidth: true
                             onClicked: {
-                                DeviceControl.control(DeviceControl.CTRL_Key, index)
+                                console.warn("clicked", ADT.Key, ADT.Music, ADT.Broadcast)
+                                DeviceControl.control(ADT.Key, index)
                             }
                         }
                     }
@@ -96,7 +99,7 @@ ItemPage {
                                 btnType: MButton.FBtnType.Ordinary
                                 Layout.fillWidth: true
                                 onClicked: {
-                                    DeviceControl.control(DeviceControl.CTRL_BoardCast, index)
+                                    DeviceControl.control(ADT.Broadcast, index)
                                 }
                             }
                         }

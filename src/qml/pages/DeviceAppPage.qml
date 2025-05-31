@@ -24,6 +24,9 @@ ItemPage {
                 id: softListComboBox
                 Layout.minimumWidth: 80
                 model: ["第三方应用", "系统应用", "所有应用"]
+                onCurrentIndexChanged: {
+                    AppDetailControl.softListType = softListComboBox.currentIndex;
+                }
             }
 
             ColumnLayout {

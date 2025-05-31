@@ -13,6 +13,8 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
+namespace ADT {
+
 static auto constexpr Wallpaper_Section = "wallpaper";
 static auto constexpr Url_Key = "url";
 static auto constexpr Index_key = "index";
@@ -181,3 +183,5 @@ void SettingPageTools::onRequestRefreshWallpaperList()
     }
     cacheFile.close();
 }
+
+} // namespace ADT

@@ -1,5 +1,7 @@
 #include "softlistmodel.h"
 
+namespace ADT {
+
 SoftListModel::SoftListModel(QObject *parent) : QAbstractListModel(parent)
 {
 
@@ -107,3 +109,5 @@ QHash<int, QByteArray> SoftListModel::roleNames() const
     roles[AppVersionCodeRole] = "versionCode";
     return roles;
 }
+
+} // namespace ADT

@@ -9,6 +9,8 @@
 #include "service/WebSocketService.h"
 #include "src/cpp/utils/constants.h"
 
+namespace ADT {
+
 ImageDetailTools::ImageDetailTools(QObject *parent)
     : QObject(parent)
 {
@@ -88,3 +90,5 @@ void ImagePageTool::checkScrcpyServer()
         targetFile.close();    
     }
 }
+
+} // namespace ADT

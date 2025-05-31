@@ -3,6 +3,8 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QCoreApplication>
 
+namespace ADT {
+
 DeviceHelper::DeviceHelper(QObject *parent)
     : QObject(parent)
     , m_connectionManagerThread(new QThread(this))
@@ -83,3 +85,5 @@ void DeviceHelper::requestDisConnectDevice(const QString &deviceCode, ConnectSta
         }
     }
 }
+
+} // namespace ADT

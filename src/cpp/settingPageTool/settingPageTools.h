@@ -11,6 +11,8 @@
 
 #include "bingwallpaperhander.h"
 
+namespace ADT {
+
 enum WallPaperModelRoles {
     UrlRole = Qt::UserRole + 1,
     TitleRole,
@@ -73,3 +75,5 @@ private:
 };
 
 #endif
+
+} // namespace ADT

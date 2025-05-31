@@ -7,6 +7,8 @@
 #include <QUrl>
 #include <QDebug>
 
+namespace ADT {
+
 FlashTools::FlashTools(QObject *parent)
     : QObject(parent)
 {
@@ -259,3 +261,5 @@ void FlashTools::executeCommand(ADBTools::APP appType, const QStringList &args, 
         }
     });
 }
+
+} // namespace ADT

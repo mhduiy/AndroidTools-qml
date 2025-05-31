@@ -10,6 +10,8 @@
 #include "../utils/defutils.hpp"
 
 #define CONNECTMANAGER ConnectManager::instance()
+
+namespace ADT {
 class ConnectManager : public QObject
 {
     Q_OBJECT
@@ -41,3 +43,4 @@ private:
     QVector<QSharedPointer<FastbootDevice>> m_fastbootDeviceList;
     QTimer *m_deviceCheckTimer;
 };
+} // namespace ADT

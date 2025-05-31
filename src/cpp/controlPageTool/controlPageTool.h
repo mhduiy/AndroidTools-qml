@@ -5,6 +5,8 @@
 #include <QObject>
 #include "../utils/defutils.hpp"
 
+namespace ADT {
+
 class ControlPageTool : public QObject
 {
     Q_OBJECT
@@ -12,5 +14,7 @@ class ControlPageTool : public QObject
 public:
 
 };
+
+} // namespace ADT
 
 #endif

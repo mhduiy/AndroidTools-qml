@@ -5,6 +5,8 @@
 #include <QAbstractListModel>
 #include "../adb/adbdevice.h"
 
+namespace ADT {
+
 enum SoftListModelRole {
     AppNameRole = Qt::UserRole + 1,
     AppStateRole,
@@ -36,5 +38,7 @@ protected:
 private:
     QList<AppListInfo> m_appListInfo;
 };
+
+} // namespace ADT
 
 #endif // SOFTLISTMODEL_H

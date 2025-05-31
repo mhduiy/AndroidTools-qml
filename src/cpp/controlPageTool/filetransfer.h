@@ -6,6 +6,8 @@
 #include <qtmetamacros.h>
 #include "../utils/defutils.hpp"
 
+namespace ADT {
+
 class FileTransferHandler : public QObject
 {
     Q_OBJECT
@@ -29,5 +31,7 @@ private:
     FileTransferHandler *m_handler;
     QThread *m_handleThread;
 };
+
+} // namespace ADT
 
 #endif // FILETRANSFER_H

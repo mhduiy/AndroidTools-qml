@@ -6,6 +6,8 @@
 #include "../utils/defutils.hpp"
 #include "../adb/connectmanager.h"
 
+namespace ADT {
+
 class ResolutionControl : public QObject
 {
     Q_OBJECT
@@ -40,5 +42,7 @@ private:
     quint16 m_scrennWidth;
     quint16 m_deviceDpi;
 };
+
+} // namespace ADT
 
 #endif // RESOLUTIONCONTROL_H

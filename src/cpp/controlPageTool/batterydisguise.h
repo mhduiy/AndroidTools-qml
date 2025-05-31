@@ -4,6 +4,8 @@
 #include <QObject>
 #include "../utils/defutils.hpp"
 
+namespace ADT {
+
 class BatteryDisguise : public QObject
 {
     Q_OBJECT
@@ -15,5 +17,7 @@ public:
     Q_INVOKABLE void connectButNoCharge();
     Q_INVOKABLE void restoreAll();
 };
+
+} // namespace ADT
 
 #endif // BATTERYDISGUISE_H

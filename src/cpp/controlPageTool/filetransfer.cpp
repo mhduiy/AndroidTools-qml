@@ -10,6 +10,8 @@
 #include <qthread.h>
 #include <QDebug>
 
+namespace ADT {
+
 FileTransferHandler::FileTransferHandler(QObject *parent)
     : QObject(parent)
 {
@@ -67,3 +69,5 @@ void FileTransfer::transmission(const QString &source, const QString &targetDir)
     qWarning() << filePath << url.toLocalFile();
     QMetaObject::invokeMethod(m_handler, "transmission", Q_ARG(QString, cutDevice), Q_ARG(QString, filePath), Q_ARG(QString, targetDir));
 } 
+
+} // namespace ADT

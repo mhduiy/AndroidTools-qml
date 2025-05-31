@@ -4,6 +4,8 @@
 #include "../adb/connectmanager.h"
 #include "../utils/keyconvert.h"
 
+namespace ADT {
+
 InputText::InputText(QObject *parent) : QObject(parent)
 {
 
@@ -26,3 +28,5 @@ void InputText::pushKey(Qt::Key key)
 
     asyncOperator(operatorFunc);
 }
+
+} // namespace ADT

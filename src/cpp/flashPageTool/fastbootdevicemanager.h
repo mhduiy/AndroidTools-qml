@@ -8,6 +8,8 @@
 #include "../utils/notificationcontroller.h"
 #include "../utils/defutils.hpp"
 
+namespace ADT {
+
 class DeviceCheckTool : public QObject
 {
     Q_OBJECT
@@ -57,5 +59,7 @@ private:
 
     QString m_currentDeviceCode;
 };
+
+} // namespace ADT
 
 #endif // FASTBOOTDEVICEMANAGER_H

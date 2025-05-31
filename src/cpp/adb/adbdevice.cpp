@@ -1,5 +1,6 @@
 #include "adbdevice.h"
-#include "../utils/utils.hpp"
+#include "src/cpp/utils/utils.hpp"
+#include "src/cpp/adb/adbtools.h"
 #include <algorithm>
 #include <QDebug>
 #include <QProcess>
@@ -7,141 +8,212 @@
 #include <QDateTime>
 #include <QFile>
 #include <QUrl>
+#include <QTimer>
+
+namespace ADT {
+
+ADBDeviceWorker::ADBDeviceWorker(ADBDevice *device, QObject *parent)
+    : QObject(parent)
+    , m_device(device)
+    , m_refreshTimer(new QTimer(this))
+{
+    m_refreshTimer->setInterval(3000);
+    m_refreshTimer->setSingleShot(false);
+    connect(m_refreshTimer, &QTimer::timeout, this, &ADBDeviceWorker::refreshRealtimeInfo);
+}
+
+ADBDeviceWorker::~ADBDeviceWorker()
+{
+    m_refreshTimer->stop();
+}
+
+void ADBDeviceWorker::refreshFixInfo()
+{
+    DeviceDetailInfo info;
+    /*厂商*/
+    QString ret;
+    QString code = m_device->code();
+    info.manufacturer = m_device->getDeviceProp(code, "ro.product.manufacturer");
+    /*品牌*/
+    info.brand = m_device->getDeviceProp(code, "ro.product.brand");    
+    /*型号*/
+    info.model = m_device->getDeviceProp(code, "ro.product.model");
+    /*设备名*/
+    info.deviceName = m_device->getDeviceProp(code, "ro.product.marketname");
+    /*设备代号*/
+    info.deviceCode = m_device->getDeviceProp(code, "ro.product.name");
+    /*系统信息*/
+    info.systemInfo = m_device->getDeviceProp(code, "ro.custom.version");
+    /*安卓版本*/
+    info.androidVersion = m_device->getDeviceProp(code, "ro.build.version.release");
+    /*分辨率*/
+    info.resolving = m_device->executeCommand({"-s", code, "shell", "wm size"}).simplified().split(' ').last();
+    /*Dpi*/
+    info.dpi = m_device->getDeviceProp(code, "ro.sf.lcd_density");
+    /*MAC地址*/
+    info.macAddr = "未知";
+    /*IP地址*/
+    info.ipAddr = "未知";
+    /*SDK版本*/
+    info.sdkVersion = m_device->getDeviceProp(code, "ro.build.version.sdk");
+    /*序列号*/
+    ret = m_device->getDeviceProp(code, "ro.serialno").simplified();
+    info.serialNumber = ret.split(' ').value(0);
+    // CPU最大频率
+    ret = m_device->executeCommand({"-s", code, "shell", "cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq"});
+    {
+        QStringList maxs = ret.split('\n');
+        int max = 0; // 初始化为0
+        for (const auto &maxStr : maxs) {
+            max = std::max(maxStr.toInt(), max);
+        }
+        info.maxFrep = QString("%1Mhz").arg(QString::number(max / 1000));
+    }
+    // CPU核心数量 CPU 信息
+    ret = m_device->executeCommand({"-s", code, "shell", "cat /proc/cpuinfo"});
+    {
+        QStringList retList = ret.split('\n');
+        for (const auto &cpuInfo : retList) {
+            if (cpuInfo.startsWith("CPU architecture")) {
+                info.maxCoreNum = cpuInfo.split(':').last().simplified();
+            } else if (cpuInfo.startsWith("Hardware")) {
+                info.cpuInfo = cpuInfo.split(':').last().simplified();
+                break;
+            }
+        }
+    }
+
+    if (info.cpuInfo.isEmpty()) {
+        info.cpuInfo = m_device->getDeviceProp(code, "ro.hardware");
+    }
+
+    // 内存信息
+    ret = m_device->executeCommand({"-s", code, "shell", "cat /proc/meminfo | grep MemTotal:"});
+    info.memory = QString::number(ret.simplified().split(' ').value(1).toUInt() / 1024.0 / 1024.0, 'g') + "GB";
+    
+    Q_EMIT fixInfoRefreshed(info);
+}
+
+void ADBDeviceWorker::startRefreshRealtimeInfo()
+{
+    m_refreshTimer->start();
+}
+
+void ADBDeviceWorker::stopRefreshRealtimeInfo()
+{
+    m_refreshTimer->stop();
+}
+
+void ADBDeviceWorker::refreshRealtimeInfo()
+{
+    refreshCutActivityInfo();
+    refreshBatteryInfo();
+}
+
+void ADBDeviceWorker::refreshCutActivityInfo()
+{
+    QString deviceCode = m_device->code();
+    QStringList retStrList = m_device->executeCommand({"-s", deviceCode, "shell", "dumpsys activity activities | grep topResumedActivity"}).split('\n');
+    
+    DeviceActivityInfo deviceCutActivity;
+    for (QString &lineInfo : retStrList) {
+        if (lineInfo.contains("topResumedActivity")) {
+            lineInfo = lineInfo.simplified();
+            int index = lineInfo.indexOf('{');
+            if (lineInfo.isEmpty() || index < 0) continue;
+            QStringList blockInfoList = lineInfo.mid(index, lineInfo.size() - index - 1).split(' ');
+            if (blockInfoList.size() == 4) {
+                deviceCutActivity.windowCode = blockInfoList.value(0).right(blockInfoList.value(0).size() - 1);
+                deviceCutActivity.cutPackage = blockInfoList.value(2).split('/').first();
+                deviceCutActivity.cutActivity = blockInfoList.value(2).split('/').last();
+                Q_EMIT cutActivityRefreshed(deviceCutActivity);
+            }
+        }
+    }
+}
+
+void ADBDeviceWorker::refreshBatteryInfo()
+{
+    QString deviceCode = m_device->code();
+    QString retStr = m_device->executeCommand({"-s", deviceCode, "shell", "dumpsys battery"});
+    QMap<QString, QString> retMap = serializationInformation(retStr);
+    
+    DeviceBatteryInfo batteryInfo;
+    if (retMap["AC powered"] == "true") {
+        batteryInfo.chargingType = AC;
+    } else if (retMap["USB powered"] == "true") {
+        batteryInfo.chargingType = USB;
+    } else if (retMap["Wireless powered"] == "true") {
+        batteryInfo.chargingType = Wireless;
+    } else if (retMap["Dock powered"] == "true") {
+        batteryInfo.chargingType = Dock;
+    } else {
+        batteryInfo.chargingType = None;
+    }
+    
+    batteryInfo.maxChargingCut = retMap["Max charging current"].toInt() / 1000;
+    batteryInfo.maxChargingVol = retMap["Max charging voltage"].toInt() / 1000;
+    batteryInfo.chargingCounter = retMap["Charge counter"].toInt() / 1000;
+    batteryInfo.status = retMap["status"].toInt();
+    batteryInfo.health = retMap["health"].toInt();
+    batteryInfo.level = retMap["level"].toInt();
+    batteryInfo.scale = retMap["scale"].toInt();
+    batteryInfo.voltage = retMap["voltage"].toInt();
+    batteryInfo.temperature = retMap["temperature"].toDouble() / 10.0;
+    // 自测只有Android 15及其以上版本支持
+    batteryInfo.current = retMap["Battery current"].toInt() < 0 ? retMap["Battery current"].toInt() * -1 : retMap["Battery current"].toInt();
+    
+    Q_EMIT batteryInfoRefreshed(batteryInfo);
+}
 
 ADBDevice::ADBDevice(QObject *parent)
     : Device(parent)
+    , m_worker(new ADBDeviceWorker(this))
+    , m_workerThread(new QThread(this))
     , m_adbTools(ADBTools::instance())
-    , m_fixInfoRefreshTimer(new QTimer(this))
-    , m_realtimeRefreshTimer(new QTimer(this))
-    , m_refreshThread(new QThread(this))
-    , m_fixInfoRefreshed(false)
 {
-    qInfo() << "创建ADBDevice实例";
-    
-    // 初始化设备信息
-    setdetailInfo(QSharedPointer<DeviceDetailInfo>::create());
-    setbatteryInfo(QSharedPointer<DeviceBatteryInfo>::create());
-    setcutActivityInfo(QSharedPointer<DeviceCutActivityInfo>::create());
-    
-    // 设置固定信息刷新定时器（只刷新一次）
-    m_fixInfoRefreshTimer->setInterval(1000); // 1秒后刷新固定信息
-    m_fixInfoRefreshTimer->setSingleShot(true);
-    
-    // 设置实时信息刷新定时器
-    m_realtimeRefreshTimer->setInterval(3000); // 3秒刷新一次实时信息
-    m_realtimeRefreshTimer->setSingleShot(false);
-    
-    // 将定时器移到子线程中运行
-    m_fixInfoRefreshTimer->moveToThread(m_refreshThread);
-    m_realtimeRefreshTimer->moveToThread(m_refreshThread);
-    
-    // 连接定时器信号
-    connect(m_fixInfoRefreshTimer, &QTimer::timeout, this, &ADBDevice::onFixInfoRefreshTimeout, Qt::QueuedConnection);
-    connect(m_realtimeRefreshTimer, &QTimer::timeout, this, &ADBDevice::onRealtimeRefreshTimeout, Qt::QueuedConnection);
-    
-    // 启动子线程
-    m_refreshThread->start();
-    qInfo() << "ADBDevice子线程已启动";
-    
-    // 启动自动刷新
-    startAutoRefresh();
+    initWorker();
 }
 
 ADBDevice::~ADBDevice()
 {
-    qInfo() << "销毁ADBDevice实例";
-    if (m_refreshThread) {
-        m_fixInfoRefreshTimer->stop();
-        m_realtimeRefreshTimer->stop();
-        m_refreshThread->quit();
-        m_refreshThread->wait();
-        qInfo() << "ADBDevice子线程已停止";
-    }
+    m_workerThread->quit();
+    m_workerThread->wait();
+    m_workerThread->deleteLater();
+    m_worker->deleteLater();
 }
 
-void ADBDevice::startAutoRefresh()
+void ADBDevice::initWorker()
 {
-    qInfo() << "启动ADBDevice自动刷新";
-    // 启动固定信息刷新定时器
-    QMetaObject::invokeMethod(m_fixInfoRefreshTimer, "start", Qt::QueuedConnection);
+    m_worker->moveToThread(m_workerThread);
+    connect(m_workerThread, &QThread::finished, m_worker, &QObject::deleteLater);
+    connect(m_workerThread, &QThread::finished, m_workerThread, &QObject::deleteLater);
+    connect(m_workerThread, &QThread::finished, this, &ADBDevice::deleteLater);
+
+    connect(m_worker, &ADBDeviceWorker::fixInfoRefreshed, this, &ADBDevice::onFixInfoRefreshed);
+    connect(m_worker, &ADBDeviceWorker::cutActivityRefreshed, this, &ADBDevice::onCutActivityRefreshed);
+    connect(m_worker, &ADBDeviceWorker::batteryInfoRefreshed, this, &ADBDevice::onBatteryInfoRefreshed);
+
+    m_workerThread->start();
+
+    QMetaObject::invokeMethod(m_worker, "refreshFixInfo", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_worker, "startRefreshRealtimeInfo", Qt::QueuedConnection);
     
-    // 启动实时信息刷新定时器
-    QMetaObject::invokeMethod(m_realtimeRefreshTimer, "start", Qt::QueuedConnection);
 }
 
-void ADBDevice::onFixInfoRefreshTimeout()
+void ADBDevice::onFixInfoRefreshed(const DeviceDetailInfo &info)
 {
-    if (!m_fixInfoRefreshed && !code().isEmpty()) {
-        qInfo() << "开始刷新设备固定信息 - 设备代码:" << code();
-        
-        // 刷新固定信息
-        DeviceDetailInfo info = refreshFixInfo();
-        
-        qInfo() << "设备固定信息刷新完成:";
-        qInfo() << "  厂商:" << info.manufacturer;
-        qInfo() << "  品牌:" << info.brand;
-        qInfo() << "  型号:" << info.model;
-        qInfo() << "  设备名:" << info.deviceName;
-        qInfo() << "  Android版本:" << info.androidVersion;
-        qInfo() << "  内存:" << info.memory;
-        qInfo() << "  CPU:" << info.cpuInfo;
-        
-        // 更新设备详细信息到新属性
-        updateDetailInfoFromStruct(info);
-        
-        // 更新旧的共享指针（保持兼容性）
-        auto detailInfoPtr = detailInfo();
-        if (detailInfoPtr) {
-            *detailInfoPtr = info;
-            emit detailInfoChanged(detailInfoPtr);
-        }
-        
-        m_fixInfoRefreshed = true;
-        qInfo() << "设备固定信息已设置完成";
-    } else if (code().isEmpty()) {
-        qWarning() << "设备代码为空，无法刷新固定信息";
-    }
+    updateDetailInfoFromStruct(info);
 }
 
-void ADBDevice::onRealtimeRefreshTimeout()
+void ADBDevice::onCutActivityRefreshed(const DeviceActivityInfo &activityInfo)
 {
-    if (code().isEmpty()) {
-        qWarning() << "设备代码为空，跳过实时信息刷新";
-        return;
-    }
-    
-    qDebug() << "开始刷新设备实时信息 - 设备代码:" << code();
-    
-    // 刷新电池信息
-    DeviceBatteryInfo batteryInfo = refreshBatteryInfo();
+    updateActivityInfoFromStruct(activityInfo);
+}
+
+void ADBDevice::onBatteryInfoRefreshed(const DeviceBatteryInfo &batteryInfo)
+{
     updateBatteryInfoFromStruct(batteryInfo);
-    
-    // 更新旧的共享指针（保持兼容性）
-    auto batteryInfoPtr = this->batteryInfo();
-    if (batteryInfoPtr) {
-        *batteryInfoPtr = batteryInfo;
-        emit batteryInfoChanged(batteryInfoPtr);
-    }
-    
-    qDebug() << "电池信息更新 - 电量:" << batteryInfo.level 
-             << "% 充电状态:" << batteryInfo.chargingType 
-             << " 温度:" << batteryInfo.temperature << "°C";
-    
-    // 刷新当前活动信息
-    DeviceCutActivityInfo cutActivityInfo = refreshCutActivityInfo();
-    updateActivityInfoFromStruct(cutActivityInfo);
-    
-    // 更新旧的共享指针（保持兼容性）
-    auto cutActivityInfoPtr = this->cutActivityInfo();
-    if (cutActivityInfoPtr) {
-        *cutActivityInfoPtr = cutActivityInfo;
-        emit cutActivityInfoChanged(cutActivityInfoPtr);
-    }
-    
-    if (!cutActivityInfo.cutPackage.isEmpty()) {
-        qDebug() << "当前活动更新 - 包名:" << cutActivityInfo.cutPackage 
-                 << " 活动:" << cutActivityInfo.cutActivity;
-    }
 }
 
 void ADBDevice::updateDetailInfoFromStruct(const DeviceDetailInfo &info)
@@ -180,7 +252,7 @@ void ADBDevice::updateBatteryInfoFromStruct(const DeviceBatteryInfo &info)
     setBatteryTemperature(info.temperature);
 }
 
-void ADBDevice::updateActivityInfoFromStruct(const DeviceCutActivityInfo &info)
+void ADBDevice::updateActivityInfoFromStruct(const DeviceActivityInfo &info)
 {
     setWindowCode(info.windowCode);
     setCurrentPackage(info.cutPackage);
@@ -443,143 +515,14 @@ void ADBDevice::requestDisConnect()
 
 }
 
-DeviceDetailInfo ADBDevice::refreshFixInfo()
-{
-    qDebug() << "执行refreshFixInfo() - 获取设备固定信息";
-    
-    DeviceDetailInfo info;
-    /*厂商*/
-    QString ret;
-    QString code = this->code();
-    info.manufacturer = getDeviceProp(code, "ro.product.manufacturer");
-    /*品牌*/
-    info.brand = getDeviceProp(code, "ro.product.brand");    
-    /*型号*/
-    info.model = getDeviceProp(code, "ro.product.model");
-    /*设备名*/
-    info.deviceName = getDeviceProp(code, "ro.product.marketname");
-    /*设备代号*/
-    info.deviceCode = getDeviceProp(code, "ro.product.name");
-    /*系统信息*/
-    info.systemInfo = getDeviceProp(code, "ro.custom.version");
-    /*安卓版本*/
-    info.androidVersion = getDeviceProp(code, "ro.build.version.release");
-    /*分辨率*/
-    info.resolving = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "wm size"}).simplified().split(' ').last();
-    /*Dpi*/
-    info.dpi = getDeviceProp(code, "ro.sf.lcd_density");
-    /*MAC地址*/
-    info.macAddr = "未知";
-    /*IP地址*/
-    info.ipAddr = "未知";
-    /*SDK版本*/
-    info.sdkVersion = getDeviceProp(code, "ro.build.version.sdk");
-    /*序列号*/
-    ret = getDeviceProp(code, "ro.serialno").simplified();
-    info.serialNumber = ret.split(' ').value(0);
-    // CPU最大频率
-    ret = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq"});
-    {
-        QStringList maxs = ret.split('\n');
-        int max = 0; // 初始化为0
-        for (const auto &maxStr : maxs) {
-            max = std::max(maxStr.toInt(), max);
-        }
-        info.maxFrep = QString("%1Mhz").arg(QString::number(max / 1000));
-    }
-    // CPU核心数量 CPU 信息
-    ret = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "cat /proc/cpuinfo"});
-    {
-        QStringList retList = ret.split('\n');
-        for (const auto &cpuInfo : retList) {
-            if (cpuInfo.startsWith("CPU architecture")) {
-                info.maxCoreNum = cpuInfo.split(':').last().simplified();
-            } else if (cpuInfo.startsWith("Hardware")) {
-                info.cpuInfo = cpuInfo.split(':').last().simplified();
-                break;
-            }
-        }
-    }
-
-    if (info.cpuInfo.isEmpty()) {
-        info.cpuInfo = getDeviceProp(code, "ro.hardware");
-    }
-
-    // 内存信息
-    ret = m_adbTools->executeCommand(ADBTools::ADB, {"-s", code, "shell", "cat /proc/meminfo | grep MemTotal:"});
-    info.memory = QString::number(ret.simplified().split(' ').value(1).toUInt() / 1024.0 / 1024.0, 'g') + "GB";
-
-    qDebug() << "refreshFixInfo()完成";
-    return info;
-}
-
-DeviceBatteryInfo ADBDevice::refreshBatteryInfo()
-{
-    qDebug() << "执行refreshBatteryInfo() - 获取电池信息";
-    
-    QString deviceCode = this->code();
-    QString retStr = m_adbTools->executeCommand(ADBTools::ADB, {"-s", deviceCode, "shell", "dumpsys battery"});
-    QMap<QString, QString> retMap = serializationInformation(retStr);
-    
-    DeviceBatteryInfo batteryInfo;
-    if (retMap["AC powered"] == "true") {
-        batteryInfo.chargingType = AC;
-    } else if (retMap["USB powered"] == "true") {
-        batteryInfo.chargingType = USB;
-    } else if (retMap["Wireless powered"] == "true") {
-        batteryInfo.chargingType = Wireless;
-    } else if (retMap["Dock powered"] == "true") {
-        batteryInfo.chargingType = Dock;
-    } else {
-        batteryInfo.chargingType = None;
-    }
-    
-    batteryInfo.maxChargingCut = retMap["Max charging current"].toInt() / 1000;
-    batteryInfo.maxChargingVol = retMap["Max charging voltage"].toInt() / 1000;
-    batteryInfo.chargingCounter = retMap["Charge counter"].toInt() / 1000;
-    batteryInfo.status = retMap["status"].toInt();
-    batteryInfo.health = retMap["health"].toInt();
-    batteryInfo.level = retMap["level"].toInt();
-    batteryInfo.scale = retMap["scale"].toInt();
-    batteryInfo.voltage = retMap["voltage"].toInt();
-    batteryInfo.temperature = retMap["temperature"].toDouble() / 10.0;
-    // 自测只有Android 15及其以上版本支持
-    batteryInfo.current = retMap["Battery current"].toInt() < 0 ? retMap["Battery current"].toInt() * -1 : retMap["Battery current"].toInt();
-    
-    qDebug() << "refreshBatteryInfo()完成 - 电量:" << batteryInfo.level << "%";
-    return batteryInfo;
-}
-
-DeviceCutActivityInfo ADBDevice::refreshCutActivityInfo()
-{
-    qDebug() << "执行refreshCutActivityInfo() - 获取当前活动信息";
-    
-    QString deviceCode = this->code();
-    QStringList retStrList = m_adbTools->executeCommand(ADBTools::ADB, {"-s", deviceCode, "shell", "dumpsys activity activities | grep topResumedActivity"}).split('\n');
-    
-    DeviceCutActivityInfo deviceCutActivity;
-    for (QString &lineInfo : retStrList) {
-        if (lineInfo.contains("topResumedActivity")) {
-            lineInfo = lineInfo.simplified();
-            int index = lineInfo.indexOf('{');
-            if (lineInfo.isEmpty() || index < 0) continue;
-            QStringList blockInfoList = lineInfo.mid(index, lineInfo.size() - index - 1).split(' ');
-            if (blockInfoList.size() == 4) {
-                deviceCutActivity.windowCode = blockInfoList.value(0).right(blockInfoList.value(0).size() - 1);
-                deviceCutActivity.cutPackage = blockInfoList.value(2).split('/').first();
-                deviceCutActivity.cutActivity = blockInfoList.value(2).split('/').last();
-                qDebug() << "refreshCutActivityInfo()完成 - 找到活动:" << deviceCutActivity.cutPackage;
-                return deviceCutActivity;
-            }
-        }
-    }
-    qDebug() << "refreshCutActivityInfo()完成 - 未找到当前活动";
-    return deviceCutActivity;
-}
-
 QString ADBDevice::executeCommand(const QStringList &args, const QString &writeStr, const int timeout) const
 {
     return m_adbTools->executeCommand(ADBTools::ADB, args, writeStr, timeout);
+}
+
+CommandResult ADBDevice::executeCommandDetailed(const QStringList &args, const QString &writeStr, const int timeout) const
+{
+    return m_adbTools->executeCommandDetailed(ADBTools::ADB, args, writeStr, timeout);
 }
 
 QString ADBDevice::getDeviceProp(const QString &deviceCode, const QString &prop)
@@ -603,24 +546,48 @@ bool ADBDevice::installApp(const QString &path, bool r, bool s, bool d, bool g)
     
     args << path;
     
-    QString result = m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
-    return result.contains("Success");
+    CommandResult result = m_adbTools->executeCommandDetailed(ADBTools::ADB, args, "", INT_MAX);
+    
+    // 输出详细的执行信息用于调试
+    qDebug() << "Install App Command:" << result.command;
+    qDebug() << "Success:" << result.success;
+    qDebug() << "Exit Code:" << result.exitCode;
+    qDebug() << "Execution Time:" << result.executionTime << "ms";
+    if (!result.errorOutput.isEmpty()) {
+        qDebug() << "Error Output:" << result.errorOutput;
+    }
+    
+    return result.isSuccess() && result.output.contains("Success");
 }
 
 bool ADBDevice::clearData(const QString &packageName)
 {
     QStringList args;
     args << "-s" << code() << "shell" << "pm" << "clear" << packageName;
-    QString result = m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
-    return result.contains("Success");
+    CommandResult result = m_adbTools->executeCommandDetailed(ADBTools::ADB, args, "", INT_MAX);
+    
+    qDebug() << "Clear Data Command:" << result.command;
+    qDebug() << "Success:" << result.success << "Exit Code:" << result.exitCode;
+    if (!result.errorOutput.isEmpty()) {
+        qDebug() << "Error Output:" << result.errorOutput;
+    }
+    
+    return result.isSuccess() && result.output.contains("Success");
 }
 
 bool ADBDevice::uninstallApp(const QString &packageName)
 {
     QStringList args;
     args << "-s" << code() << "uninstall" << packageName;
-    QString result = m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
-    return result.contains("Success");
+    CommandResult result = m_adbTools->executeCommandDetailed(ADBTools::ADB, args, "", INT_MAX);
+    
+    qDebug() << "Uninstall App Command:" << result.command;
+    qDebug() << "Success:" << result.success << "Exit Code:" << result.exitCode;
+    if (!result.errorOutput.isEmpty()) {
+        qDebug() << "Error Output:" << result.errorOutput;
+    }
+    
+    return result.isSuccess() && result.output.contains("Success");
 }
 
 bool ADBDevice::freezeApp(const QString &packageName)
@@ -670,6 +637,12 @@ void ADBDevice::startApp(const QString &packageName)
     m_adbTools->executeCommand(ADBTools::ADB, args, "", INT_MAX);
 }
 
+bool ADBDevice::stopApp(const QString &packageName)
+{
+    killActivity(packageName);
+    return true;
+}
+
 void ADBDevice::killActivity(const QString &packageName)
 {
     QStringList args;
@@ -684,13 +657,19 @@ void ADBDevice::startActivity(const QString &activity, const QStringList &args)
     m_adbTools->executeCommand(ADBTools::ADB, adbArgs);
 }
 
-QList<AppListInfo> ADBDevice::getSoftListInfo() const
+QList<AppListInfo> ADBDevice::getSoftListInfo(SoftListType type) const
 {
     QStringList args;
     QList<AppListInfo> res;
-    
-    // 获取第三方应用列表
-    args << "-s" << code() << "shell" << "pm" << "list" << "packages" << "-3" << "--show-versioncode";
+
+    if (type == SoftListType::ThirdParty) { 
+        args << "-s" << code() << "shell" << "pm" << "list" << "packages" << "-3" << "--show-versioncode";
+    } else if (type == SoftListType::System) {
+        args << "-s" << code() << "shell" << "pm" << "list" << "packages" << "-s" << "--show-versioncode";
+    } else {
+        args << "-s" << code() << "shell" << "pm" << "list" << "packages" << "--show-versioncode";
+    }
+
     QStringList retList = m_adbTools->executeCommand(ADBTools::ADB, args).split('\n');
     
     int packageLen = QString("package:").length();
@@ -706,7 +685,7 @@ QList<AppListInfo> ADBDevice::getSoftListInfo() const
             if (auto versionCodeInfo = infos.last(); versionCodeInfo.size() > versionCodeLen) {
                 appInfo.versionCode = versionCodeInfo.remove(0, versionCodeLen);
             }
-            appInfo.state = AppState::APP_Enable;
+            appInfo.state = AppState::Enable;
             res.append(appInfo);
         }
     }
@@ -727,7 +706,7 @@ QList<AppListInfo> ADBDevice::getSoftListInfo() const
                 return info.packageName == disablePackageName;
             });
             if(findIt != res.end()) {
-                (*findIt).state = AppState::APP_Disable;
+                (*findIt).state = AppState::Disable;
             }
         }
     }
@@ -899,22 +878,24 @@ void ADBDevice::control(ControlType controlType, int controlItem)
     QStringList args;
     args << "-s" << code();
     
-    if (controlType == CTRL_Music) {
+    if (controlType == ControlType::Music) {
         QString cmd = MusicControlArgsMap.value(controlItem);
         if (!cmd.isEmpty()) {
             args << cmd.split(' ');
         }
-    } else if (controlType == CTRL_Key) {
+    } else if (controlType == ControlType::Key) {
         QString cmd = KeyControlArgsMap.value(controlItem);
         if (!cmd.isEmpty()) {
             args << cmd.split(' ');
         }
-    } else if (controlType == CTRL_BoardCast) {
+    } else if (controlType == ControlType::Broadcast) {
         QString cmd = BoardControlArgsMap.value(controlItem);
         if (!cmd.isEmpty()) {
             args << cmd.split(' ');
         }
     }
+
+    qWarning() << args << "controlType" << controlType << "controlItem" << controlItem;
     
     if (args.size() > 2) {
         m_adbTools->executeCommand(ADBTools::ADB, args);
@@ -957,3 +938,5 @@ void ADBDevice::restoreResolutionAndDpi()
     m_adbTools->executeCommand(ADBTools::ADB, args1);
     m_adbTools->executeCommand(ADBTools::ADB, args2);
 }
+
+} // namespace ADT

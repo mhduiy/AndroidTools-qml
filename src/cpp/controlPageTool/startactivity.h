@@ -4,6 +4,8 @@
 #include <QObject>
 #include "../utils/defutils.hpp"
 
+namespace ADT {
+
 class StartActivity : public QObject
 {
     Q_OBJECT
@@ -11,5 +13,7 @@ class StartActivity : public QObject
 public:
     Q_INVOKABLE void start(const QString &activity, const QString &argsStr);
 };
+
+} // namespace ADT
 
 #endif // STARTACTIVITY_H

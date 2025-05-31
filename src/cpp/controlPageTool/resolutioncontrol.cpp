@@ -4,6 +4,8 @@
 #include "../utils/utils.hpp"
 #include <QDebug>
 
+namespace ADT {
+
 ResolutionControl::ResolutionControl(QObject *parent) : QObject(parent)
 {
     // 监听当前设备的详细信息变化
@@ -20,23 +22,23 @@ ResolutionControl::~ResolutionControl()
 
 void ResolutionControl::onDeviceInfoChanged()
 {
-    auto device = ConnectManager::instance()->cutADBDevice();
-    if (device && device->detailInfo()) {
-        auto detailInfo = device->detailInfo();
+    // auto device = ConnectManager::instance()->cutADBDevice();
+    // if (device && device->detailInfo()) {
+    //     auto detailInfo = device->detailInfo();
         
-        // 解析分辨率信息
-        QString resolutionStr = detailInfo->resolving;
-        if (!resolutionStr.isEmpty() && resolutionStr.contains('x')) {
-            auto sizeInfo = resolutionStr.split('x');
-            if (sizeInfo.size() >= 2) {
-                setResolutionWidth(sizeInfo.first().toUInt());
-                setResolutionHeight(sizeInfo.last().toUInt());
-            }
-        }
+    //     // 解析分辨率信息
+    //     QString resolutionStr = detailInfo->resolving;
+    //     if (!resolutionStr.isEmpty() && resolutionStr.contains('x')) {
+    //         auto sizeInfo = resolutionStr.split('x');
+    //         if (sizeInfo.size() >= 2) {
+    //             setResolutionWidth(sizeInfo.first().toUInt());
+    //             setResolutionHeight(sizeInfo.last().toUInt());
+    //         }
+    //     }
         
-        // 设置DPI
-        setScreenDPI(detailInfo->dpi.toUInt());
-    }
+    //     // 设置DPI
+    //     setScreenDPI(detailInfo->dpi.toUInt());
+    // }
 }
 
 void ResolutionControl::setResolutionWidth(quint16 width)
@@ -125,3 +127,5 @@ void ResolutionControl::restore()
 
     asyncOperator(operatorFunc);
 }
+
+} // namespace ADT

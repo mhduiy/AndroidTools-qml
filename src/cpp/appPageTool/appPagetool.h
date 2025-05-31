@@ -3,28 +3,11 @@
 
 #include <QObject>
 #include <QThread>
-#include "../utils/defutils.hpp"
-#include "../adb/adbdevice.h"
+#include "src/cpp/utils/defutils.hpp"
+#include "src/cpp/adb/adbdevice.h"
 #include "softlistmodel.h"
 
-class AppInfoHandle : public QObject
-{
-    Q_OBJECT
-public:
-    explicit AppInfoHandle(QObject *parent = nullptr);
-    QList<AppListInfo> getInfo();
-
-public slots:
-    void updateListInfo();
-
-signals:
-    void updateListFinish();
-    void updatePackageInfoFinish();
-
-private:
-    QList<AppListInfo> m_info;
-};
-
+namespace ADT {
 class AppPageTool : public QObject
 {
     Q_OBJECT
@@ -33,15 +16,16 @@ public:
     ~AppPageTool();
 
 private:
-void initData();
+    void initData();
 
-private:
+private slots:
+    void onADBDeviceChanged();
     void updateAppListInfo();
 
 private:
     SoftListModel *m_softListModel;
-    AppInfoHandle *m_appHandle;
-    QThread *m_appHandleThread;
 };
+
+} // namespace ADT
 
 #endif
