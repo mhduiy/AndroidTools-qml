@@ -58,6 +58,26 @@ QVector<QSharedPointer<Device>> ConnectManager::devices(ConnectStatus type) cons
     return {};
 }
 
+void ConnectManager::requestSetCutADBDevice(const QString &deviceCode)
+{
+    for (const auto &device : m_adbDeviceList) {
+        if (device->code() == deviceCode) {
+            setcutADBDevice(device.get());
+            break;
+        }
+    }
+}
+
+void ConnectManager::requestSetCutFastbootDevice(const QString &deviceCode)
+{
+    for (const auto &device : m_fastbootDeviceList) {
+        if (device->code() == deviceCode) {
+            setcutFastbootDevice(device.get());
+            break;
+        }
+    }
+}
+
 void ConnectManager::refreshDevice()
 {
     if (enableADBCheck()) {

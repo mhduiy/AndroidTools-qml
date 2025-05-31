@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
 import DeviceHelper 1.0
-
+import ConnectManager 1.0
 Item {
     height: 400
     width: 20
@@ -21,11 +21,6 @@ Item {
         }
         delegate: lvDelegate
         spacing: 10
-
-        onCurrentIndexChanged: {
-            // 当前选中的设备可以通过 ConnectManager.cutADBDevice 来管理
-            console.log("选中设备索引:", currentIndex)
-        }
     }
 
     Component {
@@ -155,6 +150,7 @@ Item {
                 propagateComposedEvents: true
                 onClicked: {
                     listView.currentIndex = index
+                    ConnectManager.requestSetCutADBDevice(modelData.code)
                 }
             }
         }

@@ -26,6 +26,9 @@ public:
 
     QVector<QSharedPointer<Device>> devices(ConnectStatus type = C_ADB) const;    
 
+    Q_INVOKABLE void requestSetCutADBDevice(const QString &deviceCode);
+    Q_INVOKABLE void requestSetCutFastbootDevice(const QString &deviceCode);
+
 signals:
     void deviceDisconnected(QSharedPointer<Device> device);
     void deviceConnected(QSharedPointer<Device> device);
