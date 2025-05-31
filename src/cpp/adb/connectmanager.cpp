@@ -11,6 +11,8 @@ namespace ADT {
 
 ConnectManager::ConnectManager(QObject *parent)
     : QObject(parent)
+    , m_cutADBDevice(nullptr)
+    , m_cutFastbootDevice(nullptr)
     , m_deviceCheckTimer(nullptr)
     , m_enableADBCheck(true)
     , m_enableFastbootCheck(true)
