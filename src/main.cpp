@@ -22,7 +22,6 @@
 #include "cpp/imagePageTool/scrcpy/ui/mirror/imageframeitem.h"
 #include "cpp/utils/constants.h"
 #include "cpp/adb/adblog.h"
-#include "src/cpp/adb/device.h"
 #include "src/cpp/adb/devicehelper.h"
 #include "src/cpp/adb/adbdevice.h"
 
@@ -32,10 +31,11 @@ bool checkADB() {
     QString trueADBPath;
 
     if (QSysInfo::productType() == "windows") {
-        process.start("where", {"adb"});
+        process.start("powershell", {"-Command", "Get-Command adb | Select-Object -ExpandProperty Source"});
     } else {
         process.start("which", {"adb"});
     }
+
     process.waitForFinished();
     QString output = process.readAll().simplified();
 
@@ -48,7 +48,7 @@ bool checkADB() {
         qputenv("QTSCRCPY_ADB_PATH", trueADBPath.toLocal8Bit());
         return true;
     }
-    
+
     qWarning() << "can not found adb!";
     return false;
 }
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     
     NotificationController::instance(&app);
 
-    
+
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
     qmlRegisterType<FpsItem>( "FpsItem", 1, 0, "FpsItem");
     qmlRegisterType<ImageFrameItem>( "ImageFrameItem", 1, 0, "ImageFrameItem");
