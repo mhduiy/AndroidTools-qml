@@ -34,6 +34,29 @@ void ConnectManager::startCheckDevice()
     m_deviceCheckTimer->start();
 }
 
+void ConnectManager::startADBServer(std::function<void()> callback)
+{
+    asyncOperator([this, callback](){
+        setadbServerStarting(true);
+        if (!ADBTOOL->startService()) {
+            NotificationController::instance()->send("ADB服务启动失败", "请检查ADB服务是否已启动", NotificationController::Error);
+        }
+        setadbServerStarting(false);
+        if (callback) {
+            callback();
+        }
+    });
+}
+
+void ConnectManager::killADBServer()
+{
+    asyncOperator([this](){
+        setadbServerStarting(true);
+        ADBTOOL->killService();
+        setadbServerStarting(false);
+    });
+}
+
 void ConnectManager::stopCheckDevice()
 {
     m_deviceCheckTimer->stop();
@@ -124,6 +147,7 @@ void ConnectManager::requestConnectDevice(const QString &ipPort)
 
 void ConnectManager::refreshDevice()
 {
+    qInfo() << "开始检查设备";
     if (enableADBCheck()) {
         QVector<QString> adbDevices = getDeviceList(C_ADB);
         // 检查是否有新设备连接(ADB)

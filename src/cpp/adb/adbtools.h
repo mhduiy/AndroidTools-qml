@@ -29,8 +29,8 @@ public:
 
     static ADBTools *instance(QObject *parent = nullptr);
 
-    void startService();
-    void killService();
+    bool startService();
+    bool killService();
 private:
     explicit ADBTools(QObject *parent = nullptr);
     ADBTools() = delete;

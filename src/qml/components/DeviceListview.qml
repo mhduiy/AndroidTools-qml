@@ -2,8 +2,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import MFloat
+import App
 import DeviceHelper 1.0
 import ConnectManager 1.0
+
 Item {
     height: 400
     width: 20
@@ -16,7 +18,8 @@ Item {
         model: DeviceHelper.adbDeviceList
         highlightMoveDuration: 300
         highlight: Rectangle {
-            color: Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.6)
+            color: App.themeType === App.Light ? 
+                Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.6) : Qt.rgba(0 / 255, 49 / 255, 49 / 255, 0.6)
             radius: 10
         }
         delegate: lvDelegate

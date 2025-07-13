@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <functional>
 
 #include "src/cpp/adb/adbdevice.h"
 #include "src/cpp/adb/device.h"
@@ -20,17 +21,22 @@ class ConnectManager : public QObject
     DECLARE_PROPERTY(FastbootDevice*, cutFastbootDevice)
     DECLARE_PROPERTY(bool, enableADBCheck)
     DECLARE_PROPERTY(bool, enableFastbootCheck)
+    DECLARE_PROPERTY(bool, adbServerStarting)
 public:
-    void startCheckDevice();
-    void stopCheckDevice();
-
     QVector<QSharedPointer<Device>> devices(ConnectStatus type = C_ADB) const;    
 
-    Q_INVOKABLE void requestSetCutADBDevice(const QString &deviceCode);
-    Q_INVOKABLE void requestSetCutFastbootDevice(const QString &deviceCode);
+public slots:
+    void startCheckDevice();
+    void stopCheckDevice();
+        
+    void startADBServer(std::function<void()> callback = nullptr);
+    void killADBServer();
 
-    Q_INVOKABLE void requestPairDevice(const QString &ipPort, const QString &pairCode);
-    Q_INVOKABLE void requestConnectDevice(const QString &ipPort);
+    void requestSetCutADBDevice(const QString &deviceCode);
+    void requestSetCutFastbootDevice(const QString &deviceCode);
+
+    void requestPairDevice(const QString &ipPort, const QString &pairCode);
+    void requestConnectDevice(const QString &ipPort);
 
 signals:
     void deviceDisconnected(QSharedPointer<Device> device);

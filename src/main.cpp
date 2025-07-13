@@ -83,6 +83,9 @@ int main(int argc, char *argv[])
     qInfo() << "mainThread:" << QThread::currentThreadId();
 
     ADT::DeviceHelper::instance(qApp)->init();
+    ADT::CONNECTMANAGER->startADBServer([&](){
+        QMetaObject::invokeMethod(ADT::CONNECTMANAGER, "startCheckDevice", Qt::QueuedConnection);
+    });
 
     ADT::ControlPageTool::instance(&app);
     ADT::AppPageTool::instance(&app);

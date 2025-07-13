@@ -93,7 +93,7 @@ ItemPage {
                     }
                 }
 
-                Text {
+                Label {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 40

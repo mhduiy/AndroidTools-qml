@@ -120,4 +120,14 @@ bool ADBTools::isRunning()
     return m_isRunning.loadRelaxed();
 }
 
+bool ADBTools::startService()
+{
+    return executeCommandDetailed(APP::ADB, {"start-server"}).success;
+}
+
+bool ADBTools::killService()
+{
+    return executeCommandDetailed(APP::ADB, {"kill-server"}).success;
+}
+
 } // namespace ADT

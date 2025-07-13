@@ -347,7 +347,7 @@ ItemPage {
                                     rectColor: colorConstants.suggestClickedColor
                                     text: "前台活动"
                                 }
-                                Text {
+                                Label {
                                     Layout.fillWidth: true
                                     text: currentDevice ? currentDevice.currentActivity : ""
                                 }

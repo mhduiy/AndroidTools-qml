@@ -15,19 +15,11 @@ DeviceHelper::DeviceHelper(QObject *parent)
 void DeviceHelper::init()
 {
     initConnectManager();
-    CONNECTMANAGER->startCheckDevice();
 }
 
 
 void DeviceHelper::initConnectManager()
 {
-    // 不移动ConnectManager到子线程，保持在主线程中
-    // CONNECTMANAGER->moveToThread(m_connectionManagerThread);
-    // m_connectionManagerThread->start();
-    
-    // 开始检测设备连接
-    CONNECTMANAGER->startCheckDevice();
-
     connect(CONNECTMANAGER, &ConnectManager::deviceConnected, this, [this](QSharedPointer<Device> device) {
         if (device->connectStatus() == C_ADB) {
             auto adbDevice = device.dynamicCast<ADBDevice>();

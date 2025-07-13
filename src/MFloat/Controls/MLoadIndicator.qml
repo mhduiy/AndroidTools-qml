@@ -5,6 +5,7 @@ import App
 Item {
     width: 30
     height: 30
+    property alias running: rotationAnimation.running
     function start() {
         rotationAnimation.start()
         canvas.opacity = 1.0

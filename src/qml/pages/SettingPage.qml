@@ -4,11 +4,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import "../components/"
-import NotificationController 1.0
-import WallPaperModel 1.0
-import WallpaperHelper 1.0
-import OtherSettingsHandler 1.0
+import NotificationController
+import WallPaperModel
+import WallpaperHelper
+import OtherSettingsHandler
 import App
+import ConnectManager
 
 ItemPage {
     ScrollView {
@@ -239,14 +240,9 @@ ItemPage {
                 controlItem: MButton {
                     text: "重启"
                     onClicked: {
-                        // 显示开始重启的通知
                         NotificationController.send("正在重启", "正在重启ADB服务...", 1, 2000)
-                        
-                        // 简单的重启逻辑：杀死adb然后重新启动
-                        // 这里我们通过QML调用，实际的ADB工具会在需要时自动重启
-                        Qt.callLater(function() {
-                            NotificationController.send("重启完成", "ADB服务已重启", 1, 3000)
-                        })
+                        ConnectManager.killADBServer()
+                        ConnectManager.startADBServer()
                     }
                 }
             }

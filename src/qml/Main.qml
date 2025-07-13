@@ -6,9 +6,10 @@ import Qt5Compat.GraphicalEffects
 
 import "./components/"
 import "./pages/"
-import WallpaperHelper 1.0
-import FpsItem 1.0
+import WallpaperHelper
+import FpsItem
 import App
+import ConnectManager
 
 ApplicationWindow {
     id: root
@@ -26,6 +27,12 @@ ApplicationWindow {
 
     FpsItem {
         id: fpsItem
+    }
+
+    AdbServerStartDialog {
+        id: adbServerStartDialog
+        visible: ConnectManager.adbServerStarting
+        backImage: rootRect
     }
 
     palette.windowText: App.windowTextColor
