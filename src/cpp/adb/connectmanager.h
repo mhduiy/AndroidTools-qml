@@ -29,6 +29,9 @@ public:
     Q_INVOKABLE void requestSetCutADBDevice(const QString &deviceCode);
     Q_INVOKABLE void requestSetCutFastbootDevice(const QString &deviceCode);
 
+    Q_INVOKABLE void requestPairDevice(const QString &ipPort, const QString &pairCode);
+    Q_INVOKABLE void requestConnectDevice(const QString &ipPort);
+
 signals:
     void deviceDisconnected(QSharedPointer<Device> device);
     void deviceConnected(QSharedPointer<Device> device);

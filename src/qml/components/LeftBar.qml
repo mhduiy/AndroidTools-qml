@@ -6,41 +6,12 @@ import QtQuick.Effects
 import Qt5Compat.GraphicalEffects
 import App
 import NotificationController 1.0
+import ConnectManager
 
 Item {
     id: sideBar
     property var backImage
     property int radius: 12
-
-    // 添加无线连接功能的JavaScript函数
-    function pairDevice(ipPort, pairCode) {
-        if (!ipPort || !pairCode) {
-            NotificationController.send("配对失败", "请填写IP端口和配对码", 3, 3000)
-            return
-        }
-        
-        NotificationController.send("正在配对", "正在配对设备 " + ipPort, 1, 2000)
-        
-        // 这里可以使用Qt.createQmlObject创建QProcess或通过其他方式调用adb命令
-        // 简化实现：显示提示信息
-        Qt.callLater(function() {
-            NotificationController.send("配对请求已发送", "请在设备上确认配对", 1, 4000)
-        })
-    }
-    
-    function connectDevice(ipPort) {
-        if (!ipPort) {
-            NotificationController.send("连接失败", "请填写IP端口", 3, 3000)
-            return
-        }
-        
-        NotificationController.send("正在连接", "正在连接设备 " + ipPort, 1, 2000)
-        
-        // 简化实现：显示提示信息
-        Qt.callLater(function() {
-            NotificationController.send("连接请求已发送", "请稍等片刻...", 1, 3000)
-        })
-    }
 
     MultiEffect {
         id: effect
@@ -290,7 +261,7 @@ Item {
                     btnType: MButton.FBtnType.Suggest
                     text: "配对设备"
                     onClicked: {
-                        sideBar.pairDevice(pairEdit.editItem.text, pairCodeEdit.editItem.text)
+                        ConnectManager.requestPairDevice(pairEdit.editItem.text, pairCodeEdit.editItem.text)
                     }
                 }
             }
@@ -309,7 +280,7 @@ Item {
                     btnType: MButton.FBtnType.Suggest
                     text: "连接设备"
                     onClicked: {
-                        sideBar.connectDevice(connectEdit.editItem.text)
+                        ConnectManager.requestConnectDevice(connectEdit.editItem.text)
                     }
                 }
             }

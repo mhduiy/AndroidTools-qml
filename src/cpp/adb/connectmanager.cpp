@@ -6,6 +6,7 @@
 #include "src/cpp/adb/adbtools.h"
 #include "src/cpp/adb/device.h"
 #include "src/cpp/adb/fastbootdevice.h"
+#include "src/cpp/utils/utils.hpp"
 
 namespace ADT {
 
@@ -78,6 +79,47 @@ void ConnectManager::requestSetCutFastbootDevice(const QString &deviceCode)
             break;
         }
     }
+}
+
+void ConnectManager::requestPairDevice(const QString &ipPort, const QString &pairCode)
+{
+    if (ipPort.isEmpty()) {
+        NotificationController::instance()->send("配对失败", "ip和端口不能为空");
+        return;
+    }
+    if (pairCode.isEmpty()) {
+        NotificationController::instance()->send("配对失败", "请输入配对码");
+        return;
+    }
+
+    NotificationController::instance()->send("配对中", "请耐心等待", NotificationController::Info);
+
+    asyncOperator([ipPort, pairCode, this](){
+        auto retStr = ADBTOOL->executeCommand(ADBTools::ADB, {"pair", ipPort}, pairCode).simplified();
+        if (retStr.contains("Success")) {
+            NotificationController::instance()->send("配对成功", "请进行下一步");
+        } else {
+            NotificationController::instance()->send("配对失败", "配对失败，请检查信息是否填写正确", NotificationController::Error);
+        }
+    });
+}
+
+void ConnectManager::requestConnectDevice(const QString &ipPort)
+{
+    if (ipPort.isEmpty()) {
+        NotificationController::instance()->send("连接失败", "ip和端口不能为空", NotificationController::Warning);
+        return;
+    }
+
+    NotificationController::instance()->send("连接中", "请耐心等待", NotificationController::Info);
+
+    asyncOperator([ipPort, this](){
+        auto retStr = ADBTOOL->executeCommand(ADBTools::ADB, {"connect", ipPort}).simplified();
+        NotificationController::instance()->send("返回信息", retStr);
+        if (!retStr.contains("connected")) {
+            NotificationController::instance()->send("连接失败", "请检查信息是否填写正确", NotificationController::Error);
+        }
+    });
 }
 
 void ConnectManager::refreshDevice()
