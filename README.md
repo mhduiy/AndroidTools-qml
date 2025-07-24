@@ -6,6 +6,8 @@
 
 A cross platform Android toolbox developed using Qt based on ADB tools, previously known as [AndroidTools](https://github.com/mhduiy/AndroidTools)The QML refactoring version can be considered as ADB's GUI tool
 
+https://zread.ai/mhduiy/AndroidTools-qml
+
 ## Display image
 
 ![alt text](doc/image0.png)
@@ -121,4 +123,4 @@ The development of this project referred to the following projects. Thank you, e
 
 [FluentUI]( https://github.com/zhuzichu520/FluentUI )
 
-[awesome]( https://github.com/mzlogin/awesome-adb )
+[ wesome]( https://github.com/mzlogin/awesome-adb )

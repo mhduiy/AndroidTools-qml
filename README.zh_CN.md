@@ -3,6 +3,8 @@
 ## 一句话介绍
 一个基于ADB工具使用Qt开发的跨平台安卓工具箱，是之前[AndroidTools](https://github.com/mhduiy/AndroidTools)的QML重构版本，你可以认为是ADB的GUI工具
 
+https://zread.ai/mhduiy/AndroidTools-qml
+
 ## 展示图
 
 ![alt text](doc/image0.png)
