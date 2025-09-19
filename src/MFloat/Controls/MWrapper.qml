@@ -28,7 +28,7 @@ Control {
                         color: App.windowTextColor
                         text: control.title
                         font.bold: true
-                        font.pixelSize: 18
+                        font.pixelSize: 16
                         Behavior on color {
                             ColorAnimation{
                                 duration: 200

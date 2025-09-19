@@ -8,141 +8,67 @@ import App
 import NotificationController 1.0
 import ConnectManager
 
-Item {
+        Item {
     id: sideBar
     property var backImage
     property int radius: 12
 
-    MultiEffect {
-        id: effect
+    Rectangle {
+        id: sidebarControlContent
         anchors.fill: parent
-        source: backImage
-        maskEnabled: true
-        maskSource: markItem
-        autoPaddingEnabled: false
-        blurEnabled: true
-        blur: 0.8
-        blurMax: 64
-    }
+        radius: sideBar.radius
+        color: App.midColor
+        border.color: App.borderColor
 
-    Item {
-        id: markItem
-        anchors.fill: parent
-        layer.enabled: true
-        layer.smooth: true
-        visible: false
-
-        Rectangle {
-            x: sidebarControl.x + sidebarControlContent.x
-            y: sidebarControl.y + sidebarControlContent.y
-            width: sidebarControlContent.width
-            height: sidebarControlContent.height
-            radius: sideBar.radius
-        }
-    }
-
-
-    Item {
-        id: sidebarControl
-        property bool startAniStatus: false
-        width: 220
-        height: Window.height
-        x: hoverHandler.hovered  ? 0 : startAniStatus ?  -width + 80 : -width + 20
-        y: 0
-
-        Behavior on x {
-            NumberAnimation {
-                duration: 800
-                easing.type: Easing.OutQuint
+        Behavior on color {
+            ColorAnimation {
+                duration: 200
             }
         }
-        Rectangle {
-            id: sidebarControlContent
-            anchors.margins: 10
-            anchors.fill: parent
-            radius: sideBar.radius
-            color: App.midColor
-            border.color: App.borderColor
 
-            Behavior on color {
-                ColorAnimation {
-                    duration: 200
+        ColumnLayout {
+            anchors.fill: parent    
+
+            RowLayout {
+                spacing: 4  
+                Layout.margins: 5
+                MButton {
+                    text: "有线连接"
+                    btnType: MButton.FBtnType.Ordinary
+                    Layout.fillWidth: true
+                    onClicked: {
+                        wireConnectDialog.open()
+                    }
+                }
+
+                MButton {
+                    text: "无线连接"
+                    btnType: MButton.FBtnType.Ordinary
+                    Layout.fillWidth: true
+                    onClicked: {
+                        wirelessConnectDialog.open()
+                    }
                 }
             }
 
-            ColumnLayout {
-                anchors.fill: parent
+            DeviceListview {
+                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignTop
-                anchors.margins: 10
-
-                RowLayout {
-                    spacing: 4
-                    Layout.margins: 5
-                    Layout.alignment: Qt.AlignTop
-                    Text {
-                        id: greeterText
-                        font.bold: true
-                        font.pixelSize: 18
-                        color: "#E67E22"
-                        text: "Hi! 下午好"
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    MButton {
-                        text: "无线连接"
-                        btnType: MButton.FBtnType.Ordinary
-                        onClicked: {
-                            wirelessConnectDialog.open()
-                        }
-                    }
-                }
-
-                DeviceListview {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignTop
-                    anchors.margins: 4
-                    Layout.preferredHeight: parent.height * 0.30
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-
-                ControlListview {
-                    id: controlListView
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignBottom
-
-                    onCurrentIndexChanged: {
-                        mainStackLayout.currentIndex = currentIndex
-                    }
-                }
+                Layout.preferredHeight: parent.height * 0.27
+                Layout.rightMargin: 10
+                Layout.leftMargin: 10
             }
-        }
 
-        HoverHandler {
+            ControlListview {
+                id: controlListView
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignBottom
+                Layout.rightMargin: 10
+                Layout.leftMargin: 10
 
-            id: hoverHandler
-        }
-
-        Component.onCompleted: {
-            startAniTimer.start()
-        }
-
-        Timer {
-            id: startAniTimer
-            interval: 1500
-            repeat : true
-            onTriggered: {
-                if (!sidebarControl.startAniStatus) {
-                    sidebarControl.startAniStatus = true
-                    repeat = false
-                } else {
-                    sidebarControl.startAniStatus = false
+                onCurrentIndexChanged: {
+                    mainStackLayout.currentIndex = currentIndex
                 }
             }
         }
@@ -283,6 +209,112 @@ Item {
                         ConnectManager.requestConnectDevice(connectEdit.editItem.text)
                     }
                 }
+            }
+        }
+    }
+
+    Dialog {
+        id: wireConnectDialog
+        title: "准备有线连接"
+        width: 450
+        height: 200
+        modal: Qt.ApplicationModal
+        visible: false
+        anchors.centerIn: Overlay.overlay
+        header: Item {}
+
+        background: Item {
+            id: wbackItem
+            state: wireConnectDialog.visible ? "visible" : "hidden"
+
+            Behavior on scale {
+                PropertyAnimation {
+                    duration: 600
+                    easing.type: Easing.OutExpo
+                }
+            }
+
+            states: [
+                State {
+                    name: "visible"
+                    PropertyChanges { target: wbackItem; scale: 1.0;}
+                    PropertyChanges { target: wireDialogContent; scale: 1.0; opacity: 1.0}
+                },
+                State {
+                    name: "hidden"
+                    PropertyChanges { target: wbackItem; scale: 0;}
+                    PropertyChanges { target: wireDialogContent; scale: 0; opacity: 0}
+                }
+            ]
+
+            ShaderEffectSource {
+                id: wdialogSource
+                anchors.fill: parent
+                sourceItem: backImage
+                sourceRect: Qt.rect(wireConnectDialog.x, wireConnectDialog.y, wireConnectDialog.width, wireConnectDialog.height)
+                visible: false
+            }
+
+            MultiEffect {
+                anchors.fill: wdialogSource
+                source: wdialogSource
+                autoPaddingEnabled: false
+                blurEnabled: true
+                maskEnabled: true
+                maskSource: wmarkRect
+                blur: 0.8
+                blurMax: 64
+            }
+
+            Rectangle {
+                id: wmarkRect
+                anchors.fill: parent
+                radius: 12
+                color: App.midColor
+                border.color: App.borderColor
+                layer.enabled: true
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 200
+                    }
+                }
+            }
+        }
+
+        ColumnLayout {
+            id: wireDialogContent
+            anchors.fill: parent
+            anchors.margins: 10
+
+            Behavior on scale {
+                PropertyAnimation {
+                    duration: 800
+                    easing.type: Easing.OutExpo
+                }
+            }
+
+            Behavior on opacity {
+                PropertyAnimation {
+                    duration: 1000
+                }
+            }
+
+            Label {
+                text: "1. 打开开发者模式中的有线调试"
+                font.family: "黑体"
+                font.pixelSize: 16
+            }
+            Label {
+                text: "2. 几秒钟后同意电脑的连接"
+                wrapMode: Text.WrapAnywhere
+                font.family: "黑体"
+                font.pixelSize: 16
+            }
+            Label {
+                text: "3. adb 会自动连接到手机"
+                wrapMode: Text.WrapAnywhere
+                font.family: "黑体"
+                font.pixelSize: 16
             }
         }
     }

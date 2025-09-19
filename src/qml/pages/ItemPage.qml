@@ -5,7 +5,6 @@ import QtQuick.Layouts
 Item {
     property bool isCurrentPage: false
     id: page
-    Layout.minimumWidth: 780
     state: "prepareShow"
     states: [
         State {

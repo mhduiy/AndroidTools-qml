@@ -65,7 +65,7 @@ ItemPage {
                                 
                                 return title
                             }
-                            font.pixelSize: 22
+                            font.pixelSize: 16
                             font.bold: true
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -218,7 +218,7 @@ ItemPage {
                                     Label {
                                         text: deviceDetailInfoRep.titles[index]
                                         font.bold: true
-                                        font.pixelSize: 18
+                                        font.pixelSize: 16
                                         color: App.windowTextColor
                                     }
                                     Repeater {
@@ -300,7 +300,7 @@ ItemPage {
                                 Layout.preferredHeight: 30
                                 Label {
                                     font.bold: true
-                                    font.pixelSize: 20
+                                    font.pixelSize: 16
                                     text: "前台应用"
                                 }
                                 Item {

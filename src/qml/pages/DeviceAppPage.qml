@@ -74,62 +74,64 @@ ItemPage {
                     }
                 }
 
-                Rectangle {
-                    id: softListImage
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: 5
-                    width: 30
-                    height: 30
-                    radius: width / 2
-                    color: "#008c8c"
-                    Text {
-                        anchors.fill: parent
-                        text: model.packageName[0].toUpperCase()
-                        color: "white"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        font.pixelSize: 14
-                    }
-                }
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: 40
-                    text: model.packageName
-                    font.pixelSize: 14
-                }
-
-                ColumnLayout {
-                    anchors.right: parent.right
-                    anchors.rightMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                    height: parent.height - 4
-                    spacing: 1
-                    MLabel {
-                        rectColor: colorConstants.suggestClickedColor
-                        vMargin: 1
-                        hMargin: 4
-                        text: {
-                            if (model.state === 0) {
-                                return "启用";
-                            } else if (model.state === 1) {
-                                return "禁用";
-                            } else {
-                                return "未知";
-                            }
+                RowLayout {
+                    anchors.fill: parent
+                    Rectangle {
+                        id: softListImage
+                        Layout.preferredWidth: 30
+                        Layout.preferredHeight: 30
+                        Layout.leftMargin: 5
+                        Layout.alignment: Qt.AlignVCenter
+                        radius: width / 2
+                        color: "#008c8c"
+                        Text {
+                            anchors.fill: parent
+                            text: model.packageName[0].toUpperCase()
+                            color: "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 14
                         }
-                        Layout.alignment: Qt.AlignRight
                     }
-                    MLabel {
-                        rectColor: colorConstants.warningClickedColor
-                        hMargin: 4
-                        vMargin: 1
-                        text: model.versionCode
-                        Layout.alignment: Qt.AlignRight
+
+                    Label {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        text: model.packageName
+                        font.pixelSize: 14
+                        elide: Text.ElideRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    ColumnLayout {
+                        Layout.rightMargin: 5
+                        Layout.fillHeight: true
+                        spacing: 1
+                        MLabel {
+                            rectColor: colorConstants.suggestClickedColor
+                            vMargin: 1
+                            hMargin: 4
+                            text: {
+                                if (model.state === 0) {
+                                    return "启用";
+                                } else if (model.state === 1) {
+                                    return "禁用";
+                                } else {
+                                    return "未知";
+                                }
+                            }
+                            Layout.alignment: Qt.AlignRight
+                        }
+                        MLabel {
+                            rectColor: colorConstants.warningClickedColor
+                            hMargin: 4``
+                            vMargin: 1
+                            text: model.versionCode
+                            Layout.alignment: Qt.AlignRight
+                        }
                     }
                 }
+                
                 MouseArea {
                     id: listMouseArea
                     anchors.fill: parent
@@ -174,9 +176,11 @@ ItemPage {
                             Layout.fillWidth: true
                             spacing: 5
                             Label {
+                                Layout.fillWidth: true
+                                verticalAlignment: Text.AlignVCenter
                                 text: AppDetailControl.packageName === "" ? "请选择应用" : AppDetailControl.packageName
                                 font.pixelSize: 16
-                                horizontalAlignment: Text.AlignRight
+                                elide: Text.ElideRight
                             }
                             Repeater {
                                 model: softDetailInfoModel

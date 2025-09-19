@@ -110,6 +110,7 @@ ApplicationWindow {
 
         ColumnLayout {
             anchors.fill: parent
+
             TitleBar {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 30
@@ -132,15 +133,23 @@ ApplicationWindow {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.leftMargin: 5
+                Layout.rightMargin: 5
+                Layout.topMargin: 5
+                Layout.bottomMargin: 5
+                spacing: 5
+
+                LeftBar {
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 180
+                    backImage: rootRect
+                }
 
                 StackLayout {
                     id: mainStackLayout
                     Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.leftMargin: 15
-                    Layout.rightMargin: 5
-                    Layout.bottomMargin: 5
                     property int preIndex: 0
 
                     onCurrentIndexChanged: {
@@ -198,10 +207,5 @@ ApplicationWindow {
             }
         }
 
-    }
-
-    LeftBar {
-        anchors.fill: parent
-        backImage: rootRect
     }
 }

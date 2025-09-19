@@ -64,6 +64,7 @@ MWrapper {
                 color: App.windowTextColor
                 labelsColor: App.windowTextColor
                 labelsFont.bold: true
+                labelsFont.pixelSize: 10
             }
             SplineSeries {
                 id: splineSeries
