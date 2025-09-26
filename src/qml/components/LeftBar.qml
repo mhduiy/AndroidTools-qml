@@ -5,10 +5,11 @@ import MFloat
 import QtQuick.Effects
 import Qt5Compat.GraphicalEffects
 import App
-import NotificationController 1.0
+import NotificationController
 import ConnectManager
+import OtherSettingsHandler
 
-        Item {
+Item {
     id: sideBar
     property var backImage
     property int radius: 12
@@ -17,7 +18,7 @@ import ConnectManager
         id: sidebarControlContent
         anchors.fill: parent
         radius: sideBar.radius
-        color: App.midColor
+        color: App.adjustColorOpacity(App.baseColor, OtherSettingsHandler.wrapperOpacity)
         border.color: App.borderColor
 
         Behavior on color {

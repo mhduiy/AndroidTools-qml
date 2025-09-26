@@ -13,7 +13,7 @@ Item {
 
     width: 350
     height: 50
-    y: 40
+    y: 30
     z: 1000
 
     transitions: [
@@ -106,7 +106,8 @@ Item {
                     return Qt.rgba(214 / 255, 62 / 255, 62 / 255, 0.3)
                 }
             }
-            border.color: Qt.darker("white", 1.8)
+            border.width: 2
+            border.color: Qt.darker(markRect.color, 1.5)
             layer.enabled: true
         }
 
