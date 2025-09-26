@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QUrl>
 #include <QTimer>
+#include <QRegularExpression>
 
 namespace ADT {
 
@@ -166,12 +167,13 @@ void ADBDeviceWorker::refreshBatteryInfo()
     Q_EMIT batteryInfoRefreshed(batteryInfo);
 }
 
-ADBDevice::ADBDevice(QObject *parent)
-    : Device(parent)
+ADBDevice::ADBDevice(const QString &code, QObject *parent)
+    : Device(code, parent)
     , m_worker(new ADBDeviceWorker(this))
     , m_workerThread(new QThread(this))
     , m_adbTools(ADBTools::instance())
 {
+    initData();
     initWorker();
 }
 
@@ -214,6 +216,7 @@ void ADBDevice::onCutActivityRefreshed(const DeviceActivityInfo &activityInfo)
 void ADBDevice::onBatteryInfoRefreshed(const DeviceBatteryInfo &batteryInfo)
 {
     updateBatteryInfoFromStruct(batteryInfo);
+    setisCharging(batteryInfo.chargingType != None);
 }
 
 void ADBDevice::updateDetailInfoFromStruct(const DeviceDetailInfo &info)
@@ -937,6 +940,15 @@ void ADBDevice::restoreResolutionAndDpi()
     args2 << "-s" << code() << "shell" << "wm" << "density" << "reset";
     m_adbTools->executeCommand(ADBTools::ADB, args1);
     m_adbTools->executeCommand(ADBTools::ADB, args2);
+}
+
+void ADBDevice::initData()
+{
+    // 匹配 IPv4:端口
+    QRegularExpression ipv4PortRegex(
+        R"(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):[0-9]{1,5}$)"
+    );
+    setisWireless(ipv4PortRegex.match(code()).hasMatch());
 }
 
 } // namespace ADT

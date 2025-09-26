@@ -1,7 +1,7 @@
 #include "fastbootdevice.h"
 
-FastbootDevice::FastbootDevice(QObject *parent)
-    : Device(parent)
+FastbootDevice::FastbootDevice(const QString &code, QObject *parent)
+    : Device(code, parent)
 {
 
 }

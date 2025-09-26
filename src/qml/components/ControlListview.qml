@@ -28,7 +28,7 @@ ListView {
             width: ListView.view.width
             height: 40
             radius: 6
-            color: ListView.isCurrentItem ? Qt.rgba(0, 0, 0, 0.3) : Qt.rgba(0, 0, 0, 0.1)
+            color: ListView.isCurrentItem ? Qt.rgba(0, 0, 0, 0.2) : Qt.rgba(0, 0, 0, 0.05)
             Behavior on color {
                 PropertyAnimation {
                     duration: 300

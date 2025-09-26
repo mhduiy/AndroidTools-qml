@@ -147,11 +147,10 @@ void ConnectManager::requestConnectDevice(const QString &ipPort)
 
 void ConnectManager::refreshDevice()
 {
-    qInfo() << "开始检查设备";
     if (enableADBCheck()) {
         QVector<QString> adbDevices = getDeviceList(C_ADB);
         // 检查是否有新设备连接(ADB)
-        for (QString &deviceCode : adbDevices) {
+        for (const QString &deviceCode : adbDevices) {
             if (!deviceCode.isEmpty() && !hasDevice(deviceCode, C_ADB)) {
                 auto &&device = addDevice(deviceCode, C_ADB);
                 emit deviceConnected(device);
@@ -310,12 +309,10 @@ QSharedPointer<Device> ConnectManager::addDevice(const QString &deviceCode, Conn
 {
     QSharedPointer<Device> device;
     if (type == C_ADB) {
-        device = QSharedPointer<ADBDevice>::create();
-        device->setcode(deviceCode);
+        device = QSharedPointer<ADBDevice>::create(deviceCode);
         m_adbDeviceList.append(device.staticCast<ADBDevice>());
     } else if (type == C_Fastboot) {
-        device = QSharedPointer<FastbootDevice>::create();
-        device->setcode(deviceCode);
+        device = QSharedPointer<FastbootDevice>::create(deviceCode);
         m_fastbootDeviceList.append(device.staticCast<FastbootDevice>());
     }
     

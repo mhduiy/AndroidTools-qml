@@ -32,7 +32,7 @@ class Device : public QObject
     DECLARE_PROPERTY(bool, isCharging)
 
 public:
-    explicit Device(QObject *parent = nullptr);
+    explicit Device(const QString &code, QObject *parent = nullptr);
     virtual ~Device() = default;
 
     // 请求断开连接

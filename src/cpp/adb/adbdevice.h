@@ -275,7 +275,7 @@ class ADBDevice : public Device
     Q_PROPERTY(QString currentActivity READ currentActivity WRITE setCurrentActivity NOTIFY currentActivityChanged)
 
 public:
-    explicit ADBDevice(QObject *parent = nullptr);
+    explicit ADBDevice(const QString &code, QObject *parent = nullptr);
     ~ADBDevice();
 
     // === 设备详细信息访问器 ===
@@ -490,6 +490,7 @@ private:
     void updateActivityInfoFromStruct(const DeviceActivityInfo &info);
 
     void initWorker();
+    void initData();
 
 private:
     ADBDeviceWorker *m_worker;

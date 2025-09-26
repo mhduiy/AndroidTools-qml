@@ -10,17 +10,11 @@ ListView {
     id: listView
     clip: true
     model: DeviceHelper.adbDeviceList
-    highlightMoveDuration: 300
-    highlight: Rectangle {
-        color: App.themeType === App.Light ?
-                   Qt.rgba(135 / 255, 206 / 255, 250 / 255, 0.6) : Qt.rgba(0 / 255, 49 / 255, 49 / 255, 0.6)
-        radius: 10
-    }
     delegate: Rectangle {
         width: ListView.view.width
         height: 75
         radius: 10
-        color: Qt.rgba(255,255,255, ListView.isCurrentItem ? 0 : 0.4)
+        color: ListView.isCurrentItem ? Qt.rgba(0, 0, 0, 0.2) : Qt.rgba(0, 0, 0, 0.05)
 
         Behavior on color {
             PropertyAnimation {
@@ -30,12 +24,12 @@ ListView {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 3
+            anchors.margins: 6
 
             spacing: 2
             RowLayout {
                 Layout.fillWidth: true
-                Text {
+                Label {
                     id: deviceName
                     text: {
                         if (modelData) {
@@ -100,7 +94,12 @@ ListView {
                         rectColor: "#000000"
                     }
                     Label {
-                        text: (modelData && modelData.isConnected) ? (modelData.isCharging ? modelData.batteryLevel + "% +" : modelData.batteryLevel + "%") : "未连接"
+                        text: {
+                            let cutValue = modelData ? modelData.batteryLevel : 0
+                            let cutPower = modelData ? Math.floor((modelData.batteryCurrent * modelData.batteryVoltage) / 1000000) : 0
+                            return (modelData && modelData.isConnected) ?
+                                (modelData.isCharging ? cutValue + "%+" : cutValue + "%") + "(" + cutPower + "w)" : "未连接"
+                        }
                         font.pixelSize: 12
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter

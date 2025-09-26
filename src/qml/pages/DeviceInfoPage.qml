@@ -355,25 +355,25 @@ ItemPage {
                         }
                     }
                     MonitorItem {
-                        title: "电池电量 (%)"
+                        title: "电池电量 (" + cutValue + "%)"
                         minY: 0
                         maxY: 100
                         cutValue: currentDevice ? currentDevice.batteryLevel : 0
                     }
                     MonitorItem {
-                        title: "电池温度 (°C)"
+                        title: "电池温度 (" + cutValue + "°C)"
                         minY: 20
                         maxY: 50
                         cutValue: currentDevice ? currentDevice.batteryTemperature : 0
                     }
                     MonitorItem {
-                        title: "电池电压 (mV)"
+                        title: "电池电压 (" + cutValue + "mV)"
                         minY: 3000
                         maxY: 5000
                         cutValue: currentDevice ? currentDevice.batteryVoltage : 0
                     }
                     MonitorItem {
-                        title: "电池电流 (mA)"
+                        title: "电池电流 (" + cutValue + "mA)"
                         minY: 0
                         maxY: 3000
                         cutValue: currentDevice ? currentDevice.batteryCurrent : 0

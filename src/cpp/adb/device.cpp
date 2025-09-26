@@ -1,6 +1,6 @@
 #include "device.h"
 
-Device::Device(QObject *parent) : QObject(parent)
+Device::Device(const QString &code, QObject *parent) : QObject(parent)
 {
-
+    setcode(code);
 }
