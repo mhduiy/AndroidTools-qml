@@ -83,21 +83,24 @@ ItemPage {
                         Layout.leftMargin: 5
                         Layout.alignment: Qt.AlignVCenter
                         radius: width / 2
-                        color: "#008c8c"
-                        Text {
+                        color: "transparent"
+                        Image {
                             anchors.fill: parent
-                            text: model.packageName[0].toUpperCase()
-                            color: "white"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            font.pixelSize: 14
+                            source: model.icon
+                            fillMode: Image.PreserveAspectFit
+                            Component.onCompleted: {
+                                if (model.icon === "") {
+                                    console.log("request load icon: " + model.packageName);
+                                    AppDetailControl.requestLoadIcon(model.packageName);
+                                }
+                            }
                         }
                     }
 
                     Label {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        text: model.packageName
+                        text: model.appName
                         font.pixelSize: 14
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
@@ -112,21 +115,19 @@ ItemPage {
                             vMargin: 1
                             hMargin: 4
                             text: {
-                                if (model.state === 0) {
+                                if (model.isEnabled) {
                                     return "启用";
-                                } else if (model.state === 1) {
-                                    return "禁用";
                                 } else {
-                                    return "未知";
+                                    return "禁用";
                                 }
                             }
                             Layout.alignment: Qt.AlignRight
                         }
                         MLabel {
                             rectColor: colorConstants.warningClickedColor
-                            hMargin: 4``
+                            hMargin: 4
                             vMargin: 1
-                            text: model.versionCode
+                            text: model.versionName
                             Layout.alignment: Qt.AlignRight
                         }
                     }

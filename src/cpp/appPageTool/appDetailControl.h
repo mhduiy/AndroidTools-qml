@@ -27,8 +27,8 @@ public:
     ~AppDetailControl();
     QVariant getPackageName() { return m_info.packageName; };
     QVariant getVersionCode() { return m_info.versionName; } ;
-    QVariant getInstallDate()  { return m_info.installDate; };
-    QVariant getInstallUser() { return m_info.installUser; } ;
+    QVariant getInstallDate()  { return m_info.firstInstallTime; };
+    QVariant getInstallUser() { return ""; } ;
     QVariant getTargetSdk() { return m_info.targetsdk; } ;
     QVariant getMinSdk() { return m_info.minsdk; } ;
     QVariant getAppId() {return m_info.appid;} ;
@@ -46,11 +46,13 @@ public:
 
     Q_INVOKABLE void startApp(const QString &packageName);
     Q_INVOKABLE void startActivity(const QString &activity, const QStringList &args);
+    Q_INVOKABLE void requestLoadIcon(const QString &packageName);
 signals:
     void valueChanged(const AppDetailInfo &info);
     void updateSoftDetailInfoFinish(const AppDetailInfo &info);
     void requestUpdateSoftList();
     void softListTypeChanged(SoftListType type);
+    void iconLoaded(const QString &packageName, const QString &iconBase64);
 
 private slots:
     void onUpdateSoftDetailInfoFinish(const AppDetailInfo &info);

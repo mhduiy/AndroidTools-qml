@@ -23,10 +23,10 @@ AppDetailControl::~AppDetailControl()
 
 void AppDetailControl::updateInfo(const QString &packageName)
 {
-    asyncOperator([packageName, this](){
-        auto info = CONNECTMANAGER->cutADBDevice()->getAppDetailInfo(packageName);
-        emit updateSoftDetailInfoFinish(info);
-    });
+    // asyncOperator([packageName, this](){
+    //     auto info = CONNECTMANAGER->cutADBDevice()->getAppDetailInfo(packageName);
+    //     emit updateSoftDetailInfoFinish(info);
+    // });
 }
 
 void AppDetailControl::installApp(const QString &path, bool r, bool s, bool d, bool g)
@@ -124,6 +124,14 @@ void AppDetailControl::startActivity(const QString &activity, const QStringList 
     });
 }
 
+void AppDetailControl::requestLoadIcon(const QString &packageName)
+{
+    // asyncOperator([packageName, this](){
+        auto iconBase64 = CONNECTMANAGER->cutADBDevice()->getAppIconBase64(packageName);
+        Q_EMIT iconLoaded(packageName, iconBase64);
+    // });
+}
+
 void AppDetailControl::onUpdateSoftDetailInfoFinish(const AppDetailInfo &info)
 {
     m_info = info;
@@ -133,6 +141,7 @@ void AppDetailControl::onUpdateSoftDetailInfoFinish(const AppDetailInfo &info)
 void AppDetailControl::setSoftListType(SoftListType type)
 {
     m_softListType = type;
+    qWarning() << "======" << m_softListType << "======";
     emit softListTypeChanged(m_softListType);
 }
 

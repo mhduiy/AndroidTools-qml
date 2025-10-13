@@ -19,7 +19,9 @@ AppPageTool::AppPageTool(QObject *parent)
 
     connect(AppDetailControl::instance(), &AppDetailControl::softListTypeChanged, this, &AppPageTool::updateAppListInfo);
     connect(ConnectManager::instance(), &ConnectManager::cutADBDeviceChanged, this, &AppPageTool::onADBDeviceChanged);
-
+    connect(AppDetailControl::instance(), &AppDetailControl::iconLoaded, this, [this](const QString &packageName, const QString &iconBase64) {
+        m_softListModel->setIcon(packageName, iconBase64);
+    });
     initData();
 }
 
@@ -48,7 +50,7 @@ void AppPageTool::updateAppListInfo()
             return;
         }
 
-        auto infos = device->getSoftListInfo();
+        auto infos = device->getSoftListInfo(AppDetailControl::instance()->getSoftListType());
         
         // 将模型更新操作调度回主线程执行
         QMetaObject::invokeMethod(this, [this, infos]() {

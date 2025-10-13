@@ -1,6 +1,7 @@
 #include "adbdevice.h"
 #include "src/cpp/utils/utils.hpp"
 #include "src/cpp/adb/adbtools.h"
+#include "src/cpp/utils/constants.h"
 #include <algorithm>
 #include <QDebug>
 #include <QProcess>
@@ -10,6 +11,15 @@
 #include <QUrl>
 #include <QTimer>
 #include <QRegularExpression>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrlQuery>
+#include <QEventLoop>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QDateTime>
 
 namespace ADT {
 
@@ -173,6 +183,8 @@ ADBDevice::ADBDevice(const QString &code, QObject *parent)
     , m_workerThread(new QThread(this))
     , m_adbTools(ADBTools::instance())
 {
+    m_serverPro = new QProcess(this);
+    startAndroidService();
     initData();
     initWorker();
 }
@@ -183,6 +195,74 @@ ADBDevice::~ADBDevice()
     m_workerThread->wait();
     m_workerThread->deleteLater();
     m_worker->deleteLater();
+}
+
+bool ADBDevice::startAndroidService()
+{
+    qInfo() << "Starting androidtools-server on device:" << code();
+    if (!QFile::exists(ANDROID_TOOLS_SERVER_TARGET_PATH)) {
+        // 确保目标目录存在
+        QFileInfo fileInfo(ANDROID_TOOLS_SERVER_TARGET_PATH);
+        QDir dir = fileInfo.dir();
+        if (!dir.exists()) {
+            dir.mkpath(".");
+        }
+
+        QFile resourceFile(ANDROID_TOOLS_SERVER_PATH);
+        if (!resourceFile.exists()) {
+            qWarning() << "Resource file does not exist!";
+            return false;
+        }
+        if (!resourceFile.open(QIODevice::ReadOnly)) {
+            qWarning() << "Cannot open resource file:" << resourceFile.error();
+            return false;
+        }
+        QFile targetFile(ANDROID_TOOLS_SERVER_TARGET_PATH);
+        if (!targetFile.open(QIODevice::WriteOnly)) {
+            qWarning() << "Cannot open target file:" << targetFile.error();
+            return false;
+        }
+        QByteArray data = resourceFile.readAll();
+        if (targetFile.write(data) == -1) {
+            qWarning() << "Failed to write file:" << targetFile.error();
+            return false;
+        }
+        resourceFile.close();
+        targetFile.close();    
+    }
+
+    // 推送文件到设备
+    pushFile(ANDROID_TOOLS_SERVER_TARGET_PATH, "/data/local/tmp/androidtools-server.dex");
+
+    // 设置权限
+    auto ret = m_adbTools->executeShellCommand("chmod 755 /data/local/tmp/androidtools-server.dex");
+    if (!ret.success) {
+        qWarning() << "Set server dex file permission failed:" << ret.getAllOutput();
+        return false;
+    }
+
+    // 端口转发 TODO: 多设备导致端口冲突
+    ret = m_adbTools->executeCommandDetailed(ADBTools::ADB, {"forward", "tcp:18888", "tcp:18888"});
+    if (!ret.success) {
+        qWarning() << "ADB forward port failed:" << ret.getAllOutput();
+        return false;
+    }
+
+    // 启动服务
+    m_serverPro->start("adb", {"-s", code(), "shell", "CLASSPATH=/data/local/tmp/androidtools-server.dex app_process / com.mhduiy.androidtoolsserver.SystemInfoServer 18888"});
+    m_serverPro->waitForStarted(3000);
+    return true;
+}
+
+bool ADBDevice::killAndroidService()
+{
+    m_serverPro->terminate();
+    m_serverPro->waitForFinished(1000);
+    if (m_serverPro->state() != QProcess::NotRunning) {
+        m_serverPro->kill();
+        m_serverPro->waitForFinished(1000);
+    }
+    return true;
 }
 
 void ADBDevice::initWorker()
@@ -660,100 +740,64 @@ void ADBDevice::startActivity(const QString &activity, const QStringList &args)
     m_adbTools->executeCommand(ADBTools::ADB, adbArgs);
 }
 
-QList<AppListInfo> ADBDevice::getSoftListInfo(SoftListType type) const
+QList<AppDetailInfo> ADBDevice::getSoftListInfo(SoftListType type) const
 {
-    QStringList args;
-    QList<AppListInfo> res;
+    qInfo() << "Getting soft list info:" << type;
 
-    if (type == SoftListType::ThirdParty) { 
-        args << "-s" << code() << "shell" << "pm" << "list" << "packages" << "-3" << "--show-versioncode";
+    QUrl url("http://localhost:18888/apps");
+    if (type == SoftListType::ThirdParty) {
+        url.setQuery(QUrlQuery("isUser=true"));
     } else if (type == SoftListType::System) {
-        args << "-s" << code() << "shell" << "pm" << "list" << "packages" << "-s" << "--show-versioncode";
+        url.setQuery(QUrlQuery("isSystem=true"));
     } else {
-        args << "-s" << code() << "shell" << "pm" << "list" << "packages" << "--show-versioncode";
+        // do nothing
     }
 
-    QStringList retList = m_adbTools->executeCommand(ADBTools::ADB, args).split('\n');
-    
-    int packageLen = QString("package:").length();
-    int versionCodeLen = QString("versionCode:").length();
-    
-    for (const QString &lineInfo : retList) {
-        QStringList infos = lineInfo.simplified().split(' ');
-        if (infos.size() == 2) {
-            AppListInfo appInfo;
-            if (auto packageNameInfo = infos.first(); packageNameInfo.size() > packageLen) {
-                appInfo.packageName = packageNameInfo.remove(0, packageLen);
-            }
-            if (auto versionCodeInfo = infos.last(); versionCodeInfo.size() > versionCodeLen) {
-                appInfo.versionCode = versionCodeInfo.remove(0, versionCodeLen);
-            }
-            appInfo.state = AppState::Enable;
-            res.append(appInfo);
+    auto ret = syncCallNetGetMethod(url);
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(ret.data.toUtf8());
+    if (!jsonDoc.isArray()) {
+        qWarning() << "Invalid JSON response:" << ret.data;
+        return {};
+    }
+    QJsonArray jsonArray = jsonDoc.array();
+    QList<AppDetailInfo> appList;
+    for (const QJsonValue &value : jsonArray) {
+        if (value.isObject()) {
+            QJsonObject obj = value.toObject();
+            AppDetailInfo info;
+            info.packageName = obj.value("packageName").toString();
+            info.appName = obj.value("appName").toString();
+            info.versionName = obj.value("versionName").toString();
+            info.versionCode = obj.value("versionCode").toInt();
+            info.isSystemApp = obj.value("isSystemApp").toBool();
+            info.isEnabled = obj.value("isEnabled").toBool();
+            info.firstInstallTime = QDateTime::fromMSecsSinceEpoch(obj.value("firstInstallTime").toVariant().toLongLong()).toString("yyyy-MM-dd hh:mm:ss");
+            info.lastUpdateTime = QDateTime::fromMSecsSinceEpoch(obj.value("lastUpdateTime").toVariant().toLongLong()).toString("yyyy-MM-dd hh:mm:ss");
+            info.iconBase64 = "";
+            appList.append(info);
         }
     }
-
-    // 获取禁用的应用列表
-    args.clear();
-    args << "-s" << code() << "shell" << "pm" << "list" << "packages" << "-d";
-    retList = m_adbTools->executeCommand(ADBTools::ADB, args).split('\n');
-    
-    for (const QString &lineInfo : retList) {
-        QString info = lineInfo.simplified();
-        QString disablePackageName;
-        if (auto packageNameInfo = info; packageNameInfo.size() > packageLen) {
-            disablePackageName = packageNameInfo.remove(0, packageLen);
-        }
-        if (!disablePackageName.isEmpty()) {
-            auto findIt = std::find_if(res.begin(), res.end(), [&disablePackageName](const AppListInfo &info){
-                return info.packageName == disablePackageName;
-            });
-            if(findIt != res.end()) {
-                (*findIt).state = AppState::Disable;
-            }
-        }
-    }
-    
-    return res;
+    return appList;
 }
 
-AppDetailInfo ADBDevice::getAppDetailInfo(const QString &packageName) const
+QString ADBDevice::getAppIconBase64(const QString &packageName) const
 {
-    QStringList args;
-    args << "-s" << code() << "shell" << "dumpsys" << "package" << packageName;
-    const QStringList retInfo = m_adbTools->executeCommand(ADBTools::ADB, args).split('\n');
-    
-    AppDetailInfo resInfo;
-    for (QString lineInfo : retInfo) {
-        lineInfo = lineInfo.simplified();
-        if (lineInfo.startsWith("firstInstallTime", Qt::CaseInsensitive)) {
-            resInfo.installDate = lineInfo.split('=').last();
-            continue;
-        } else if (lineInfo.startsWith("versionName", Qt::CaseInsensitive)) {
-            resInfo.versionName = lineInfo.split('=').last();
-            continue;
-        } else if (lineInfo.startsWith("installerPackageName", Qt::CaseInsensitive)) {
-            resInfo.installUser = lineInfo.split('=').last();
-            continue;
-        } else if (lineInfo.startsWith("appId", Qt::CaseInsensitive)) {
-            resInfo.appid = lineInfo.split('=').last();
-            continue;
-        } else if (lineInfo.startsWith("versionCode", Qt::CaseInsensitive)) {
-            const QStringList infoList = lineInfo.split(' ');
-            resInfo.minsdk = infoList.value(1).split('=').last();
-            resInfo.targetsdk = infoList.value(2).split('=').last();
-            continue;
-        }
+    QUrl url("http://localhost:18888/appIcon");
+    url.setQuery(QUrlQuery("packageName=" + packageName));
+
+    auto ret = syncCallNetGetMethod(url);
+    if (!ret.success) {
+        qWarning() << "Failed to get app icon:" << ret.data;
+        return {};
     }
 
-    // 获取APK路径
-    args.clear();
-    args << "-s" << code() << "shell" << "pm" << "path" << packageName;
-    auto apkPathInfo = m_adbTools->executeCommand(ADBTools::ADB, args).simplified().split(':');
-    resInfo.path = apkPathInfo.value(1);
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(ret.data.toUtf8());
+    if (!jsonDoc.isObject()) {
+        qWarning() << "Invalid JSON response for app icon:" << ret.data;
+        return {};
+    }
 
-    resInfo.packageName = packageName;
-    return resInfo;
+    return "data:image/png;base64," + jsonDoc.object().value("iconBase64").toString();
 }
 
 void ADBDevice::shotScreen(const QString &outPath)
@@ -944,11 +988,29 @@ void ADBDevice::restoreResolutionAndDpi()
 
 void ADBDevice::initData()
 {
+    m_networkManager = new QNetworkAccessManager(this);
     // 匹配 IPv4:端口
     QRegularExpression ipv4PortRegex(
         R"(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):[0-9]{1,5}$)"
     );
     setisWireless(ipv4PortRegex.match(code()).hasMatch());
+}
+
+NetResult ADBDevice::syncCallNetGetMethod(const QUrl &url) const
+{
+    if (m_networkManager == nullptr) {
+        qWarning() << "Network manager is not initialized.";
+        return {false, QByteArray()};
+    }
+    QEventLoop loop;
+    QNetworkRequest request(url);
+    QNetworkReply *reply = m_networkManager->get(request);
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    QByteArray data = reply->readAll();
+    reply->deleteLater();
+    return {reply->error() == QNetworkReply::NoError, data};
 }
 
 } // namespace ADT

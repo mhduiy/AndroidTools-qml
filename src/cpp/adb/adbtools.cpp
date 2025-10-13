@@ -104,6 +104,12 @@ QString ADBTools::executeCommand(APP app, const QStringList &args, const QString
     return result.getAllOutput();
 }
 
+CommandResult ADBTools::executeShellCommand(const QString &command, const int timeout)
+{
+    QStringList args = {"shell", command};
+    return executeCommandDetailed(APP::ADB, args, "", timeout);
+}
+
 ADBTools *ADBTools::instance(QObject *parent)
 {
     static QMutex mutex;

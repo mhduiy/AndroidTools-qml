@@ -24,6 +24,7 @@ public:
     
     // 新增方法，返回详细执行结果
     CommandResult executeCommandDetailed(APP app = ADB, const QStringList &args = QStringList(), const QString &writeStr = "", const int timeout = 3000);
+    CommandResult executeShellCommand(const QString &command, const int timeout = 5000);
     
     bool isRunning();
 

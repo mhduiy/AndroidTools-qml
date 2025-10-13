@@ -8,9 +8,19 @@
 namespace ADT {
 
 enum SoftListModelRole {
-    AppNameRole = Qt::UserRole + 1,
-    AppStateRole,
+    AppPackageRole = Qt::UserRole + 1,
+    AppNameRole,
+    AppVersionRole,
     AppVersionCodeRole,
+    AppIsSystemRole,
+    AppIsEnabledRole,
+    AppFirstInstallTimeRole,
+    AppLastUpdateTimeRole,
+    AppTargetSdkRole,
+    AppMinSdkRole,
+    AppIdRole,
+    AppPathRole,
+    AppIconRole
 };
 
 class SoftListModel : public QAbstractListModel
@@ -20,9 +30,9 @@ public:
     explicit SoftListModel(QObject *parent = nullptr);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    Q_INVOKABLE void appendRow(AppListInfo info);
+    Q_INVOKABLE void appendRow(AppDetailInfo info);
     Q_INVOKABLE void removeRow(const QString &packageName);
-    Q_INVOKABLE void setInfo(const AppListInfo &info);
+    Q_INVOKABLE void setIcon(const QString &packageName, const QString &iconBase64);
     QModelIndex index(int row, int column = 1, const QModelIndex &parent = QModelIndex()) const override;
     bool hasPackage(const QString &packageName);
     void clearData();
@@ -36,7 +46,7 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QList<AppListInfo> m_appListInfo;
+    QList<AppDetailInfo> m_appListInfo;
 };
 
 } // namespace ADT

@@ -9,6 +9,8 @@
 
 const static QString WALLPAPERCACHEJSONPATH = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QDir::separator() + "AndroidTools" + QDir::separator() + "wallpaperCache.json";
 const static QString SCRCPYSERVERPATH = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QDir::separator() + "scrcpy-server";
+const static QString ANDROID_TOOLS_SERVER_PATH = ":/res/androidtools-server";
+const static QString ANDROID_TOOLS_SERVER_TARGET_PATH = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QDir::separator() + "androidtools-server";
 
 // default values
 const static double DEFAULT_WALLPAPER_OPACITY = 0.6;

@@ -23,20 +23,41 @@ QVariant SoftListModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= m_appListInfo.size())
         return QVariant();
 
-    const AppListInfo &info = m_appListInfo[index.row()];
+    const AppDetailInfo &info = m_appListInfo[index.row()];
     switch (role) {
-    case AppNameRole:
+    case AppPackageRole:
         return info.packageName;
-    case AppStateRole:
-        return info.state;
+    case AppNameRole:
+        return info.appName;
+    case AppVersionRole:
+        return info.versionName;
     case AppVersionCodeRole:
         return info.versionCode;
+    case AppIsSystemRole:
+        return info.isSystemApp;
+    case AppIsEnabledRole:
+        return info.isEnabled;
+    case AppFirstInstallTimeRole:
+        return info.firstInstallTime;
+    case AppLastUpdateTimeRole:
+        return info.lastUpdateTime;
+    case AppTargetSdkRole:
+        return info.targetsdk;
+    case AppMinSdkRole:
+        return info.minsdk;
+    case AppIdRole:
+        return info.appid;
+    case AppPathRole:
+        return info.path;
+    case AppIconRole:
+        return info.iconBase64;
+
     default:
         return QVariant();
     }
 }
 
-void SoftListModel::appendRow(AppListInfo info)
+void SoftListModel::appendRow(AppDetailInfo info)
 {
     if (info.packageName.isEmpty()) return;
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -56,17 +77,15 @@ void SoftListModel::removeRow(const QString &packageName)
     }
 }
 
-void SoftListModel::setInfo(const AppListInfo &info)
+void SoftListModel::setIcon(const QString &packageName, const QString &iconBase64)
 {
-    int _index = 0;
-    for (auto &it : m_appListInfo) {
-        if (it.packageName == info.packageName) {
-            it.state = info.state;
-            it.versionCode = info.versionCode;
-            emit dataChanged(index(_index, 0), index(_index, 0));
+    if (packageName.isEmpty()) return;
+    for (int i = 0; i < m_appListInfo.size(); i++) {
+        if (m_appListInfo[i].packageName == packageName) {
+            m_appListInfo[i].iconBase64 = iconBase64;
+            emit dataChanged(index(i, 0), index(i, 0));
             break;
         }
-        _index++;
     }
 }
 
@@ -104,9 +123,19 @@ void SoftListModel::setCurrentIndex(int index)
 QHash<int, QByteArray> SoftListModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[AppNameRole] = "packageName";
-    roles[AppStateRole] = "state";
+    roles[AppPackageRole] = "packageName";
+    roles[AppNameRole] = "appName";
+    roles[AppVersionRole] = "versionName";
     roles[AppVersionCodeRole] = "versionCode";
+    roles[AppIsSystemRole] = "isSystemApp";
+    roles[AppIsEnabledRole] = "isEnabled";
+    roles[AppFirstInstallTimeRole] = "firstInstallTime";
+    roles[AppLastUpdateTimeRole] = "lastUpdateTime";
+    roles[AppTargetSdkRole] = "targetSdk";
+    roles[AppMinSdkRole] = "minSdk";
+    roles[AppIdRole] = "appId";
+    roles[AppPathRole] = "path";
+    roles[AppIconRole] = "icon";
     return roles;
 }
 

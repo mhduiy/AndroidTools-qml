@@ -4,6 +4,9 @@
 #include "adbtools.h"
 #include <QTimer>
 #include <QThread>
+#include <QProcess>
+#include <QPointer>
+#include <QNetworkAccessManager>
 
 namespace ADT {
 
@@ -11,6 +14,11 @@ Q_NAMESPACE
 
 // 前向声明
 class ADBDevice;
+
+struct NetResult {
+    bool success = false;
+    QString data;
+};
 
 // @brief ADB命令执行结果
 struct CommandResult {
@@ -70,21 +78,19 @@ struct DeviceDetailInfo {
 // @brief 应用详细信息
 struct AppDetailInfo {
     QString packageName;
+    QString appName;
     QString versionName;
-    QString installDate;
-    QString installUser;
+    QString iconBase64;
+    quint64 versionCode;
+    bool isSystemApp;
+    bool isEnabled;
+    QString firstInstallTime;
+    QString lastUpdateTime;
+
     QString targetsdk;
     QString minsdk;
     QString appid;
     QString path;
-    
-    AppDetailInfo(const QString &_packageName = "", const QString &_versioncode = "", 
-                  const QString &_installDate = "", const QString &_installUser = "", 
-                  const QString &_targetsdk = "", const QString &_minsdk = "", 
-                  const QString _appid = "", const QString &_path = "")
-        : packageName(_packageName), versionName(_versioncode), installDate(_installDate)
-        , installUser(_installUser), targetsdk(_targetsdk), minsdk(_minsdk)
-        , appid(_appid), path(_path) {}
 };
 
 // 重新声明枚举用于QML注册
@@ -94,16 +100,6 @@ enum AppState {
     Unknown
 };
 Q_ENUM_NS(AppState)
-
-struct AppListInfo {
-    QString packageName;
-    AppState state;
-    QString versionCode;
-    
-    AppListInfo(const QString &_name = "", AppState _state = AppState::Unknown, 
-                const QString &_versionCode = "000000")
-        : packageName(_name), state(_state), versionCode(_versionCode) {}
-};
 
 // 重新声明枚举用于QML注册
 enum ControlType {
@@ -278,6 +274,9 @@ public:
     explicit ADBDevice(const QString &code, QObject *parent = nullptr);
     ~ADBDevice();
 
+    bool startAndroidService();
+    bool killAndroidService();
+
     // === 设备详细信息访问器 ===
     QString manufacturer() const;
     void setManufacturer(const QString &val);
@@ -375,9 +374,9 @@ public:
     void setCurrentActivity(const QString &val);
 
     // 获取应用列表
-    QList<AppListInfo> getSoftListInfo(SoftListType type = SoftListType::All) const;
-    // 获取应用详细信息
-    AppDetailInfo getAppDetailInfo(const QString &packageName) const;
+    QList<AppDetailInfo> getSoftListInfo(SoftListType type = SoftListType::All) const;
+    // 获取应用图标
+    Q_INVOKABLE QString getAppIconBase64(const QString &packageName) const;
     // 安装应用
     bool installApp(const QString &Path, bool r = false, bool s = false, bool d = false, bool g = false);
     // 清除数据
@@ -489,6 +488,8 @@ private:
     void updateBatteryInfoFromStruct(const DeviceBatteryInfo &info);
     void updateActivityInfoFromStruct(const DeviceActivityInfo &info);
 
+    NetResult syncCallNetGetMethod(const QUrl &url) const;
+
     void initWorker();
     void initData();
 
@@ -496,6 +497,8 @@ private:
     ADBDeviceWorker *m_worker;
     QThread *m_workerThread;
     ADBTools *m_adbTools;
+    QProcess *m_serverPro;
+    QPointer<QNetworkAccessManager> m_networkManager;
 
     // === 设备详细信息成员变量 ===
     QString m_manufacturer;
