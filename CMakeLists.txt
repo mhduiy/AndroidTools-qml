@@ -37,7 +37,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/utils)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/components)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/settingPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/controlPageTool)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/appPageTool)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/AppPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/flashPageTool)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cpp/imagePageTool)
 

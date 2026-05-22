@@ -5,7 +5,7 @@
 #include <QMutexLocker>
 #include <QDebug>
 #include <QTimer>
-#include <QApplication>
+#include <QCoreApplication>
 
 GlobalSetting* GlobalSetting::_instance = nullptr;
 
@@ -15,7 +15,7 @@ GlobalSetting::GlobalSetting(QObject *parent) : QObject(parent) {
     m_timer->setInterval(1000);
     m_timer->setSingleShot(true);
     // 创建目录
-    cacheDir = cacheDir + QDir::separator() + QApplication::applicationName();
+    cacheDir = cacheDir + QDir::separator() + QCoreApplication::applicationName();
     QDir dir(cacheDir);
     if(!dir.exists(cacheDir)) {
         dir.mkpath(cacheDir);

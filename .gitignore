@@ -2,7 +2,20 @@ build/*
 CMakeLists.txt.user*
 .idea
 .vscode
+.VSCode*
 cmake-*
 .cache
-.VSCode*
 .output/*
+
+# macOS
+.DS_Store
+
+# Binary resources (should be downloaded/built, not committed)
+*.jar
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Package manager
+node_modules/

@@ -9,6 +9,10 @@ set(UTILS_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/notificationcontroller.h
     ${CMAKE_CURRENT_SOURCE_DIR}/defutils.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/taskthread.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/taskthread.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/serviceregistry.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/serviceregistry.cpp
 )
 
 target_sources(${EXE_NAME} PRIVATE ${UTILS_SRC})

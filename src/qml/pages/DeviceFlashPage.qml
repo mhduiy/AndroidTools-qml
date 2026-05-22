@@ -227,6 +227,7 @@ ItemPage {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MLineEdit {
+                                id: exeScriptWorkDirEdit
                                 placeholderText: "工作目录"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -236,6 +237,9 @@ ItemPage {
                                 text: "开始执行"
                                 Layout.preferredWidth: 80
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    FlashTools.executeScript("", exeScriptEdit.editItem.text, exeScriptWorkDirEdit.editItem.text)
+                                }
                             }
                         }
                     }
@@ -274,6 +278,9 @@ ItemPage {
                             btnType: MButton.FBtnType.Warning
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+                            onClicked: {
+                                FlashTools.flashToXiaomi("", xiaomiImageEdit.editItem.text)
+                            }
                         }
                     }
                 }
@@ -325,6 +332,9 @@ ItemPage {
                                 text: "开始解压"
                                 Layout.preferredWidth: 80
                                 Layout.fillHeight: true
+                                onClicked: {
+                                    FlashTools.unzip(unzipInEdit.editItem.text, unzipOutEdit.editItem.text)
+                                }
                             }
                         }
                     }

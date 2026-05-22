@@ -1,7 +1,6 @@
 set(ADB_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/adbinterface.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/adbinterface.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/adbtools.cpp
+    adbtypes.h
+    adbtools.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/adbtools.h
     ${CMAKE_CURRENT_SOURCE_DIR}/connectmanager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/connectmanager.h
@@ -12,6 +11,8 @@ set(ADB_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/device.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/adbdevice.h
     ${CMAKE_CURRENT_SOURCE_DIR}/adbdevice.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/adbdevice_apps.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/adbdevice_control.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastbootdevice.h
     ${CMAKE_CURRENT_SOURCE_DIR}/fastbootdevice.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/devicehelper.h

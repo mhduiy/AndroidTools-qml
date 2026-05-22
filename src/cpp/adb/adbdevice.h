@@ -2,6 +2,7 @@
 
 #include "device.h"
 #include "adbtools.h"
+#include "adbtypes.h"
 #include <QTimer>
 #include <QThread>
 #include <QProcess>
@@ -12,96 +13,13 @@ namespace ADT {
 
 Q_NAMESPACE
 
-// 前向声明
-class ADBDevice;
-
-struct NetResult {
-    bool success = false;
-    QString data;
-};
-
-// @brief ADB命令执行结果
-struct CommandResult {
-    bool success = false;           // 命令是否成功执行
-    int exitCode = -1;              // 进程退出码
-    QString output;                 // 标准输出内容
-    QString errorOutput;            // 标准错误输出内容
-    QString command;                // 执行的命令(用于调试)
-    int executionTime = 0;          // 命令执行时间(毫秒)
-    
-    // 构造函数
-    CommandResult() = default;
-    CommandResult(bool _success, int _exitCode, const QString& _output, 
-                    const QString& _errorOutput = "", const QString& _command = "", 
-                    int _executionTime = 0)
-        : success(_success), exitCode(_exitCode), output(_output)
-        , errorOutput(_errorOutput), command(_command), executionTime(_executionTime) {}
-    
-    // 判断是否成功的便捷方法
-    bool isSuccess() const { return success && exitCode == 0; }
-    
-    // 获取所有输出(标准输出优先，如果为空则返回错误输出)
-    QString getAllOutput() const { 
-        return output.isEmpty() ? errorOutput : output; 
-    }
-};
-
-// @brief 设备当前活动信息
-struct DeviceActivityInfo {
-    QString windowCode;
-    QString cutPackage;
-    QString cutActivity;
-};
-
-// @brief 设备详细信息
-struct DeviceDetailInfo {
-    QString manufacturer;   // 厂商
-    QString brand;          // 品牌
-    QString model;          // 型号
-    QString deviceName;     // 设备名
-    QString deviceCode;     // 设备代号
-    QString systemInfo;     // 系统信息
-    QString androidVersion; // 安卓版本
-    QString resolving;      //分辨率
-    QString dpi;            // dpi
-    QString macAddr;        // mac地址
-    QString ipAddr;         // ip地址
-    QString cpuInfo;        // cpu信息
-    QString memory;         // 内存容量
-    QString sdkVersion;     // sdk版本
-    QString serialNumber;   // 序列号
-
-    QString maxFrep;    // CPU 最大频率
-    QString maxCoreNum; // CPU 核心数量
-};
-
-// @brief 应用详细信息
-struct AppDetailInfo {
-    QString packageName;
-    QString appName;
-    QString versionName;
-    QString iconBase64;
-    quint64 versionCode;
-    bool isSystemApp;
-    bool isEnabled;
-    QString firstInstallTime;
-    QString lastUpdateTime;
-
-    QString targetsdk;
-    QString minsdk;
-    QString appid;
-    QString path;
-};
-
-// 重新声明枚举用于QML注册
 enum AppState {
-    Enable, 
-    Disable, 
+    Enable,
+    Disable,
     Unknown
 };
 Q_ENUM_NS(AppState)
 
-// 重新声明枚举用于QML注册
 enum ControlType {
     Music,
     Key,
@@ -109,7 +27,6 @@ enum ControlType {
 };
 Q_ENUM_NS(ControlType)
 
-// 重新声明枚举用于QML注册
 enum MusicControl {
     PreviousSong = 0,
     StopPlay,
@@ -120,7 +37,6 @@ enum MusicControl {
 };
 Q_ENUM_NS(MusicControl)
 
-// 重新声明枚举用于QML注册
 enum KeyControl {
     Menu = 0,
     Home,
@@ -140,7 +56,6 @@ enum KeyControl {
 };
 Q_ENUM_NS(KeyControl)
 
-// 重新声明枚举用于QML注册
 enum BroadcastControl {
     NetworkChanged = 0,
     ScreenOpened,
@@ -167,17 +82,22 @@ enum BroadcastControl {
 };
 Q_ENUM_NS(BroadcastControl)
 
-// 重新声明枚举用于QML注册
 enum ChargingType {
-    AC, 
-    USB, 
-    Wireless, 
-    Dock, 
+    AC,
+    USB,
+    Wireless,
+    Dock,
     None
 };
 Q_ENUM_NS(ChargingType)
 
-// @brief 设备电池信息
+enum SoftListType {
+    ThirdParty,
+    System,
+    All
+};
+Q_ENUM_NS(SoftListType)
+
 struct DeviceBatteryInfo {
     ChargingType chargingType;
     uint maxChargingCut;
@@ -192,13 +112,7 @@ struct DeviceBatteryInfo {
     float temperature;
 };
 
-// 重新声明枚举用于QML注册
-enum SoftListType {
-    ThirdParty,
-    System,
-    All
-};
-Q_ENUM_NS(SoftListType)
+class ADBDevice;
 
 class ADBDeviceWorker : public QObject
 {
@@ -224,7 +138,6 @@ private:
     void refreshCutActivityInfo();
     void refreshBatteryInfo();
 
-private:
     QTimer *m_refreshTimer;
     ADBDevice *m_device;
 };

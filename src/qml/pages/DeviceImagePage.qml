@@ -322,7 +322,9 @@ ItemPage {
                             }
                         }
                     }
+                    // === 宏录制功能尚未实现，暂时隐藏 ===
                     RowLayout {
+                        visible: false
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
                         Label {
@@ -344,6 +346,7 @@ ItemPage {
                         }
                     }
                     RowLayout {
+                        visible: false
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
                         Label {
@@ -365,6 +368,7 @@ ItemPage {
                         }
                     }
                     RowLayout {
+                        visible: false
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
                         Label {
@@ -379,6 +383,7 @@ ItemPage {
                         }
                     }
                     RowLayout {
+                        visible: false
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
                         Label {

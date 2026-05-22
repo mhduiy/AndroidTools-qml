@@ -2,7 +2,6 @@
 #include <QDebug>
 #include "../utils/globalsetting.h"
 #include <QFileDialog>
-#include <QApplication>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>

@@ -2,7 +2,9 @@
 #define UTILS_HPP
 
 #include <QMap>
-#include <QtConcurrent/QtConcurrentRun>
+#include <QThreadPool>
+#include <QRunnable>
+#include <functional>
 
 static QMap<QString, QString> serializationInformation(const QString &info)
 {
@@ -10,7 +12,7 @@ static QMap<QString, QString> serializationInformation(const QString &info)
     QStringList l = info.split('\n');
     for (QString &s : l) {
         s = s.simplified();
-        if(s.isEmpty()) {   //过滤空行
+        if (s.isEmpty()) {
             continue;
         }
         QStringList ll = s.split(':');
@@ -19,9 +21,17 @@ static QMap<QString, QString> serializationInformation(const QString &info)
     return res;
 }
 
-static void asyncOperator(std::function<void ()> function)
+inline void asyncOperator(std::function<void()> func)
 {
-    (void)QtConcurrent::run(function);
+    class FnRunnable : public QRunnable
+    {
+    public:
+        FnRunnable(std::function<void()> fn) : m_fn(std::move(fn)) {}
+        void run() override { m_fn(); }
+    private:
+        std::function<void()> m_fn;
+    };
+    QThreadPool::globalInstance()->start(new FnRunnable(std::move(func)));
 }
 
 #endif
