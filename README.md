@@ -1,126 +1,115 @@
-# AndroidTools-qml
+# AndroidTools
 
-[中文介绍](README.zh_CN.md)
+[![License](https://img.shields.io/github/license/mhduiy/AndroidTools-qml)](LICENSE)
+[![Build](https://github.com/mhduiy/AndroidTools-qml/actions/workflows/compile-project.yml/badge.svg)](https://github.com/mhduiy/AndroidTools-qml/actions/workflows/compile-project.yml)
+[![Deb Package](https://github.com/mhduiy/AndroidTools-qml/actions/workflows/build-deb.yml/badge.svg)](https://github.com/mhduiy/AndroidTools-qml/actions/workflows/build-deb.yml)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)]()
 
-## One sentence introduction
+A cross-platform Android toolbox with modern GUI, built on Qt6 + QML. Think of it as a graphical interface for ADB — manage devices, install apps, control settings, flash firmware, and mirror screens, all without touching the command line.
 
-A cross platform Android toolbox developed using Qt based on ADB tools, previously known as [AndroidTools](https://github.com/mhduiy/AndroidTools)The QML refactoring version can be considered as ADB's GUI tool
+> Previously [AndroidTools](https://github.com/mhduiy/AndroidTools), rewritten in QML for a fluid, animated UI.
 
-https://zread.ai/mhduiy/AndroidTools-qml
+---
 
-## Display image
+## Features
 
-![alt text](doc/image0.png)
+### Device Info
+- Hardware details: manufacturer, model, brand, serial number, SDK version
+- Real-time battery monitor with charging type, voltage, temperature
+- CPU architecture, core count, max frequency
+- Memory and storage overview
+- Foreground activity tracking
 
-## Why is there this project
+### Device Control
+- Music playback control (play/pause, next, previous, volume)
+- Hardware key simulation (home, back, power, brightness, camera, etc.)
+- Broadcast injection — simulate system events like network change, low battery, boot complete
+- Battery spoofing — fake charge level and charging state for testing
+- Resolution and DPI modification on the fly
+- File push/pull between PC and device
+- Keyboard passthrough — type on PC, input goes to device
+- Manual activity launcher
 
-1. Driven by interest
-2. Currently, some ADB tools generally have fewer functions, and the UI is relatively ugly without animations (I personally like animations)
-3. Consolidate the coding capabilities of C++and QML
-4. ...
+### App Management
+- List installed apps (user, system, or all) with version info
+- Install APK with advanced options (downgrade, overwrite, SD card install)
+- Uninstall, force-stop, clear data
+- Freeze/unfreeze (disable/enable) apps
+- Extract APK to PC
+- Launch apps remotely
 
-## What functions are included in the plan
+### Screen Mirroring
+- Low-latency screen projection via scrcpy
+- Configurable bitrate, resolution, and frame rate
+- Screenshot capture
+- Touch and click interaction on the mirrored screen
 
-#### Program framework
+### Flash Tools
+- Fastboot device detection and management
+- Temporary boot (boot an image without flashing)
+- Flash or erase specific partitions
+- Flash script execution in terminal
+- Xiaomi fastboot flash support
+- Firmware package extraction
 
-- [x] Customize TitleBar
-- [x] Wireless connection
-- [x] Multi device connection
-- [x] Cross platform support
+### Settings
+- Light / dark theme toggle
+- Customizable wallpaper with blur and opacity controls
+- Configurable device polling interval
+- Persistent configuration
 
-#### Equipment information
+---
 
-- [x] Display of basic equipment information, model, serial number, etc
-- [x] Real time battery information
-- [x] Front end application management
-- [x] CPU and other monitoring strips
+## Quick Start
 
-#### Equipment control
+### Prerequisites
+- **Qt 6** (Core, Quick, Widgets, Network, WebSockets, QuickControls2, Concurrent)
+- **ADB** installed and available in `PATH` ([Platform Tools](https://developer.android.com/tools/releases/platform-tools))
 
-- [x] Music control
-- [x] Button simulation
-- [x] Broadcast control
-- [x] Electricity camouflage
-- [x] Resolution and DPI modification
-- [x] File transfer
-- [x] Keyboard sharing
-- [x] Manual activation of activity
+### Build
 
-#### Software Management
+```bash
+git clone --recursive https://github.com/mhduiy/AndroidTools-qml.git
+cd AndroidTools-qml
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+```
 
-- [x] Viewing basic information of device installation software
-- [x] Basic software operations, uninstallation, stopping, etc
-- [x] Extract software, freeze and unfreeze (disabled function of old Android)
-- [x] Start the software or increase the capacity
-- [x] Install software
-- [x] Advanced installation, downgrade installation, overwrite installation, installation to location SD card, etc
+On macOS you also need FFmpeg:
+```bash
+brew install ffmpeg
+```
 
-#### Flashing tool
+### Usage
+1. Enable USB Debugging (or Wireless Debugging) on your Android device
+2. Connect via USB or pair wirelessly in the app
+3. Select your device from the sidebar
+4. Start using any feature
 
-- [x] Fastboot device detection
-- [x] Temporary boot up
-- [x] Clear/flash specified partition
-- [ ] Execution of flashing scripts (supports cross platform)
-- [ ] Quick flashing for Xiaomi devices
-- [ ] Unpacking of line brush package/card brush package
-- [ ] Convert wire brush package to card brush package
-- [ ] Convert card brush package to wire brush package
-- [ ] Friend Chain
-- [ ] Quick patch installation of Magisk
+---
 
-#### Device image
+## Roadmap
 
-- [x] Device screen projection
-- [x] Device screenshot
-- [x] Screen projection parameter control
-- [x] Simulate Click
-- [ ] Recording macros
+- [ ] Logcat viewer with real-time filtering
+- [ ] Macro recording and playback for screen mirroring
+- [ ] Magisk patch installer
+- [ ] System tray battery indicator
+- [ ] EXE / AppImage packaging
+- [ ] Migrate UI components to FluentUI
 
-#### Setting up
+---
 
-- [x] Persistent storage
-- [x] Switching between dark and light colors
-- [x] Blurriness and Transparency of Wallpaper
-- [ ] ADB detection interval
-- [x] Element Transparency
+## Acknowledgments
 
-#### Other
+This project builds upon the work of these great projects:
 
-- [ ] Device battery icon on the system tray
-- [ ] exe package support
-- [ ] Deb package support
-- [ ] Automated Building and Publishing of GitHub Actions
+- [QtScrcpy](https://github.com/barry-ran/QtScrcpy) — scrcpy integration and video decoding
+- [QmlScrcpy](https://github.com/mahdi-cpp/QmlScrcpy) — QML-based scrcpy GUI reference
+- [FluentUI](https://github.com/zhuzichu520/FluentUI) — Fluent Design component library for QML
+- [awesome-adb](https://github.com/mzlogin/awesome-adb) — Comprehensive ADB command reference
 
-## Compile
+---
 
-prerequisite
+## License
 
-- Qt6
-
-## How to use
-
-1. Install ADB => https://developer.android.com/tools/releases/platform-tools
-2. Add the bin directory of ADB tool to the PATH environment variable
-3. The device to be connected needs to enable USB debugging or wireless debugging in developer mode
-4. Open this software to automatically detect device connections
-5. You can start using it now
-
-## Other Display Images
-
-![](doc/1.png)
-![](doc/2.png)
-![](doc/5.png)
-![](doc/3.png)
-![](doc/4.png)
-
-## Thank
-
-The development of this project referred to the following projects. Thank you, experts
-
-[QmlScrcpy]( https://github.com/mahdi-cpp/QmlScrcpy )
-
-[QtScrcpy]( https://github.com/barry-ran/QtScrcpy )
-
-[FluentUI]( https://github.com/zhuzichu520/FluentUI )
-
-[ wesome]( https://github.com/mzlogin/awesome-adb )
+[MIT](LICENSE)
