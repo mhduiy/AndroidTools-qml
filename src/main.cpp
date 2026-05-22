@@ -102,7 +102,11 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
-    const QUrl url("qrc:/qml/Main.qml");
+    // TODO: Make FluentUI QML import path cross-platform (CMake install step)
+#ifdef Q_OS_MACOS
+    engine.addImportPath("/opt/homebrew/qml");
+#endif
+    const QUrl url("qrc:/qml2/Main.qml");
     engine.load(url);
     qInfo() << "QML界面加载完成，用时(ms):" << loaderTimer.elapsed();
 

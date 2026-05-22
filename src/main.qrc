@@ -1,33 +1,21 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/Main.qml</file>
-        <file>qml/components/ControlListview.qml</file>
-        <file>qml/components/DeviceListview.qml</file>
-        <file>qml/components/StandardComponent.qml</file>
-        <file>qml/components/BatteryRect.qml</file>
-        <file>qml/components/SettingItem.qml</file>
-        <file>qml/components/TitleBar.qml</file>
-        <file>qml/components/MonitorItem.qml</file>
-        <file>qml/components/AdbServerStartDialog.qml</file>
-        <file>qml/pages/DeviceInfoPage.qml</file>
-        <file>qml/pages/DeviceControlPage.qml</file>
-        <file>qml/pages/DeviceAppPage.qml</file>
-        <file>qml/pages/DeviceFlashPage.qml</file>
-        <file>qml/pages/DeviceImagePage.qml</file>
-        <file>qml/pages/SettingPage.qml</file>
-        <file>qml/pages/LogPage.qml</file>
         <file>res/backgroundImage.jpeg</file>
-        <file>res/closeIcon.png</file>
-        <file>res/errorIcon.png</file>
-        <file>res/successIcon.png</file>
-        <file>res/warningIcon.png</file>
         <file>res/shaders/fragment.fsh</file>
         <file>res/shaders/vertex.vsh</file>
         <file>res/scrcpy-server</file>
         <file>res/androidtools-server</file>
-        <file>qml/pages/ItemPage.qml</file>
-        <file>qml/components/AppInfoItem.qml</file>
-        <file>qml/components/MonitorBarItem.qml</file>
-        <file>qml/components/LeftBar.qml</file>
+
+        <file>qml2/Main.qml</file>
+        <file>qml2/pages/DeviceInfoPage.qml</file>
+        <file>qml2/pages/DeviceControlPage.qml</file>
+        <file>qml2/pages/DeviceAppPage.qml</file>
+        <file>qml2/pages/DeviceFlashPage.qml</file>
+        <file>qml2/pages/DeviceImagePage.qml</file>
+        <file>qml2/pages/LogPage.qml</file>
+        <file>qml2/pages/SettingPage.qml</file>
+        <file>qml2/components/BatteryCanvas.qml</file>
+        <file>qml2/components/NotificationOverlay.qml</file>
+        <file>qml2/components/NotifItem.qml</file>
     </qresource>
 </RCC>

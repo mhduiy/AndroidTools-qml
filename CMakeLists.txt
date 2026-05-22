@@ -13,7 +13,6 @@ file(GLOB_RECURSE QML_PATHS src/qml/*.qml)
 
 set(RES_PATHS
     src/main.qrc
-    ${CMAKE_SOURCE_DIR}/src/MFloat/mfloat.qrc
 )
 
 set(SRC_PATHS
@@ -46,38 +45,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(${EXE_NAME} PRIVATE QT_QML_DEBUG)
 endif()
 
-
-# MFloat
-file(GLOB_RECURSE QML_PATHS ${CMAKE_SOURCE_DIR}/src/MFloat/*.qml)
-
-foreach(QML_FILE ${QML_PATHS})
-    get_filename_component(file_name ${QML_FILE} NAME)
-    set_source_files_properties(${QML_FILE}
-        PROPERTIES QT_RESOURCE_ALIAS ${file_name}
-    )
-endforeach()
-
-set(MFloat_QRC_FILE_LIST
-    ${CMAKE_SOURCE_DIR}/src/MFloat/mfloat.qrc
-)
-
-foreach(MFloat_QRC_FILE ${MFloat_QRC_FILE_LIST})
-    get_filename_component(file_name ${MFloat_QRC_FILE} NAME)
-    set_source_files_properties(${MFloat_QRC_FILE}
-        PROPERTIES QT_RESOURCE_ALIAS ${file_name}
-    )
-endforeach()
-
-qt_add_qml_module(${EXE_NAME}
-    URI MFloat
-    VERSION 1.0
-    RESOURCES ${CMAKE_SOURCE_DIR}/src/MFloat/mfloat.qrc
-    RESOURCE_PREFIX
-        /qt/qml
-    QML_FILES
-        ${QML_PATHS}
-)
-
 target_link_libraries(${EXE_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Quick
@@ -97,5 +64,5 @@ install(TARGETS ${EXE_NAME}
     ARCHIVE DESTINATION lib
 )
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/qml DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/qml2 DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/res DESTINATION share/${PROJECT_NAME})
