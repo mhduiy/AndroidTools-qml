@@ -10,7 +10,7 @@ import ConnectManager 1.0
 
 FluContentPage {
     id: page
-    title: "Settings"
+    title: "设置"
 
     Timer {
         id: restartTimer
@@ -29,6 +29,7 @@ FluContentPage {
             // ---- Wallpaper ----
             FluFrame {
                 Layout.fillWidth: true
+                Layout.preferredHeight: 240
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 Layout.topMargin: 12
@@ -38,13 +39,13 @@ FluContentPage {
                     anchors.margins: 16
                     spacing: 10
 
-                    FluText { text: "Wallpaper"; font: FluTextStyle.Subtitle }
+                    FluText { text: "壁纸"; font: FluTextStyle.Subtitle }
 
                     ScrollView {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 90
-                        contentHeight: availableHeight
+                        Layout.preferredHeight: 85
                         RowLayout {
+                            height: 75
                             spacing: 8
                             Repeater {
                                 model: WallPaperModel
@@ -58,25 +59,25 @@ FluContentPage {
                                     MouseArea { anchors.fill: parent; onClicked: WallPaperModel.setCurrentIndex(index) }
                                 }
                             }
-                            FluButton { text: "+ Add"; Layout.preferredWidth: 80; Layout.preferredHeight: 75; onClicked: WallpaperHelper.requestAddCustomWallpaper() }
+                            FluButton { text: "+ 添加"; Layout.preferredWidth: 80; Layout.preferredHeight: 75; onClicked: WallpaperHelper.requestAddCustomWallpaper() }
                         }
                     }
 
                     RowLayout {
-                        FluText { text: "Opacity"; Layout.preferredWidth: 140 }
+                        FluText { text: "不透明度"; Layout.preferredWidth: 140 }
                         FluSlider {
                             id: opacitySlide; Layout.fillWidth: true
-                            from: 0.1; to: 1.0; value: WallpaperHelper.opacity
+                            from: 0.1; to: 1.0; stepSize: 0.05; value: WallpaperHelper.opacity
                             onMoved: WallpaperHelper.opacity = value
                         }
                         FluText { text: Math.round(opacitySlide.value*100)+"%"; Layout.preferredWidth: 40 }
                     }
 
                     RowLayout {
-                        FluText { text: "Blur"; Layout.preferredWidth: 140 }
+                        FluText { text: "模糊"; Layout.preferredWidth: 140 }
                         FluSlider {
                             id: blurSlide; Layout.fillWidth: true
-                            from: 0; to: 64; value: WallpaperHelper.blurRadius
+                            from: 0; to: 64; stepSize: 1; value: WallpaperHelper.blurRadius
                             onMoved: WallpaperHelper.blurRadius = value
                         }
                         FluText { text: Math.round(blurSlide.value); Layout.preferredWidth: 40 }
@@ -87,26 +88,26 @@ FluContentPage {
             // ---- Appearance ----
             FluFrame {
                 Layout.fillWidth: true
+                Layout.preferredHeight: 150
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
 
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 16
+                    anchors { left: parent.left; top: parent.top; right: parent.right; margins: 16 }
                     spacing: 12
 
-                    FluText { text: "Appearance"; font: FluTextStyle.Subtitle }
+                    FluText { text: "外观"; font: FluTextStyle.Subtitle }
 
                     RowLayout {
-                        FluText { text: "Dark Mode"; Layout.preferredWidth: 140 }
+                        FluText { text: "深色模式"; Layout.preferredWidth: 140 }
                         FluToggleSwitch { checked: App.themeType === App.Dark; onClicked: App.setThemeType(checked ? App.Dark : App.Light) }
                     }
 
                     RowLayout {
-                        FluText { text: "Panel Opacity"; Layout.preferredWidth: 140 }
+                        FluText { text: "面板不透明度"; Layout.preferredWidth: 140 }
                         FluSlider {
                             id: panelSlide; Layout.fillWidth: true
-                            from: 0.1; to: 1.0; value: OtherSettingsHandler.wrapperOpacity
+                            from: 0.1; to: 1.0; stepSize: 0.05; value: OtherSettingsHandler.wrapperOpacity
                             onMoved: OtherSettingsHandler.wrapperOpacity = value
                         }
                         FluText { text: Math.round(panelSlide.value*100)+"%"; Layout.preferredWidth: 40 }
@@ -117,24 +118,24 @@ FluContentPage {
             // ---- Advanced ----
             FluFrame {
                 Layout.fillWidth: true
+                Layout.preferredHeight: 195
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
 
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 16
+                    anchors { left: parent.left; top: parent.top; right: parent.right; margins: 16 }
                     spacing: 12
 
-                    FluText { text: "Advanced"; font: FluTextStyle.Subtitle }
+                    FluText { text: "高级"; font: FluTextStyle.Subtitle }
 
                     RowLayout {
                         FluText { text: "OpenGL"; Layout.preferredWidth: 140 }
                         FluToggleSwitch { checked: OtherSettingsHandler.useOpenGL; onClicked: OtherSettingsHandler.useOpenGL = !OtherSettingsHandler.useOpenGL }
-                        FluText { text: "(restart)"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
+                        FluText { text: "(重启生效)"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
                     }
 
                     RowLayout {
-                        FluText { text: "Refresh"; Layout.preferredWidth: 140 }
+                        FluText { text: "刷新间隔"; Layout.preferredWidth: 140 }
                         FluSlider {
                             id: refSlide; Layout.fillWidth: true
                             from: 1000; to: 30000; stepSize: 1000
@@ -145,9 +146,9 @@ FluContentPage {
                     }
 
                     RowLayout {
-                        FluText { text: "ADB Server"; Layout.preferredWidth: 140 }
+                        FluText { text: "ADB服务"; Layout.preferredWidth: 140 }
                         FluButton {
-                            text: "Restart"
+                            text: "重启"
                             onClicked: {
                                 ConnectManager.killADBServer()
                                 ConnectManager.startADBServer()
@@ -161,15 +162,15 @@ FluContentPage {
             // ---- About ----
             FluFrame {
                 Layout.fillWidth: true
+                Layout.preferredHeight: 110
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
 
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 16
+                    anchors { left: parent.left; top: parent.top; right: parent.right; margins: 16 }
                     spacing: 4
 
-                    FluText { text: "About"; font: FluTextStyle.Subtitle }
+                    FluText { text: "关于"; font: FluTextStyle.Subtitle }
                     FluText { text: "AndroidTools v0.1.0"; font: FluTextStyle.Body }
                     FluText { text: "Qt 6.x  ·  MIT License"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
                 }

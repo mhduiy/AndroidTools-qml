@@ -6,7 +6,7 @@ import ADBLog 1.0
 
 FluContentPage {
     id: page
-    title: "ADB Log"
+    title: "ADB日志"
 
     ColumnLayout {
         anchors.fill: parent
@@ -16,11 +16,11 @@ FluContentPage {
         RowLayout {
             Layout.fillWidth: true
             spacing: 6
-            FluTextBox { id: searchBox; Layout.fillWidth: true; placeholderText: "Filter..." }
-            FluButton { text: "Clear"; onClicked: {} }
+            FluTextBox { id: searchBox; Layout.fillWidth: true; placeholderText: "过滤..." }
+            FluButton { text: "清除"; onClicked: {} }
             FluToggleSwitch { id: autoScroll; checked: true }
-            FluText { text: "Auto-scroll"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
-            FluText { text: ADBLog.rowCount() + " entries"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
+            FluText { text: "自动滚动"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
+            FluText { text: ADBLog.rowCount() + " 条"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
         }
 
         FluFrame {

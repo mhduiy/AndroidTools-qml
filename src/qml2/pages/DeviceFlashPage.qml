@@ -8,7 +8,7 @@ import FlashTools 1.0
 
 FluContentPage {
     id: page
-    title: "Flash Tools"
+    title: "刷机工具"
     property string deviceCode: FastBootDeviceManager.currentDeviceCode
 
     // ---- FlashCard inline component ----
@@ -54,7 +54,7 @@ FluContentPage {
                 }
             }
         }
-        FileDialog { id: fdo; title: "Select File"; onAccepted: ip.text = String(currentFile) }
+        FileDialog { id: fdo; title: "选择文件"; onAccepted: ip.text = String(currentFile) }
     }
 
     ScrollView {
@@ -75,13 +75,13 @@ FluContentPage {
                 ColumnLayout {
                     anchors.centerIn: parent
                     spacing: 10
-                    FluText { text: "No Fastboot Device"; font: FluTextStyle.Title; Layout.alignment: Qt.AlignHCenter }
-                    FluText { text: "Reboot into Fastboot mode, then click Refresh."; color: FluTheme.fontSecondaryColor; Layout.alignment: Qt.AlignHCenter }
+                    FluText { text: "无Fastboot设备"; font: FluTextStyle.Title; Layout.alignment: Qt.AlignHCenter }
+                    FluText { text: "重启进入Fastboot模式后点击刷新"; color: FluTheme.fontSecondaryColor; Layout.alignment: Qt.AlignHCenter }
                     RowLayout {
                         Layout.alignment: Qt.AlignHCenter
                         spacing: 8
-                        FluButton { text: "Refresh"; onClicked: FastBootDeviceManager.updateDevices() }
-                        FluButton { text: "Reboot to Fastboot"; onClicked: FastBootDeviceManager.rebootToFastBoot("") }
+                        FluButton { text: "刷新"; onClicked: FastBootDeviceManager.updateDevices() }
+                        FluButton { text: "重启到Fastboot"; onClicked: FastBootDeviceManager.rebootToFastBoot("") }
                     }
                 }
             }
@@ -94,12 +94,12 @@ FluContentPage {
                 RowLayout {
                     anchors.fill: parent
                     anchors.margins: 12
-                    FluText { text: "Device: " + deviceCode; font: FluTextStyle.BodyStrong }
+                    FluText { text: "设备: " + deviceCode; font: FluTextStyle.BodyStrong }
                     Item { Layout.fillWidth: true }
-                    FluButton { text: "Refresh"; onClicked: FastBootDeviceManager.updateDevices() }
-                    FluButton { text: "Reboot FB"; onClicked: FastBootDeviceManager.rebootToFastBoot("") }
-                    FluButton { text: "System"; onClicked: FastBootDeviceManager.rebootToSystem("") }
-                    FluButton { text: "PowerOff"; onClicked: FastBootDeviceManager.powerOff("") }
+                    FluButton { text: "刷新"; onClicked: FastBootDeviceManager.updateDevices() }
+                    FluButton { text: "重启FB"; onClicked: FastBootDeviceManager.rebootToFastBoot("") }
+                    FluButton { text: "系统"; onClicked: FastBootDeviceManager.rebootToSystem("") }
+                    FluButton { text: "关机"; onClicked: FastBootDeviceManager.powerOff("") }
                 }
             }
 
@@ -111,30 +111,30 @@ FluContentPage {
                 visible: !!deviceCode
 
                 FlashCard {
-                    ti: "Temp Boot"
-                    ds: "Boot image without flashing"
+                    ti: "临时启动"
+                    ds: "不刷入的情况下启动镜像"
                     Layout.fillWidth: true
                     ph: "boot.img"
-                    bt: "Boot"
+                    bt: "启动"
                     onA: function(p) { FlashTools.startBoot("", p) }
                 }
                 FlashCard {
-                    ti: "Flash"
-                    ds: "Flash image to partition"
+                    ti: "刷入"
+                    ds: "将镜像刷入分区"
                     Layout.fillWidth: true
                     sp: true
                     ph: "image.img"
                     pp: "boot"
-                    bt: "Flash"
+                    bt: "刷入"
                     onAP: function(p, pt) { FlashTools.flash("", pt, p) }
                 }
                 FlashCard {
-                    ti: "Erase"
-                    ds: "Clear a partition"
+                    ti: "擦除"
+                    ds: "清除分区"
                     Layout.fillWidth: true
                     op: true
                     pp: "cache"
-                    bt: "Erase"
+                    bt: "擦除"
                     onAPO: function(pt) { FlashTools.clear("", pt) }
                 }
             }
@@ -144,32 +144,32 @@ FluContentPage {
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 visible: !!deviceCode
-                headerText: "Advanced"
+                headerText: "高级"
                 content: ColumnLayout {
                     spacing: 8
                     RowLayout {
-                        FluTextBox { id: sp; placeholderText: "Script path"; Layout.fillWidth: true }
+                        FluTextBox { id: sp; placeholderText: "脚本路径"; Layout.fillWidth: true }
                         FluButton { text: "..."; onClicked: sd.open() }
-                        FluTextBox { id: sw; placeholderText: "Work dir"; Layout.fillWidth: true }
-                        FluButton { text: "Execute"; onClicked: FlashTools.executeScript("", sp.text, sw.text) }
+                        FluTextBox { id: sw; placeholderText: "工作目录"; Layout.fillWidth: true }
+                        FluButton { text: "执行"; onClicked: FlashTools.executeScript("", sp.text, sw.text) }
                     }
                     RowLayout {
-                        FluTextBox { id: xp; placeholderText: "Xiaomi package"; Layout.fillWidth: true }
+                        FluTextBox { id: xp; placeholderText: "小米线刷包"; Layout.fillWidth: true }
                         FluButton { text: "..."; onClicked: xd.open() }
-                        FluButton { text: "Flash"; onClicked: FlashTools.flashToXiaomi("", xp.text) }
+                        FluButton { text: "刷入"; onClicked: FlashTools.flashToXiaomi("", xp.text) }
                     }
                     RowLayout {
-                        FluTextBox { id: zi; placeholderText: "Archive"; Layout.fillWidth: true }
+                        FluTextBox { id: zi; placeholderText: "压缩包"; Layout.fillWidth: true }
                         FluButton { text: "..."; onClicked: zd.open() }
-                        FluTextBox { id: zo; placeholderText: "Output"; Layout.fillWidth: true }
-                        FluButton { text: "Extract"; onClicked: FlashTools.unzip(zi.text, zo.text) }
+                        FluTextBox { id: zo; placeholderText: "输出"; Layout.fillWidth: true }
+                        FluButton { text: "解压"; onClicked: FlashTools.unzip(zi.text, zo.text) }
                     }
                 }
             }
         }
     }
 
-    FileDialog { id: sd; title: "Select Script"; onAccepted: sp.text = String(currentFile) }
-    FileDialog { id: xd; title: "Select Package"; onAccepted: xp.text = String(currentFile) }
-    FileDialog { id: zd; title: "Select Archive"; onAccepted: zi.text = String(currentFile) }
+    FileDialog { id: sd; title: "选择脚本"; onAccepted: sp.text = String(currentFile) }
+    FileDialog { id: xd; title: "选择线刷包"; onAccepted: xp.text = String(currentFile) }
+    FileDialog { id: zd; title: "选择压缩包"; onAccepted: zi.text = String(currentFile) }
 }

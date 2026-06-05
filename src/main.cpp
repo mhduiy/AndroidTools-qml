@@ -12,6 +12,7 @@
 #include "cpp/adb/adbdevice.h"
 #include "src/cpp/adb/devicehelper.h"
 #include "cpp/components/fpsitem.h"
+#include "cpp/components/SystemInfoProvider.h"
 #include "cpp/utils/globalsetting.h"
 #include "cpp/utils/constants.h"
 #include "cpp/utils/notificationcontroller.h"
@@ -85,6 +86,7 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonInstance("NotificationController", 1, 0, "NotificationController", NotificationController::instance());
     qmlRegisterType<FpsItem>("FpsItem", 1, 0, "FpsItem");
     qmlRegisterType<ImageFrameItem>("ImageFrameItem", 1, 0, "ImageFrameItem");
+    qmlRegisterSingletonInstance("SystemInfo", 1, 0, "SystemInfo", SystemInfoProvider::instance());
     qmlRegisterSingletonInstance("App", 1, 0, "App", App);
     qmlRegisterSingletonInstance("ConnectManager", 1, 0, "ConnectManager", ADT::ConnectManager::instance());
     qmlRegisterSingletonInstance("DeviceHelper", 1, 0, "DeviceHelper", ADT::DeviceHelper::instance());

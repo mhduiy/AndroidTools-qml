@@ -12,7 +12,7 @@ import NotificationController 1.0
 
 FluContentPage {
     id: page
-    title: "Screen Mirror"
+    title: "屏幕镜像"
 
     property var device: ConnectManager.cutADBDevice
 
@@ -28,7 +28,7 @@ FluContentPage {
             visible: !device
             FluText {
                 anchors.centerIn: parent
-                text: "Connect a device to start screen mirroring"
+                text: "连接设备以开始屏幕镜像"
                 color: FluTheme.fontSecondaryColor
             }
         }
@@ -81,11 +81,11 @@ FluContentPage {
                 anchors { fill: parent; margins: 14 }
                 spacing: 10
 
-                FluText { text: "Control"; font: FluTextStyle.BodyStrong }
+                FluText { text: "控制"; font: FluTextStyle.BodyStrong }
 
                 RowLayout {
                     FluButton {
-                        text: Resource.mirror ? "Stop" : "Start"
+                        text: Resource.mirror ? "停止" : "开始"
                         Layout.fillWidth: true
                         onClicked: {
                             if (Resource.mirror) Resource.qmlRequest("REQUEST_MIRROR_FINISH", "")
@@ -93,7 +93,7 @@ FluContentPage {
                         }
                     }
                     FluButton {
-                        text: "Shot"
+                        text: "截图"
                         Layout.fillWidth: true
                         onClicked: ImageDetailTools.shotScreen("")
                     }
@@ -101,25 +101,25 @@ FluContentPage {
 
                 FluDivider {}
 
-                FluText { text: "Frame Rate"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
+                FluText { text: "帧率"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
                 RowLayout {
                     FluTextBox { id: fpsInput; text: ScrcpyConfig.maxFps; Layout.fillWidth: true }
-                    FluButton { text: "Set"; onClicked: { ScrcpyConfig.maxFps = parseInt(fpsInput.text)||30; restartMirror() } }
+                    FluButton { text: "设置"; onClicked: { ScrcpyConfig.maxFps = parseInt(fpsInput.text)||30; restartMirror() } }
                 }
 
-                FluText { text: "Bitrate (Kbps)"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
+                FluText { text: "码率 (Kbps)"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
                 RowLayout {
                     FluTextBox { id: rateInput; text: ScrcpyConfig.kBitRate; Layout.fillWidth: true }
-                    FluButton { text: "Set"; onClicked: { ScrcpyConfig.kBitRate = parseInt(rateInput.text)||8000; restartMirror() } }
+                    FluButton { text: "设置"; onClicked: { ScrcpyConfig.kBitRate = parseInt(rateInput.text)||8000; restartMirror() } }
                 }
 
                 FluDivider {}
 
-                FluText { text: "Record"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
+                FluText { text: "录制"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
                 RowLayout {
                     FluTextBox { id: recPath; text: ScrcpyConfig.recordOutPath; Layout.fillWidth: true }
                     FluButton {
-                        text: "Rec"; Layout.fillWidth: true
+                        text: "录制"; Layout.fillWidth: true
                         onClicked: {
                             ScrcpyConfig.recordOutPath = recPath.text
                             if(!Resource.mirror) Resource.qmlRequest("REQUEST_MIRROR_START","")

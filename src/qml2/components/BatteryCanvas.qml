@@ -109,7 +109,7 @@ Canvas {
         if (charging) {
             ctx.fillStyle = "#4fc3f7"
             ctx.font = Math.round(bh * 0.12) + "px sans-serif"
-            ctx.fillText("CHARGING", w / 2, by + bh + 18)
+            ctx.fillText("充电中", w / 2, by + bh + 18)
         }
     }
 }

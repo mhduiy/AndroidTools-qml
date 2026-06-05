@@ -60,43 +60,25 @@ FluWindow {
 
         items: FluObject {
             FluPaneItem {
-                title: "Device Info"
-                icon: FluentIcons.Phone
-                url: "qrc:/qml2/pages/DeviceInfoPage.qml"
+                title: "主页"
+                icon: FluentIcons.Home
+                url: "qrc:/qml2/pages/HomePage.qml"
                 onTap: { navView.push(url) }
             }
             FluPaneItem {
-                title: "Device Control"
-                icon: FluentIcons.Game
-                url: "qrc:/qml2/pages/DeviceControlPage.qml"
-                onTap: { navView.push(url) }
-            }
-            FluPaneItem {
-                title: "App Manager"
+                title: "应用管理"
                 icon: FluentIcons.AllApps
                 url: "qrc:/qml2/pages/DeviceAppPage.qml"
                 onTap: { navView.push(url) }
             }
             FluPaneItem {
-                title: "Flash Tools"
+                title: "刷机工具"
                 icon: FluentIcons.DeveloperTools
                 url: "qrc:/qml2/pages/DeviceFlashPage.qml"
                 onTap: { navView.push(url) }
             }
             FluPaneItem {
-                title: "Screen Mirror"
-                icon: FluentIcons.TVMonitor
-                url: "qrc:/qml2/pages/DeviceImagePage.qml"
-                onTap: { navView.push(url) }
-            }
-            FluPaneItem {
-                title: "ADB Log"
-                icon: FluentIcons.CommandPrompt
-                url: "qrc:/qml2/pages/LogPage.qml"
-                onTap: { navView.push(url) }
-            }
-            FluPaneItem {
-                title: "Settings"
+                title: "设置"
                 icon: FluentIcons.Settings
                 url: "qrc:/qml2/pages/SettingPage.qml"
                 onTap: { navView.push(url) }

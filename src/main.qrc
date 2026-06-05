@@ -7,6 +7,7 @@
         <file>res/androidtools-server</file>
 
         <file>qml2/Main.qml</file>
+        <file>qml2/pages/HomePage.qml</file>
         <file>qml2/pages/DeviceInfoPage.qml</file>
         <file>qml2/pages/DeviceControlPage.qml</file>
         <file>qml2/pages/DeviceAppPage.qml</file>
@@ -14,6 +15,7 @@
         <file>qml2/pages/DeviceImagePage.qml</file>
         <file>qml2/pages/LogPage.qml</file>
         <file>qml2/pages/SettingPage.qml</file>
+        <file>qml2/components/CircleGauge.qml</file>
         <file>qml2/components/BatteryCanvas.qml</file>
         <file>qml2/components/NotificationOverlay.qml</file>
         <file>qml2/components/NotifItem.qml</file>
