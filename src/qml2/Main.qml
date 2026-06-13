@@ -68,6 +68,12 @@ FluWindow {
                 url: "qrc:/qml2/pages/HomePage.qml"
                 onTap: { navView.push(url) }
             }
+            FluPaneItem {
+                title: "性能"
+                icon: FluentIcons.SpeedHigh
+                url: "qrc:/qml2/pages/PerformancePage.qml"
+                onTap: { navView.push(url) }
+            }
         }
 
         footerItems: FluObject {

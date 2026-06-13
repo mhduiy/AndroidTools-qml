@@ -107,7 +107,7 @@ void ResourceService::setFrameSize(QSize size) {
         setOrientation(DisplayOrientation::LANDSCAPE);
     }
 
-    //emit frameSizeChanged(m_frameSize);
+    emit frameSizeChanged(m_frameSize);
     //emit cppGenerateEvents("FRAME_SIZE_CHANGED", "");
 }
 
@@ -148,5 +148,4 @@ void ResourceService::clearMirrorCash() {
     mirror->resolution = 1080;
     mirror->connectionType = "";
 }
-
 

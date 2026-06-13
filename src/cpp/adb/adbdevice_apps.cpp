@@ -67,7 +67,12 @@ QString ADBDevice::getAppIconBase64(const QString &packageName) const
         return {};
     }
 
-    return "data:image/png;base64," + jsonDoc.object().value("iconBase64").toString();
+    QString iconBase64 = jsonDoc.object().value("iconBase64").toString();
+    if (iconBase64.isEmpty() || iconBase64.startsWith("data:")) {
+        return iconBase64;
+    }
+
+    return "data:image/png;base64," + iconBase64;
 }
 
 bool ADBDevice::installApp(const QString &path, bool r, bool s, bool d, bool g)

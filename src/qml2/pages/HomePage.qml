@@ -23,6 +23,7 @@ import ADBLog 1.0
 import ADT 1.0
 import SystemInfo 1.0
 import "qrc:/qml2/components"
+import "qrc:/qml2/pages/home"
 
 FluContentPage {
     id: page
@@ -37,6 +38,7 @@ FluContentPage {
     property string transferLocalPath: ""
     property string fastbootImagePath: ""
     property string flashZipPath: ""
+    property int workbenchIndex: 0
     property real ramPct: SystemInfo.ramTotal > 0 ? Math.round(SystemInfo.ramUsage / SystemInfo.ramTotal * 100) : 0
     property real storagePct: SystemInfo.storageTotal > 0 ? Math.round(SystemInfo.storageUsed / SystemInfo.storageTotal * 100) : 0
     property real batteryTemp: device ? device.batteryTemperature : 0
@@ -95,8 +97,19 @@ FluContentPage {
         Resource.qmlRequest("REQUEST_MIRROR_START", "")
     }
 
+    function mirrorFrameRatio() {
+        try {
+            if (mirrorView.image && mirrorView.image.width > 0 && mirrorView.image.height > 0)
+                return mirrorView.image.width / mirrorView.image.height
+        } catch (e) {
+        }
+        if (Resource.frameSize && Resource.frameSize.width > 0 && Resource.frameSize.height > 0)
+            return Resource.frameSize.width / Resource.frameSize.height
+        return Resource.orientation === 1 ? 16 / 9 : 9 / 16
+    }
+
     function openTool(index) {
-        workbench.currentIndex = index
+        page.workbenchIndex = index
     }
 
     function selectApp(pkg, name, version, icon) {
@@ -151,465 +164,65 @@ FluContentPage {
     }
 
     Popup {
-        id: fpsPopup
-        width: 300
-        implicitHeight: qualityContent.implicitHeight + padding * 2
-        x: parent.width - width - 18
-        y: 58
-        padding: 14
+        id: mirrorPopup
+        width: Math.min((parent ? parent.width : 1180) - 56, 980)
+        height: Math.min((parent ? parent.height : 760) - 56, 680)
+        x: parent ? (parent.width - width) / 2 : 28
+        y: parent ? (parent.height - height) / 2 : 28
+        padding: 12
         modal: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
         background: Rectangle {
-            radius: 8
-            color: FluTheme.dark ? Qt.rgba(0.10, 0.11, 0.13, 0.98) : Qt.rgba(1, 1, 1, 0.98)
-            border.color: FluTheme.dividerColor
+            radius: 10
+            color: "#050608"
+            border.width: 1
+            border.color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(0, 0, 0, 0.28)
         }
-        contentItem: ColumnLayout {
-            id: qualityContent
-            width: fpsPopup.availableWidth
-            spacing: 9
-            FluText { text: "投屏质量"; font: FluTextStyle.BodyStrong }
-            GridLayout {
-                columns: 2
-                columnSpacing: 10
-                rowSpacing: 8
-                FluText { text: "帧率"; color: FluTheme.fontSecondaryColor }
-                FluTextBox { id: fpsField; text: ScrcpyConfig.maxFps; Layout.fillWidth: true }
-                FluText { text: "码率"; color: FluTheme.fontSecondaryColor }
-                FluTextBox { id: brField; text: ScrcpyConfig.kBitRate; Layout.fillWidth: true }
-            }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 6
-                ActionButton { label: "省电"; icon: FluentIcons.QuietHours; dense: true; Layout.fillWidth: true; onPressed: { fpsField.text = "10"; brField.text = "2500" } }
-                ActionButton { label: "均衡"; icon: FluentIcons.SpeedHigh; dense: true; Layout.fillWidth: true; onPressed: { fpsField.text = "24"; brField.text = "6000" } }
-                ActionButton { label: "清晰"; icon: FluentIcons.Video; dense: true; Layout.fillWidth: true; onPressed: { fpsField.text = "30"; brField.text = "9000" } }
-            }
-            FluFilledButton {
-                text: "应用"
-                Layout.fillWidth: true
-                onClicked: {
-                    ScrcpyConfig.maxFps = parseInt(fpsField.text) || 30
-                    ScrcpyConfig.kBitRate = parseInt(brField.text) || 8000
-                    page.restartMirror()
-                    fpsPopup.close()
+        contentItem: Loader {
+            id: mirrorPopupLoader
+            active: mirrorPopup.visible
+            onLoaded: item.frameRatio = Qt.binding(function() { return page.mirrorFrameRatio() })
+            sourceComponent: Component {
+                Rectangle {
+                    property real frameRatio: 9 / 16
+                    color: "#050608"
+                    radius: 8
+                    clip: true
+
+                    Item {
+                        id: popupMirrorSurface
+                        width: parent.width / parent.height > parent.frameRatio ? parent.height * parent.frameRatio : parent.width
+                        height: parent.width / parent.height > parent.frameRatio ? parent.height : parent.width / parent.frameRatio
+                        anchors.centerIn: parent
+
+                        ImageFrameItem {
+                            anchors.fill: parent
+                            imageFrame: mirrorView.image
+                            hasAlphaChannel: false
+                        }
+
+                        MirrorScene {
+                            id: popupMirrorView
+                            anchors.fill: parent
+                        }
+                    }
+
+                    Rectangle {
+                        anchors { right: parent.right; top: parent.top; margins: 10 }
+                        width: 34
+                        height: 30
+                        radius: 7
+                        color: closeMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.18) : Qt.rgba(1, 1, 1, 0.10)
+                        FluIcon { anchors.centerIn: parent; iconSource: FluentIcons.ChromeClose; iconSize: 12; iconColor: "#e5e7eb" }
+                        MouseArea {
+                            id: closeMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: mirrorPopup.close()
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    component Panel: Rectangle {
-        property alias content: body.data
-        radius: 8
-        color: FluTheme.dark ? Qt.rgba(0.10, 0.11, 0.13, 0.76) : Qt.rgba(1, 1, 1, 0.78)
-        border.width: 1
-        border.color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(0, 0, 0, 0.11)
-        layer.enabled: true
-
-        Item {
-            id: body
-            anchors.fill: parent
-        }
-    }
-
-    component Header: RowLayout {
-        property string title: ""
-        property string subtitle: ""
-        spacing: 7
-        FluText { text: parent.title; font: FluTextStyle.BodyStrong }
-        FluText { text: parent.subtitle; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor; elide: Text.ElideRight; Layout.fillWidth: true }
-    }
-
-    component ActionButton: Rectangle {
-        id: button
-        property string label: ""
-        property int icon: 0
-        property color accent: FluTheme.primaryColor
-        property bool dense: false
-        signal pressed()
-
-        Layout.preferredHeight: dense ? 30 : 34
-        radius: 7
-        color: enabled
-               ? (mouse.containsMouse ? Qt.rgba(accent.r, accent.g, accent.b, FluTheme.dark ? 0.24 : 0.14)
-                                      : (FluTheme.dark ? Qt.rgba(1, 1, 1, 0.055) : Qt.rgba(0, 0, 0, 0.035)))
-               : Qt.rgba(0.5, 0.5, 0.5, 0.08)
-        border.width: 1
-        border.color: mouse.containsMouse ? accent : (FluTheme.dark ? Qt.rgba(1,1,1,0.11) : Qt.rgba(0,0,0,0.10))
-        opacity: enabled ? 1 : 0.42
-
-        Behavior on color { ColorAnimation { duration: 120 } }
-        Behavior on border.color { ColorAnimation { duration: 120 } }
-
-        RowLayout {
-            anchors.centerIn: parent
-            spacing: 5
-            FluIcon { iconSource: button.icon; iconSize: button.dense ? 13 : 15; iconColor: button.accent; visible: button.icon > 0 }
-            FluText { text: button.label; font: button.dense ? FluTextStyle.Caption : FluTextStyle.Body; color: FluTheme.fontPrimaryColor }
-        }
-
-        MouseArea {
-            id: mouse
-            anchors.fill: parent
-            hoverEnabled: true
-            enabled: button.enabled
-            onClicked: button.pressed()
-        }
-    }
-
-    component IconKey: Rectangle {
-        id: key
-        property string label: ""
-        property int icon: 0
-        property color accent: FluTheme.primaryColor
-        signal pressed()
-
-        Layout.preferredWidth: 62
-        Layout.preferredHeight: 46
-        radius: 8
-        color: mouse.containsMouse ? Qt.rgba(accent.r, accent.g, accent.b, FluTheme.dark ? 0.25 : 0.14)
-                                   : (FluTheme.dark ? Qt.rgba(1,1,1,0.045) : Qt.rgba(0,0,0,0.030))
-        border.color: mouse.containsMouse ? accent : (FluTheme.dark ? Qt.rgba(1,1,1,0.10) : Qt.rgba(0,0,0,0.09))
-        border.width: 1
-        opacity: enabled ? 1 : 0.4
-
-        ColumnLayout {
-            anchors.centerIn: parent
-            spacing: 2
-            FluIcon { iconSource: key.icon; iconSize: 16; iconColor: key.accent; Layout.alignment: Qt.AlignHCenter }
-            FluText { text: key.label; font: FluTextStyle.Caption; Layout.alignment: Qt.AlignHCenter }
-        }
-
-        MouseArea {
-            id: mouse
-            anchors.fill: parent
-            hoverEnabled: true
-            enabled: key.enabled
-            onClicked: key.pressed()
-        }
-    }
-
-    component MetricLine: ColumnLayout {
-        id: metric
-        property string name: ""
-        property string value: ""
-        property real percent: 0
-        property color accent: FluTheme.primaryColor
-        spacing: 4
-
-        RowLayout {
-            Layout.fillWidth: true
-            FluText { text: metric.name; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor; Layout.fillWidth: true }
-            FluText { text: metric.value; font: FluTextStyle.BodyStrong }
-        }
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 6
-            radius: 3
-            color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(0, 0, 0, 0.055)
-            Rectangle {
-                height: parent.height
-                radius: parent.radius
-                width: Math.max(0, Math.min(parent.width, parent.width * metric.percent / 100))
-                color: metric.accent
-                Behavior on width { SmoothedAnimation { duration: 360 } }
-            }
-        }
-    }
-
-    component SpecRow: RowLayout {
-        property string name: ""
-        property string value: ""
-        spacing: 8
-        FluText { text: parent.name; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor; Layout.preferredWidth: 48 }
-        FluText { text: parent.value; font: FluTextStyle.BodyStrong; elide: Text.ElideRight; Layout.fillWidth: true }
-    }
-
-    component DataTile: Rectangle {
-        id: tile
-        property string label: ""
-        property string value: ""
-        property string sub: ""
-        property color accent: FluTheme.primaryColor
-
-        Layout.fillWidth: true
-        Layout.preferredHeight: 50
-        radius: 7
-        color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.045) : Qt.rgba(0, 0, 0, 0.028)
-        border.width: 1
-        border.color: Qt.rgba(accent.r, accent.g, accent.b, FluTheme.dark ? 0.24 : 0.18)
-
-        ColumnLayout {
-            anchors { fill: parent; leftMargin: 10; rightMargin: 10; topMargin: 6; bottomMargin: 6 }
-            spacing: 0
-            RowLayout {
-                Layout.fillWidth: true
-                Rectangle { Layout.preferredWidth: 5; Layout.preferredHeight: 5; radius: 3; color: tile.accent }
-                FluText { text: tile.label; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor; Layout.fillWidth: true; elide: Text.ElideRight }
-            }
-            FluText { text: tile.value; font: FluTextStyle.BodyStrong; Layout.fillWidth: true; elide: Text.ElideRight }
-            FluText { text: tile.sub; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor; visible: tile.sub.length > 0; Layout.fillWidth: true; elide: Text.ElideRight }
-        }
-    }
-
-    component CompactTile: Rectangle {
-        id: compact
-        property string label: ""
-        property string value: ""
-        property color accent: FluTheme.primaryColor
-
-        Layout.fillWidth: true
-        Layout.preferredHeight: 32
-        radius: 7
-        color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.040) : Qt.rgba(0, 0, 0, 0.024)
-        border.width: 1
-        border.color: Qt.rgba(accent.r, accent.g, accent.b, FluTheme.dark ? 0.18 : 0.13)
-
-        RowLayout {
-            anchors { fill: parent; leftMargin: 8; rightMargin: 8 }
-            spacing: 7
-            Rectangle { Layout.preferredWidth: 5; Layout.preferredHeight: 5; radius: 3; color: compact.accent }
-            FluText { text: compact.label; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor; Layout.preferredWidth: 64; elide: Text.ElideRight }
-            FluText { text: compact.value; font: FluTextStyle.Caption; Layout.fillWidth: true; elide: Text.ElideRight }
-        }
-    }
-
-    component LegendPill: RowLayout {
-        property string label: ""
-        property string value: ""
-        property color accent: FluTheme.primaryColor
-        spacing: 4
-        Rectangle { Layout.preferredWidth: 6; Layout.preferredHeight: 6; radius: 3; color: parent.accent }
-        FluText { text: parent.label + " " + parent.value; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
-    }
-
-    component AppIconBox: Rectangle {
-        id: appIcon
-        property string source: ""
-        property string title: ""
-        property color accent: FluTheme.primaryColor
-
-        radius: 8
-        color: Qt.rgba(accent.r, accent.g, accent.b, FluTheme.dark ? 0.18 : 0.10)
-        border.width: 1
-        border.color: Qt.rgba(accent.r, accent.g, accent.b, FluTheme.dark ? 0.26 : 0.18)
-        clip: true
-
-        Image {
-            anchors.fill: parent
-            anchors.margins: 3
-            source: appIcon.source
-            fillMode: Image.PreserveAspectFit
-            visible: source.length > 0
-            asynchronous: true
-        }
-        FluText {
-            anchors.centerIn: parent
-            text: appIcon.title.length > 0 ? appIcon.title.charAt(0).toUpperCase() : "?"
-            font: FluTextStyle.BodyStrong
-            visible: appIcon.source.length === 0
-            color: appIcon.accent
-        }
-    }
-
-    component ActionCard: Rectangle {
-        id: action
-        property string title: ""
-        property string subtitle: ""
-        property int icon: 0
-        property color accent: FluTheme.primaryColor
-        signal pressed()
-
-        Layout.fillWidth: true
-        Layout.preferredHeight: 48
-        radius: 7
-        color: mouse.containsMouse ? Qt.rgba(accent.r, accent.g, accent.b, FluTheme.dark ? 0.18 : 0.10)
-                                   : (FluTheme.dark ? Qt.rgba(1, 1, 1, 0.04) : Qt.rgba(0, 0, 0, 0.024))
-        border.width: 1
-        border.color: mouse.containsMouse ? accent : Qt.rgba(accent.r, accent.g, accent.b, FluTheme.dark ? 0.20 : 0.14)
-        opacity: enabled ? 1 : 0.42
-
-        RowLayout {
-            anchors { fill: parent; margins: 8 }
-            spacing: 8
-            FluIcon { iconSource: action.icon; iconSize: 17; iconColor: action.accent; Layout.preferredWidth: 20 }
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 0
-                FluText { text: action.title; font: FluTextStyle.Caption; Layout.fillWidth: true; elide: Text.ElideRight }
-                FluText { text: action.subtitle; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor; Layout.fillWidth: true; elide: Text.ElideRight }
-            }
-        }
-
-        MouseArea {
-            id: mouse
-            anchors.fill: parent
-            hoverEnabled: true
-            enabled: action.enabled
-            onClicked: action.pressed()
-        }
-    }
-
-    component MiniGauge: Rectangle {
-        id: mini
-        property string label: ""
-        property string valueText: ""
-        property real value: 0
-        property color accent: FluTheme.primaryColor
-
-        Layout.fillWidth: true
-        Layout.preferredHeight: 44
-        radius: 7
-        color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.045) : Qt.rgba(0, 0, 0, 0.028)
-
-        RowLayout {
-            anchors { fill: parent; margins: 7 }
-            spacing: 8
-            Canvas {
-                id: miniCanvas
-                Layout.preferredWidth: 34
-                Layout.preferredHeight: 34
-                antialiasing: true
-                onPaint: {
-                    var ctx = getContext("2d")
-                    ctx.clearRect(0, 0, width, height)
-                    var cx = width / 2
-                    var cy = height / 2
-                    var r = Math.min(width, height) / 2 - 4
-                    ctx.lineWidth = 4
-                    ctx.strokeStyle = FluTheme.dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.07)"
-                    ctx.beginPath()
-                    ctx.arc(cx, cy, r, -Math.PI * 0.82, Math.PI * 0.82)
-                    ctx.stroke()
-                    ctx.strokeStyle = mini.accent
-                    ctx.beginPath()
-                    ctx.arc(cx, cy, r, -Math.PI * 0.82, -Math.PI * 0.82 + Math.PI * 1.64 * Math.max(0, Math.min(100, mini.value)) / 100)
-                    ctx.stroke()
-                }
-                Connections {
-                    target: mini
-                    function onValueChanged() { miniCanvas.requestPaint() }
-                    function onAccentChanged() { miniCanvas.requestPaint() }
-                }
-            }
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 0
-                FluText { text: mini.label; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
-                FluText { text: mini.valueText; font: FluTextStyle.BodyStrong; Layout.fillWidth: true; elide: Text.ElideRight }
-            }
-        }
-    }
-
-    component Sparkline: Canvas {
-        id: spark
-        property real value: 0
-        property color accent: FluTheme.primaryColor
-        property var samples: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        antialiasing: true
-        Layout.fillWidth: true
-        Layout.preferredHeight: 30
-
-        Timer {
-            interval: 1100
-            running: true
-            repeat: true
-            onTriggered: {
-                var next = spark.samples.slice(1)
-                next.push(Math.max(0, Math.min(100, spark.value)))
-                spark.samples = next
-                spark.requestPaint()
-            }
-        }
-
-        onPaint: {
-            var ctx = getContext("2d")
-            ctx.clearRect(0, 0, width, height)
-            ctx.strokeStyle = Qt.rgba(accent.r, accent.g, accent.b, 0.95)
-            ctx.lineWidth = 2
-            ctx.lineJoin = "round"
-            ctx.beginPath()
-            for (var i = 0; i < samples.length; i++) {
-                var x = samples.length === 1 ? 0 : i * width / (samples.length - 1)
-                var y = height - (samples[i] / 100) * (height - 6) - 3
-                if (i === 0) ctx.moveTo(x, y)
-                else ctx.lineTo(x, y)
-            }
-            ctx.stroke()
-        }
-    }
-
-    component MultiLineChart: Canvas {
-        id: chart
-        property real cpu: 0
-        property real gpu: 0
-        property real ram: 0
-        property real temp: 0
-        property real fps: 0
-        property var cpuSamples: []
-        property var gpuSamples: []
-        property var ramSamples: []
-        property var tempSamples: []
-        property var fpsSamples: []
-        readonly property int sampleCount: 34
-
-        Layout.fillWidth: true
-        Layout.preferredHeight: 58
-        antialiasing: true
-
-        function pushSample(values, nextValue) {
-            var arr = values.slice(Math.max(0, values.length - sampleCount + 1))
-            arr.push(Math.max(0, Math.min(100, nextValue)))
-            while (arr.length < sampleCount)
-                arr.unshift(0)
-            return arr
-        }
-
-        Timer {
-            interval: 1100
-            running: true
-            repeat: true
-            onTriggered: {
-                chart.cpuSamples = chart.pushSample(chart.cpuSamples, chart.cpu)
-                chart.gpuSamples = chart.pushSample(chart.gpuSamples, chart.gpu)
-                chart.ramSamples = chart.pushSample(chart.ramSamples, chart.ram)
-                chart.tempSamples = chart.pushSample(chart.tempSamples, chart.temp)
-                chart.fpsSamples = chart.pushSample(chart.fpsSamples, chart.fps)
-                chart.requestPaint()
-            }
-        }
-
-        function drawLine(ctx, samples, color) {
-            ctx.strokeStyle = color
-            ctx.lineWidth = 1.8
-            ctx.lineJoin = "round"
-            ctx.beginPath()
-            for (var i = 0; i < samples.length; i++) {
-                var x = samples.length <= 1 ? 0 : i * width / (samples.length - 1)
-                var y = height - 10 - samples[i] * (height - 18) / 100
-                if (i === 0) ctx.moveTo(x, y)
-                else ctx.lineTo(x, y)
-            }
-            ctx.stroke()
-        }
-
-        onPaint: {
-            var ctx = getContext("2d")
-            ctx.clearRect(0, 0, width, height)
-            ctx.strokeStyle = FluTheme.dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"
-            ctx.lineWidth = 1
-            for (var i = 0; i < 4; i++) {
-                var y = 8 + i * (height - 16) / 3
-                ctx.beginPath()
-                ctx.moveTo(0, y)
-                ctx.lineTo(width, y)
-                ctx.stroke()
-            }
-            drawLine(ctx, cpuSamples, "#0f7b6c")
-            drawLine(ctx, gpuSamples, "#2563eb")
-            drawLine(ctx, ramSamples, "#7c3aed")
-            drawLine(ctx, tempSamples, "#ca8a04")
-            drawLine(ctx, fpsSamples, "#d83b01")
         }
     }
 
@@ -743,16 +356,19 @@ FluContentPage {
                         RowLayout {
                             Layout.fillWidth: true
                             Header { title: "投屏舞台"; subtitle: page.mirrorActive ? "实时画面" : "待启动"; Layout.fillWidth: true }
-                            ActionButton { label: "质量"; icon: FluentIcons.PlayerSettings; dense: true; Layout.preferredWidth: 72; enabled: !!page.device; onPressed: fpsPopup.open() }
+                            ActionButton { label: "放大"; icon: FluentIcons.FullScreen; dense: true; Layout.preferredWidth: 72; enabled: !!page.device; onPressed: mirrorPopup.open() }
                         }
 
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 288
                             spacing: 8
+                            layoutDirection: Qt.LeftToRight
 
                             Rectangle {
                                 Layout.fillWidth: true
+                                Layout.minimumWidth: 240
+                                Layout.preferredWidth: Math.max(260, parent.width - 140)
                                 Layout.fillHeight: true
                                 radius: 10
                                 color: "#050608"
@@ -760,15 +376,24 @@ FluContentPage {
                                 border.color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(0, 0, 0, 0.18)
                                 clip: true
 
-                                MirrorScene {
-                                    id: mirrorView
-                                    anchors { fill: parent; margins: 2 }
-                                }
+                                Item {
+                                    id: mirrorSurface
+                                    property real frameRatio: page.mirrorFrameRatio()
+                                    width: parent.width / parent.height > frameRatio ? parent.height * frameRatio : parent.width
+                                    height: parent.width / parent.height > frameRatio ? parent.height : parent.width / frameRatio
+                                    anchors.centerIn: parent
 
-                                ImageFrameItem {
-                                    anchors { fill: parent; margins: 2 }
-                                    imageFrame: mirrorView.image
-                                    hasAlphaChannel: false
+                                    ImageFrameItem {
+                                        anchors.fill: parent
+                                        imageFrame: mirrorView.image
+                                        hasAlphaChannel: false
+                                    }
+
+                                    MirrorScene {
+                                        id: mirrorView
+                                        anchors.fill: parent
+                                        z: 1
+                                    }
                                 }
 
                                 Rectangle {
@@ -785,32 +410,83 @@ FluContentPage {
                                 }
                             }
 
-                            GridLayout {
+                            ColumnLayout {
                                 Layout.preferredWidth: 132
+                                Layout.minimumWidth: 132
+                                Layout.maximumWidth: 132
                                 Layout.fillHeight: true
-                                columns: 2
-                                columnSpacing: 6
-                                rowSpacing: 6
-                                IconKey { label: "主页"; icon: FluentIcons.Home; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Home) }
-                                IconKey { label: "返回"; icon: FluentIcons.Back; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Back) }
-                                IconKey { label: "电源"; icon: FluentIcons.PowerButton; enabled: !!page.device; accent: "#ca8a04"; onPressed: DeviceControl.control(ADT.Key, ADT.Power) }
-                                IconKey { label: "菜单"; icon: FluentIcons.GlobalNavButton; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Menu) }
-                                IconKey { label: "音量+"; icon: FluentIcons.Volume; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Music, ADT.VolumeAdd) }
-                                IconKey { label: "音量-"; icon: FluentIcons.Volume; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Music, ADT.VolumeReduce) }
-                                IconKey { label: "静音"; icon: FluentIcons.Mute; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Mute) }
-                                IconKey { label: "重启"; icon: FluentIcons.Refresh; enabled: !!page.device; accent: "#d83b01"; onPressed: DeviceControl.control(ADT.Key, ADT.Reboot) }
-                            }
-                        }
+                                spacing: 6
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 34
-                            spacing: 6
-                            ActionButton { label: "控制"; icon: FluentIcons.Permissions; dense: true; Layout.fillWidth: true; onPressed: page.openTool(0) }
-                            ActionButton { label: "文件"; icon: FluentIcons.Document; dense: true; Layout.fillWidth: true; onPressed: page.openTool(2) }
-                            ActionButton { label: "应用"; icon: FluentIcons.AllApps; dense: true; Layout.fillWidth: true; onPressed: page.openTool(3) }
-                            ActionButton { label: "刷机"; icon: FluentIcons.DeveloperTools; dense: true; Layout.fillWidth: true; accent: "#ca8a04"; onPressed: page.openTool(4) }
-                            ActionButton { label: "日志"; icon: FluentIcons.ReportDocument; dense: true; Layout.fillWidth: true; onPressed: page.openTool(5) }
+                                GridLayout {
+                                    Layout.fillWidth: true
+                                    columns: 2
+                                    columnSpacing: 6
+                                    rowSpacing: 6
+                                    IconKey { label: "主页"; icon: FluentIcons.Home; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Home) }
+                                    IconKey { label: "返回"; icon: FluentIcons.Back; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Back) }
+                                    IconKey { label: "电源"; icon: FluentIcons.PowerButton; enabled: !!page.device; accent: "#ca8a04"; onPressed: DeviceControl.control(ADT.Key, ADT.Power) }
+                                    IconKey { label: "菜单"; icon: FluentIcons.GlobalNavButton; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Menu) }
+                                    IconKey { label: "音量+"; icon: FluentIcons.Volume; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Music, ADT.VolumeAdd) }
+                                    IconKey { label: "音量-"; icon: FluentIcons.Volume; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Music, ADT.VolumeReduce) }
+                                    IconKey { label: "静音"; icon: FluentIcons.Mute; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Mute) }
+                                    IconKey { label: "重启"; icon: FluentIcons.Refresh; enabled: !!page.device; accent: "#d83b01"; onPressed: DeviceControl.control(ADT.Key, ADT.Reboot) }
+                                }
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    radius: 7
+                                    color: FluTheme.dark ? Qt.rgba(1,1,1,0.045) : Qt.rgba(0,0,0,0.028)
+                                    border.width: 1
+                                    border.color: FluTheme.dividerColor
+
+                                    ColumnLayout {
+                                        anchors { fill: parent; margins: 6 }
+                                        spacing: 4
+                                        GridLayout {
+                                            Layout.fillWidth: true
+                                            columns: 1
+                                            rowSpacing: 4
+                                            ActionButton {
+                                                label: "省电"
+                                                icon: FluentIcons.QuietHours
+                                                dense: true
+                                                Layout.fillWidth: true
+                                                enabled: !!page.device
+                                                onPressed: {
+                                                    ScrcpyConfig.maxFps = 10
+                                                    ScrcpyConfig.kBitRate = 2500
+                                                    page.restartMirror()
+                                                }
+                                            }
+                                            ActionButton {
+                                                label: "均衡"
+                                                icon: FluentIcons.SpeedHigh
+                                                dense: true
+                                                Layout.fillWidth: true
+                                                enabled: !!page.device
+                                                onPressed: {
+                                                    ScrcpyConfig.maxFps = 24
+                                                    ScrcpyConfig.kBitRate = 6000
+                                                    page.restartMirror()
+                                                }
+                                            }
+                                            ActionButton {
+                                                label: "清晰"
+                                                icon: FluentIcons.Video
+                                                dense: true
+                                                Layout.fillWidth: true
+                                                enabled: !!page.device
+                                                onPressed: {
+                                                    ScrcpyConfig.maxFps = 30
+                                                    ScrcpyConfig.kBitRate = 9000
+                                                    page.restartMirror()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -879,15 +555,28 @@ FluContentPage {
                 Layout.preferredHeight: 228
                 Layout.maximumHeight: 228
 
-                    FluPivot {
-                        id: workbench
-                        anchors { fill: parent; margins: 10 }
-                        headerHeight: 32
-                        font.pixelSize: 13
+                ColumnLayout {
+                    anchors { fill: parent; margins: 10 }
+                    spacing: 6
 
-                    FluPivotItem {
-                        title: "控制"
-                        contentItem: Component {
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 6
+                        WorkbenchTab { label: "控制"; icon: FluentIcons.Permissions; tabIndex: 0; currentIndex: page.workbenchIndex; onActivated: function(index) { page.workbenchIndex = index } }
+                        WorkbenchTab { label: "快捷"; icon: FluentIcons.FavoriteStar; tabIndex: 1; currentIndex: page.workbenchIndex; accent: "#2563eb"; onActivated: function(index) { page.workbenchIndex = index } }
+                        WorkbenchTab { label: "文件"; icon: FluentIcons.Document; tabIndex: 2; currentIndex: page.workbenchIndex; accent: "#2563eb"; onActivated: function(index) { page.workbenchIndex = index } }
+                        WorkbenchTab { label: "应用"; icon: FluentIcons.AllApps; tabIndex: 3; currentIndex: page.workbenchIndex; accent: "#0f7b6c"; onActivated: function(index) { page.workbenchIndex = index } }
+                        WorkbenchTab { label: "刷机"; icon: FluentIcons.DeveloperTools; tabIndex: 4; currentIndex: page.workbenchIndex; accent: "#ca8a04"; onActivated: function(index) { page.workbenchIndex = index } }
+                        WorkbenchTab { label: "日志"; icon: FluentIcons.ReportDocument; tabIndex: 5; currentIndex: page.workbenchIndex; accent: "#64748b"; onActivated: function(index) { page.workbenchIndex = index } }
+                    }
+
+                    StackLayout {
+                        id: workbench
+                        currentIndex: page.workbenchIndex
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        Item {
                             GridLayout {
                                 anchors { fill: parent; margins: 10 }
                                 columns: 3
@@ -968,11 +657,8 @@ FluContentPage {
                                 }
                             }
                         }
-                    }
 
-                    FluPivotItem {
-                        title: "快捷入口"
-                        contentItem: Component {
+                        Item {
                             GridLayout {
                                 anchors { fill: parent; margins: 10 }
                                 columns: 4
@@ -984,16 +670,12 @@ FluContentPage {
                                 ActionCard { title: "应用管理"; subtitle: "安装、启动、卸载"; icon: FluentIcons.AllApps; onPressed: page.openTool(3) }
                                 ActionCard { title: "刷机维护"; subtitle: "Fastboot 与镜像"; icon: FluentIcons.DeveloperTools; accent: "#ca8a04"; onPressed: page.openTool(4) }
                                 ActionCard { title: "实时日志"; subtitle: "ADB logcat"; icon: FluentIcons.ReportDocument; onPressed: page.openTool(5) }
-                                ActionCard { title: "投屏质量"; subtitle: "FPS / 码率预设"; icon: FluentIcons.PlayerSettings; onPressed: fpsPopup.open() }
                                 ActionCard { title: "截图"; subtitle: "保存当前屏幕"; icon: FluentIcons.Camera; enabled: !!page.device; onPressed: ImageDetailTools.shotScreen("") }
                                 ActionCard { title: "重启设备"; subtitle: "系统重启"; icon: FluentIcons.Refresh; accent: "#d83b01"; enabled: !!page.device; onPressed: DeviceControl.control(ADT.Key, ADT.Reboot) }
                             }
                         }
-                    }
 
-                    FluPivotItem {
-                        title: "文件与输入"
-                        contentItem: Component {
+                        Item {
                             GridLayout {
                                 anchors { fill: parent; margins: 10 }
                                 columns: 2
@@ -1042,11 +724,8 @@ FluContentPage {
                                 }
                             }
                         }
-                    }
 
-                    FluPivotItem {
-                        title: "应用"
-                        contentItem: Component {
+                        Item {
                             RowLayout {
                                 anchors { fill: parent; margins: 8 }
                                 spacing: 8
@@ -1196,11 +875,8 @@ FluContentPage {
                                 }
                             }
                         }
-                    }
 
-                    FluPivotItem {
-                        title: "刷机"
-                        contentItem: Component {
+                        Item {
                             GridLayout {
                                 anchors { fill: parent; margins: 10 }
                                 columns: 3
@@ -1237,11 +913,8 @@ FluContentPage {
                                 }
                             }
                         }
-                    }
 
-                    FluPivotItem {
-                        title: "日志"
-                        contentItem: Component {
+                        Item {
                             ColumnLayout {
                                 anchors { fill: parent; margins: 10 }
                                 spacing: 6

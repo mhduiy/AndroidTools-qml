@@ -83,7 +83,7 @@ void SoftListModel::setIcon(const QString &packageName, const QString &iconBase6
     for (int i = 0; i < m_appListInfo.size(); i++) {
         if (m_appListInfo[i].packageName == packageName) {
             m_appListInfo[i].iconBase64 = iconBase64;
-            emit dataChanged(index(i, 0), index(i, 0));
+            emit dataChanged(index(i, 0), index(i, 0), {AppIconRole});
             break;
         }
     }

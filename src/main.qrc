@@ -8,13 +8,25 @@
 
         <file>qml2/Main.qml</file>
         <file>qml2/pages/HomePage.qml</file>
-        <file>qml2/pages/DeviceInfoPage.qml</file>
-        <file>qml2/pages/DeviceControlPage.qml</file>
-        <file>qml2/pages/DeviceAppPage.qml</file>
-        <file>qml2/pages/DeviceFlashPage.qml</file>
-        <file>qml2/pages/DeviceImagePage.qml</file>
-        <file>qml2/pages/LogPage.qml</file>
+        <file>qml2/pages/PerformancePage.qml</file>
         <file>qml2/pages/SettingPage.qml</file>
+        <file>qml2/pages/home/ActionButton.qml</file>
+        <file>qml2/pages/home/ActionCard.qml</file>
+        <file>qml2/pages/home/AppIconBox.qml</file>
+        <file>qml2/pages/home/CompactTile.qml</file>
+        <file>qml2/pages/home/DataTile.qml</file>
+        <file>qml2/pages/home/Header.qml</file>
+        <file>qml2/pages/home/IconKey.qml</file>
+        <file>qml2/pages/home/LegendPill.qml</file>
+        <file>qml2/pages/home/MetricLine.qml</file>
+        <file>qml2/pages/home/MiniGauge.qml</file>
+        <file>qml2/pages/home/MultiLineChart.qml</file>
+        <file>qml2/pages/home/Panel.qml</file>
+        <file>qml2/pages/home/Sparkline.qml</file>
+        <file>qml2/pages/home/SpecRow.qml</file>
+        <file>qml2/pages/home/WorkbenchTab.qml</file>
+        <file>qml2/pages/performance/PerfChart.qml</file>
+        <file>qml2/pages/performance/PerfMetricCard.qml</file>
         <file>qml2/components/CircleGauge.qml</file>
         <file>qml2/components/BatteryCanvas.qml</file>
         <file>qml2/components/NotificationOverlay.qml</file>

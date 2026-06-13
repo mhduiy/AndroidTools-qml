@@ -182,10 +182,30 @@ ADBDevice::ADBDevice(const QString &code, QObject *parent)
 
 ADBDevice::~ADBDevice()
 {
-    m_workerThread->quit();
-    m_workerThread->wait();
-    m_workerThread->deleteLater();
-    m_worker->deleteLater();
+    if (m_worker) {
+        disconnect(m_worker, nullptr, this, nullptr);
+        if (m_workerThread && m_workerThread->isRunning() && QThread::currentThread() != m_workerThread) {
+            QMetaObject::invokeMethod(m_worker, "stopRefreshRealtimeInfo", Qt::BlockingQueuedConnection);
+            auto worker = m_worker;
+            QMetaObject::invokeMethod(worker, [worker]() {
+                delete worker;
+            }, Qt::BlockingQueuedConnection);
+            m_worker = nullptr;
+        } else {
+            delete m_worker;
+            m_worker = nullptr;
+        }
+    }
+
+    if (m_workerThread) {
+        disconnect(m_workerThread, nullptr, nullptr, nullptr);
+        if (m_workerThread->isRunning()) {
+            m_workerThread->quit();
+            m_workerThread->wait();
+        }
+        delete m_workerThread;
+        m_workerThread = nullptr;
+    }
 }
 
 bool ADBDevice::startAndroidService()
@@ -259,9 +279,6 @@ bool ADBDevice::killAndroidService()
 void ADBDevice::initWorker()
 {
     m_worker->moveToThread(m_workerThread);
-    connect(m_workerThread, &QThread::finished, m_worker, &QObject::deleteLater);
-    connect(m_workerThread, &QThread::finished, m_workerThread, &QObject::deleteLater);
-    connect(m_workerThread, &QThread::finished, this, &ADBDevice::deleteLater);
 
     connect(m_worker, &ADBDeviceWorker::fixInfoRefreshed, this, &ADBDevice::onFixInfoRefreshed);
     connect(m_worker, &ADBDeviceWorker::cutActivityRefreshed, this, &ADBDevice::onCutActivityRefreshed);
