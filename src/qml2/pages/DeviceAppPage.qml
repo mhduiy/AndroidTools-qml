@@ -12,6 +12,14 @@ FluContentPage {
     title: "应用管理"
 
     property var device: ConnectManager.cutADBDevice
+    property string selectedPackage: ""
+
+    function localPath(url) {
+        var path = String(url)
+        if (path.indexOf("file://") === 0)
+            return decodeURIComponent(path.substring(Qt.platform.os === "windows" ? 8 : 7))
+        return path
+    }
 
     RowLayout {
         anchors.fill: parent
@@ -72,7 +80,9 @@ FluContentPage {
                             anchors { fill: parent; margins: 8 }
                             spacing: 10
                             Rectangle {
-                                width: 30; height: 30; radius: 6
+                                Layout.preferredWidth: 30
+                                Layout.preferredHeight: 30
+                                radius: 6
                                 color: FluTheme.dark ? Qt.rgba(1,1,1,0.08) : Qt.rgba(0,0,0,0.06)
                                 FluText { anchors.centerIn: parent; text: model.appName ? model.appName.charAt(0).toUpperCase() : "?"; font: FluTextStyle.BodyStrong }
                             }
@@ -82,7 +92,11 @@ FluContentPage {
 
                         MouseArea {
                             anchors.fill: parent
-                            onClicked: { appListView.currentIndex = index; AppDetailControl.updateInfo(model.packageName) }
+                            onClicked: {
+                                appListView.currentIndex = index
+                                selectedPackage = model.packageName || ""
+                                AppDetailControl.updateInfo(selectedPackage)
+                            }
                         }
                     }
                 }
@@ -103,28 +117,29 @@ FluContentPage {
                 spacing: 12
 
                 FluText {
-                    text: AppDetailControl.packageName || "从列表中选择应用"
+                    text: selectedPackage || "从列表中选择应用"
                     font: FluTextStyle.Subtitle
+                    wrapMode: Text.WrapAnywhere
                 }
 
                 GridLayout {
                     columns: 2; columnSpacing: 16; rowSpacing: 6
-                    visible: !!AppDetailControl.packageName
+                    visible: !!selectedPackage
                     InfoRow { label: "版本"; value: AppDetailControl.versionCode > 0 ? String(AppDetailControl.versionCode) : "--" }
                     InfoRow { label: "安装日期"; value: AppDetailControl.installDate || "--" }
                     InfoRow { label: "最低SDK"; value: AppDetailControl.minSdk || "--" }
                     InfoRow { label: "目标SDK"; value: AppDetailControl.targetSdk || "--" }
                 }
 
-                RowLayout { spacing: 8; visible: !!AppDetailControl.packageName
-                    FluButton { text: "提取"; Layout.fillWidth: true; onClicked: AppDetailControl.extractApp() }
-                    FluButton { text: "冻结"; Layout.fillWidth: true; onClicked: AppDetailControl.freezeApp() }
-                    FluButton { text: "解冻"; Layout.fillWidth: true; onClicked: AppDetailControl.unfreezeApp() }
+                RowLayout { spacing: 8; visible: !!selectedPackage
+                    FluButton { text: "提取"; Layout.fillWidth: true; onClicked: extractDialog.open() }
+                    FluButton { text: "冻结"; Layout.fillWidth: true; onClicked: AppDetailControl.freezeApp(selectedPackage) }
+                    FluButton { text: "解冻"; Layout.fillWidth: true; onClicked: AppDetailControl.unfreezeApp(selectedPackage) }
                 }
-                RowLayout { spacing: 8; visible: !!AppDetailControl.packageName
-                    FluButton { text: "卸载"; Layout.fillWidth: true; onClicked: AppDetailControl.uninstallApp() }
-                    FluButton { text: "清除数据"; Layout.fillWidth: true; onClicked: AppDetailControl.clearData() }
-                    FluButton { text: "强制停止"; Layout.fillWidth: true; onClicked: AppDetailControl.stopApp() }
+                RowLayout { spacing: 8; visible: !!selectedPackage
+                    FluButton { text: "卸载"; Layout.fillWidth: true; onClicked: AppDetailControl.uninstallApp(selectedPackage) }
+                    FluButton { text: "清除数据"; Layout.fillWidth: true; onClicked: AppDetailControl.clearData(selectedPackage) }
+                    FluButton { text: "强制停止"; Layout.fillWidth: true; onClicked: AppDetailControl.stopApp(selectedPackage) }
                 }
             }
         }
@@ -136,5 +151,16 @@ FluContentPage {
         FluText { text: value; font: FluTextStyle.Body }
     }
 
-    FileDialog { id: installDialog; title: "选择APK"; nameFilters: ["APK files (*.apk)"]; onAccepted: AppDetailControl.installApp(String(currentFile)) }
+    FileDialog {
+        id: installDialog
+        title: "选择APK"
+        nameFilters: ["APK files (*.apk)"]
+        onAccepted: AppDetailControl.installApp(localPath(currentFile))
+    }
+
+    FolderDialog {
+        id: extractDialog
+        title: "选择保存目录"
+        onAccepted: AppDetailControl.extractApp(selectedPackage, localPath(selectedFolder))
+    }
 }

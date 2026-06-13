@@ -110,7 +110,11 @@ bool SoftListModel::hasPackage(const QString &packageName)
 
 void SoftListModel::clearData()
 {
-    beginRemoveRows(QModelIndex(), 0, rowCount());
+    if (m_appListInfo.isEmpty()) {
+        return;
+    }
+
+    beginRemoveRows(QModelIndex(), 0, m_appListInfo.size() - 1);
     m_appListInfo.clear();
     endRemoveRows();
 }

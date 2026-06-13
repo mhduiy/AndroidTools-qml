@@ -18,6 +18,7 @@ AppPageTool::AppPageTool(QObject *parent)
     qmlRegisterSingletonInstance("AppDetailControl", 1, 0, "AppDetailControl", AppDetailControl::instance(this));
 
     connect(AppDetailControl::instance(), &AppDetailControl::softListTypeChanged, this, &AppPageTool::updateAppListInfo);
+    connect(AppDetailControl::instance(), &AppDetailControl::requestUpdateSoftList, this, &AppPageTool::updateAppListInfo);
     connect(ConnectManager::instance(), &ConnectManager::cutADBDeviceChanged, this, &AppPageTool::onADBDeviceChanged);
     connect(AppDetailControl::instance(), &AppDetailControl::iconLoaded, this, [this](const QString &packageName, const QString &iconBase64) {
         m_softListModel->setIcon(packageName, iconBase64);

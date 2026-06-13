@@ -5,68 +5,75 @@
 [![Deb Package](https://github.com/mhduiy/AndroidTools-qml/actions/workflows/build-deb.yml/badge.svg)](https://github.com/mhduiy/AndroidTools-qml/actions/workflows/build-deb.yml)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)]()
 
-A cross-platform Android toolbox with modern GUI, built on Qt6 + QML. Think of it as a graphical interface for ADB — manage devices, install apps, control settings, flash firmware, and mirror screens, all without touching the command line.
+AndroidTools is a cross-platform desktop toolbox for Android devices, built with Qt 6, QML, FluentUI, ADB/Fastboot, and scrcpy integration. It provides a compact control console for device status, screen mirroring, app management, file transfer, device control, logs, and flashing workflows.
 
-> Previously [AndroidTools](https://github.com/mhduiy/AndroidTools), rewritten in QML for a fluid, animated UI.
+> This is the QML rewrite of [AndroidTools](https://github.com/mhduiy/AndroidTools).
 
----
+![AndroidTools dashboard](doc/image.png)
+
+## Highlights
+
+- Compact dashboard with device profile, screen mirroring, quick controls, and real-time metrics.
+- Built-in Android device service integration for CPU, GPU, RAM, storage, battery, foreground app, process, and FPS data.
+- Real-time status visualization with gauges and trend charts.
+- App manager with icon loading, package details, install, launch, stop, clear data, freeze, uninstall, and APK extraction.
+- Screen mirroring powered by scrcpy with quality presets, screenshots, and basic device key controls.
+- File transfer, keyboard input forwarding, manual Activity launcher, resolution/DPI tools, and battery spoofing.
+- Fastboot helpers for rebooting, temporary boot, flashing, erasing, and firmware maintenance.
+- Fluent-style QML UI with light/dark theme, wallpaper blur, and persistent settings.
 
 ## Features
 
-### Device Info
-- Hardware details: manufacturer, model, brand, serial number, SDK version
-- Real-time battery monitor with charging type, voltage, temperature
-- CPU architecture, core count, max frequency
-- Memory and storage overview
-- Foreground activity tracking
+### Dashboard
+
+- Device identity, Android version, resolution, DPI, CPU, memory, battery, IP, and serial details.
+- Real-time CPU/GPU/RAM/temperature/FPS visualization.
+- Foreground package, Activity, process, and mirroring status.
+- Integrated quick-entry workbench for control, file/input, apps, flashing, and logs.
 
 ### Device Control
-- Music playback control (play/pause, next, previous, volume)
-- Hardware key simulation (home, back, power, brightness, camera, etc.)
-- Broadcast injection — simulate system events like network change, low battery, boot complete
-- Battery spoofing — fake charge level and charging state for testing
-- Resolution and DPI modification on the fly
-- File push/pull between PC and device
-- Keyboard passthrough — type on PC, input goes to device
-- Manual activity launcher
+
+- Home, back, menu, power, volume, mute, and reboot controls.
+- Media playback controls.
+- Battery level and charging-state spoofing.
+- Resolution and DPI modification.
+- Keyboard passthrough and Activity launch.
 
 ### App Management
-- List installed apps (user, system, or all) with version info
-- Install APK with advanced options (downgrade, overwrite, SD card install)
-- Uninstall, force-stop, clear data
-- Freeze/unfreeze (disable/enable) apps
-- Extract APK to PC
-- Launch apps remotely
+
+- List third-party, system, or all installed apps.
+- Display app icons, names, packages, versions, install time, and SDK targets.
+- Install APK files.
+- Launch, force-stop, clear data, freeze/unfreeze, uninstall, and extract APK.
 
 ### Screen Mirroring
-- Low-latency screen projection via scrcpy
-- Configurable bitrate, resolution, and frame rate
-- Screenshot capture
-- Touch and click interaction on the mirrored screen
+
+- Start/stop mirroring.
+- Configure FPS and bitrate presets.
+- Capture screenshots.
+- Display mirrored frame inside the main dashboard.
 
 ### Flash Tools
-- Fastboot device detection and management
-- Temporary boot (boot an image without flashing)
-- Flash or erase specific partitions
-- Flash script execution in terminal
-- Xiaomi fastboot flash support
-- Firmware package extraction
 
-### Settings
-- Light / dark theme toggle
-- Customizable wallpaper with blur and opacity controls
-- Configurable device polling interval
-- Persistent configuration
+- Fastboot device refresh and state management.
+- Reboot to system, recovery, fastboot, or power off.
+- Temporary boot image.
+- Flash or erase partitions.
+- Firmware package workflow entry points.
 
----
+## Requirements
 
-## Quick Start
+- Qt 6 with Core, Quick, Widgets, Gui, Network, WebSockets, QuickControls2, and Concurrent modules.
+- CMake 3.20 or newer.
+- ADB and Fastboot available in `PATH`.
+- Android device with USB debugging or wireless debugging enabled.
+- FFmpeg is required by the mirroring stack on macOS:
 
-### Prerequisites
-- **Qt 6** (Core, Quick, Widgets, Network, WebSockets, QuickControls2, Concurrent)
-- **ADB** installed and available in `PATH` ([Platform Tools](https://developer.android.com/tools/releases/platform-tools))
+```bash
+brew install ffmpeg
+```
 
-### Build
+## Build
 
 ```bash
 git clone --recursive https://github.com/mhduiy/AndroidTools-qml.git
@@ -75,40 +82,39 @@ cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
 ```
 
-On macOS you also need FFmpeg:
+If submodules were not cloned:
+
 ```bash
-brew install ffmpeg
+git submodule update --init --recursive
 ```
 
-### Usage
-1. Enable USB Debugging (or Wireless Debugging) on your Android device
-2. Connect via USB or pair wirelessly in the app
-3. Select your device from the sidebar
-4. Start using any feature
+## Usage
 
----
+1. Install Android Platform Tools and make sure `adb` and `fastboot` are in `PATH`.
+2. Enable USB debugging or wireless debugging on the Android device.
+3. Start AndroidTools.
+4. Connect the device. The app automatically starts its device-side helper service when needed.
+5. Use the dashboard to mirror, inspect, control, manage apps, transfer files, flash, and view logs.
 
-## Roadmap
+## Project Layout
 
-- [ ] Logcat viewer with real-time filtering
-- [ ] Macro recording and playback for screen mirroring
-- [ ] Magisk patch installer
-- [ ] System tray battery indicator
-- [ ] EXE / AppImage packaging
-- [ ] Migrate UI components to FluentUI
-
----
+```text
+src/cpp/adb                 ADB device model, commands, and Android helper service bridge
+src/cpp/controlPageTool     Device control, battery spoofing, file/input tools
+src/cpp/AppPageTool         App list, app details, icon loading, app operations
+src/cpp/flashPageTool       Fastboot and flashing helpers
+src/cpp/components          Runtime system-info provider
+src/cpp/imagePageTool       Scrcpy / mirroring integration
+src/qml2                    QML application UI
+doc                         Screenshots and documentation assets
+```
 
 ## Acknowledgments
 
-This project builds upon the work of these great projects:
-
-- [QtScrcpy](https://github.com/barry-ran/QtScrcpy) — scrcpy integration and video decoding
-- [QmlScrcpy](https://github.com/mahdi-cpp/QmlScrcpy) — QML-based scrcpy GUI reference
-- [FluentUI](https://github.com/zhuzichu520/FluentUI) — Fluent Design component library for QML
-- [awesome-adb](https://github.com/mzlogin/awesome-adb) — Comprehensive ADB command reference
-
----
+- [QtScrcpy](https://github.com/barry-ran/QtScrcpy)
+- [QmlScrcpy](https://github.com/mahdi-cpp/QmlScrcpy)
+- [FluentUI](https://github.com/zhuzichu520/FluentUI)
+- [awesome-adb](https://github.com/mzlogin/awesome-adb)
 
 ## License
 

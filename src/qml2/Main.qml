@@ -8,13 +8,16 @@ import "./components"
 
 FluWindow {
     id: mainWindow
-    width: 960
-    height: 640
+    width: 1180
+    height: 760
     title: "AndroidTools"
     launchMode: FluWindowType.Standard
     fitsAppBarWindows: true
-    minimumWidth: 600
-    minimumHeight: 400
+    fixSize: true
+    minimumWidth: 1180
+    minimumHeight: 760
+    maximumWidth: 1180
+    maximumHeight: 760
 
     appBar: FluAppBar {
         height: 30
@@ -52,31 +55,22 @@ FluWindow {
     // ---- 导航视图 ----
     FluNavigationView {
         id: navView
-        width: parent.width
-        height: parent.height
+        anchors.fill: parent
         pageMode: FluNavigationViewType.NoStack
         displayMode: FluNavigationViewType.Compact
+        navCompactWidth: 54
         cellHeight: 42
 
         items: FluObject {
             FluPaneItem {
-                title: "主页"
+                title: "控制台"
                 icon: FluentIcons.Home
                 url: "qrc:/qml2/pages/HomePage.qml"
                 onTap: { navView.push(url) }
             }
-            FluPaneItem {
-                title: "应用管理"
-                icon: FluentIcons.AllApps
-                url: "qrc:/qml2/pages/DeviceAppPage.qml"
-                onTap: { navView.push(url) }
-            }
-            FluPaneItem {
-                title: "刷机工具"
-                icon: FluentIcons.DeveloperTools
-                url: "qrc:/qml2/pages/DeviceFlashPage.qml"
-                onTap: { navView.push(url) }
-            }
+        }
+
+        footerItems: FluObject {
             FluPaneItem {
                 title: "设置"
                 icon: FluentIcons.Settings

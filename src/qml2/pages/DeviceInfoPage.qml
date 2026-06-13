@@ -62,8 +62,10 @@ FluContentPage {
 
                         Item { Layout.fillHeight: true }
 
-                        RowLayout {
-                            spacing: 32
+                        GridLayout {
+                            columns: page.width < 760 ? 2 : 4
+                            columnSpacing: 28
+                            rowSpacing: 8
                             Repeater {
                                 model: [
                                     { l: "SOC", v: device ? device.cpuInfo || "--" : "--" },

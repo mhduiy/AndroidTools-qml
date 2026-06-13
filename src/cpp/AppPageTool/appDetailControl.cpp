@@ -23,10 +23,23 @@ AppDetailControl::~AppDetailControl()
 
 void AppDetailControl::updateInfo(const QString &packageName)
 {
-    // asyncOperator([packageName, this](){
-    //     auto info = CONNECTMANAGER->cutADBDevice()->getAppDetailInfo(packageName);
-    //     emit updateSoftDetailInfoFinish(info);
-    // });
+    asyncOperator([packageName, this](){
+        AppDetailInfo info;
+        auto device = CONNECTMANAGER->cutADBDevice();
+        if (!device || packageName.isEmpty()) {
+            Q_EMIT updateSoftDetailInfoFinish(info);
+            return;
+        }
+
+        const auto appList = device->getSoftListInfo(SoftListType::All);
+        for (const auto &appInfo : appList) {
+            if (appInfo.packageName == packageName) {
+                info = appInfo;
+                break;
+            }
+        }
+        Q_EMIT updateSoftDetailInfoFinish(info);
+    });
 }
 
 void AppDetailControl::installApp(const QString &path, bool r, bool s, bool d, bool g)
@@ -35,9 +48,9 @@ void AppDetailControl::installApp(const QString &path, bool r, bool s, bool d, b
         NotificationController::instance()->send("安装中", "请耐心等待", NotificationController::Info);
         if (!CONNECTMANAGER->cutADBDevice()->installApp(path, r, s, d, g)) {
             NotificationController::instance()->send("安装失败", "安装失败", NotificationController::Error);
-            Q_EMIT requestUpdateSoftList();
         } else {
             NotificationController::instance()->send("安装成功", "安装成功", NotificationController::Info);
+            Q_EMIT requestUpdateSoftList();
         }
     });
 }
@@ -126,10 +139,21 @@ void AppDetailControl::startActivity(const QString &activity, const QStringList 
 
 void AppDetailControl::requestLoadIcon(const QString &packageName)
 {
-    // asyncOperator([packageName, this](){
-        auto iconBase64 = CONNECTMANAGER->cutADBDevice()->getAppIconBase64(packageName);
-        Q_EMIT iconLoaded(packageName, iconBase64);
-    // });
+    if (packageName.isEmpty()) {
+        return;
+    }
+
+    asyncOperator([packageName, this](){
+        auto device = CONNECTMANAGER->cutADBDevice();
+        if (!device) {
+            return;
+        }
+
+        auto iconBase64 = device->getAppIconBase64(packageName);
+        QMetaObject::invokeMethod(this, [this, packageName, iconBase64]() {
+            Q_EMIT iconLoaded(packageName, iconBase64);
+        }, Qt::QueuedConnection);
+    });
 }
 
 void AppDetailControl::onUpdateSoftDetailInfoFinish(const AppDetailInfo &info)

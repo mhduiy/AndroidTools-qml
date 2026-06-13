@@ -10,6 +10,12 @@ FluContentPage {
     id: page
     title: "刷机工具"
     property string deviceCode: FastBootDeviceManager.currentDeviceCode
+    function localPath(url) {
+        var path = String(url)
+        if (path.indexOf("file://") === 0)
+            return decodeURIComponent(path.substring(Qt.platform.os === "windows" ? 8 : 7))
+        return path
+    }
 
     // ---- FlashCard inline component ----
     component FlashCard: FluFrame {
@@ -54,7 +60,7 @@ FluContentPage {
                 }
             }
         }
-        FileDialog { id: fdo; title: "选择文件"; onAccepted: ip.text = String(currentFile) }
+        FileDialog { id: fdo; title: "选择文件"; onAccepted: ip.text = localPath(currentFile) }
     }
 
     ScrollView {
@@ -103,11 +109,13 @@ FluContentPage {
                 }
             }
 
-            RowLayout {
+            GridLayout {
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
-                spacing: 12
+                columns: page.width < 760 ? 1 : 3
+                columnSpacing: 12
+                rowSpacing: 12
                 visible: !!deviceCode
 
                 FlashCard {
@@ -169,7 +177,7 @@ FluContentPage {
         }
     }
 
-    FileDialog { id: sd; title: "选择脚本"; onAccepted: sp.text = String(currentFile) }
-    FileDialog { id: xd; title: "选择线刷包"; onAccepted: xp.text = String(currentFile) }
-    FileDialog { id: zd; title: "选择压缩包"; onAccepted: zi.text = String(currentFile) }
+    FileDialog { id: sd; title: "选择脚本"; onAccepted: sp.text = localPath(currentFile) }
+    FileDialog { id: xd; title: "选择线刷包"; onAccepted: xp.text = localPath(currentFile) }
+    FileDialog { id: zd; title: "选择压缩包"; onAccepted: zi.text = localPath(currentFile) }
 }

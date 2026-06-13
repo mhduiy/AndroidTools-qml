@@ -6,6 +6,8 @@ Canvas {
     id: control
     property int level: 0
     property bool charging: false
+    property bool showPercentText: true
+    property bool showChargingText: true
 
     property color fillColor: {
         if (level < 20) return Qt.rgba(0.9, 0.2, 0.2, 0.9)
@@ -16,7 +18,9 @@ Canvas {
 
     property real waveOffset: 0
 
-    NumberAnimation on waveOffset {
+    NumberAnimation {
+        target: control
+        property: "waveOffset"
         running: charging
         from: 0
         to: Math.PI * 2
@@ -99,14 +103,16 @@ Canvas {
         ctx.restore()
 
         // 百分比文字
-        ctx.fillStyle = dark ? "#fff" : "#222"
-        ctx.font = "bold " + Math.round(bh * 0.32) + "px sans-serif"
-        ctx.textAlign = "center"
-        ctx.textBaseline = "middle"
-        ctx.fillText(level + "%", w / 2, by + bh / 2)
+        if (showPercentText) {
+            ctx.fillStyle = dark ? "#fff" : "#222"
+            ctx.font = "bold " + Math.max(10, Math.min(Math.round(bh * 0.24), Math.round(bw * 0.28))) + "px sans-serif"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+            ctx.fillText(level + "%", w / 2, by + bh / 2)
+        }
 
         // 充电标记
-        if (charging) {
+        if (charging && showChargingText) {
             ctx.fillStyle = "#4fc3f7"
             ctx.font = Math.round(bh * 0.12) + "px sans-serif"
             ctx.fillText("充电中", w / 2, by + bh + 18)

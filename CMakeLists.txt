@@ -9,7 +9,7 @@ set(EXE_NAME ${PROJECT_NAME})
 
 file(GLOB_RECURSE SRC_PATHS src/cpp/*.cpp src/cpp/*.hpp)
 file(GLOB_RECURSE HEAD_PATHS src/cpp/*.h)
-file(GLOB_RECURSE QML_PATHS src/qml/*.qml)
+file(GLOB_RECURSE QML_PATHS src/qml2/*.qml)
 
 set(RES_PATHS
     src/main.qrc
@@ -27,6 +27,7 @@ include_directories(.)
 add_executable(${EXE_NAME}
     ${QRC_SOURCES}
     ${SRC_PATHS}
+    ${QML_PATHS}
     ${RES_PATHS}
 )
 

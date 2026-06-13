@@ -45,7 +45,7 @@ FluContentPage {
                         anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; margins: 6 }
                         text: model.display || ""
                         font.pixelSize: 12
-                        font.family: "monospace"
+                        font.family: "Menlo"
                         wrapMode: Text.WrapAnywhere
                         color: {
                             var t = model.type || 0

@@ -618,19 +618,17 @@ void ADBDevice::initData()
 
 NetResult ADBDevice::syncCallNetGetMethod(const QUrl &url) const
 {
-    if (m_networkManager == nullptr) {
-        qWarning() << "Network manager is not initialized.";
-        return {false, QByteArray()};
-    }
+    QNetworkAccessManager manager;
     QEventLoop loop;
     QNetworkRequest request(url);
-    QNetworkReply *reply = m_networkManager->get(request);
+    QNetworkReply *reply = manager.get(request);
     QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
 
-    QByteArray data = reply->readAll();
+    const bool success = reply->error() == QNetworkReply::NoError;
+    const QByteArray data = reply->readAll();
     reply->deleteLater();
-    return {reply->error() == QNetworkReply::NoError, data};
+    return {success, data};
 }
 
 } // namespace ADT

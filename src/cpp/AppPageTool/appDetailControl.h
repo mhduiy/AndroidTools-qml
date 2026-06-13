@@ -26,7 +26,7 @@ public:
 
     ~AppDetailControl();
     QVariant getPackageName() { return m_info.packageName; };
-    QVariant getVersionCode() { return m_info.versionName; } ;
+    QVariant getVersionCode() { return m_info.versionCode; } ;
     QVariant getInstallDate()  { return m_info.firstInstallTime; };
     QVariant getInstallUser() { return ""; } ;
     QVariant getTargetSdk() { return m_info.targetsdk; } ;
@@ -59,7 +59,7 @@ private slots:
 
 private:
     AppDetailInfo m_info;
-    SoftListType m_softListType;
+    SoftListType m_softListType = SoftListType::ThirdParty;
 };
 
 } // namespace ADT

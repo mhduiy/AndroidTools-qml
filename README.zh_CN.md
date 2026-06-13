@@ -1,135 +1,114 @@
 # AndroidTools-qml
 
-## 一句话介绍
-一个基于ADB工具使用Qt开发的跨平台安卓工具箱，是之前[AndroidTools](https://github.com/mhduiy/AndroidTools)的QML重构版本，你可以认为是ADB的GUI工具
+AndroidTools-qml 是一个基于 Qt 6、QML、FluentUI、ADB/Fastboot 和 scrcpy 的跨平台 Android 工具箱。它把设备信息、投屏、控制、应用管理、文件传输、日志和刷机工具整合到一个紧凑的桌面控制台里。
 
-https://zread.ai/mhduiy/AndroidTools-qml
+这是旧版 [AndroidTools](https://github.com/mhduiy/AndroidTools) 的 QML 重构版本。
 
-## 展示图
+![AndroidTools 控制台](doc/image.png)
 
-![alt text](doc/image0.png)
+## 核心特性
 
-## 为什么有这个项目
+- 信息密度更高的单页控制台：设备档案、投屏舞台、实时状态、快捷工作台集中显示。
+- 接入设备侧服务，展示 CPU、GPU、内存、存储、电池、前台应用、进程和 FPS 等实时数据。
+- 实时状态可视化：小仪表盘、资源趋势折线图、前台进程和投屏状态。
+- 应用管理：真实应用图标、应用列表、包名、版本、安装时间、SDK 信息和常用操作。
+- 投屏能力：启动/停止投屏、截图、FPS/码率质量预设、基础按键控制。
+- 设备控制：主页、返回、电源、菜单、音量、静音、重启、媒体控制。
+- 调试工具：电池伪装、分辨率/DPI 修改、文件推送、键盘输入转发、Activity 启动。
+- 刷机工具：Fastboot 设备管理、临时启动镜像、刷入/擦除分区、维护操作入口。
+- 设置：深浅色切换、壁纸、模糊和透明度等持久化配置。
 
-1. 兴趣使然
-2. 目前有的ADB工具功能普遍偏少，而且UI比较丑，没有动画（个人很喜欢动画）
-3. 巩固C++和QML的码能力
-4. ...
+## 功能概览
 
-## 计划包含哪些功能
+### 控制台
 
-#### 程序框架
+- 设备基础信息：厂商、型号、Android 版本、分辨率、DPI、CPU、内存、电池、IP 和序列号。
+- 实时状态：CPU/GPU/RAM/温度/FPS 趋势。
+- 当前上下文：前台包名、前台 Activity、进程信息、投屏状态。
+- 底部工作台：控制、快捷入口、文件与输入、应用、刷机、日志。
 
-- [x] 自定义titleBar
-- [x] 无线连接
-- [x] 多设备连接
-- [x] 跨平台支持
+### 应用管理
 
-#### 设备信息
-- [x] 设备基础信息的展示，型号，序列号等
-- [x] 电池实时信息
-- [x] 前台应用管理
-- [x] CPU等监控条
+- 按第三方、系统、全部筛选应用。
+- 显示应用真实图标、名称、包名和版本。
+- 支持安装 APK、启动、停止、提取、冻结、清数据和卸载。
+- 展示版本、版本码、安装时间、最低 SDK 和目标 SDK。
 
-#### 设备控制
+### 投屏与控制
 
-- [x] 音乐控制
-- [x] 按键模拟
-- [x] 广播控制
-- [x] 电量伪装
-- [x] 分辨率和DPI的修改
-- [x] 文件传输
-- [x] 键盘共享
-- [x] activity的手动启动
+- 基于 scrcpy 的设备投屏。
+- 支持截图和质量预设。
+- 支持主页、返回、电源、菜单、音量、静音、重启等快捷按键。
 
-#### 软件管理
+### 文件、输入与调试
 
-- [x] 设备安装软件基本信息的查看
-- [x] 软件基础操作，卸载，停止等
-- [x] 提取软件，冻结解冻(旧安卓的停用功能)
-- [x] 启动软件或acitivity
-- [x] 安装软件
-- [x] 高级安装，降级安装，覆盖安装，安装到位置SD卡等
+- 文件推送到设备路径。
+- PC 键盘输入转发到设备。
+- 手动启动 Activity。
+- 电池状态伪装和分辨率/DPI 修改。
 
-#### 刷机工具
+### 刷机工具
 
-- [x] fastboot设备的检测
-- [x] 临时启动boot
-- [x] 清除/刷写指定分区
-- [ ] 刷机脚本的执行（支持跨平台）
-- [ ] 小米设备的快捷刷机
-- [ ] 线刷包/卡刷包解包
-- [ ] 线刷包转换为卡刷包
-- [ ] 卡刷包转换为线刷包
-- [ ] 友链
-- [ ] magisk的快速修补安装
+- Fastboot 设备刷新。
+- 重启到系统、Fastboot、Recovery 或关机。
+- 临时启动镜像。
+- 刷入或擦除指定分区。
 
-#### 设备镜像
+## 环境要求
 
-- [x] 设备投屏
-- [x] 设备截图
-- [x] 投屏参数控制
-- [x] 模拟点击
-- [ ] 录制宏
+- Qt 6：Core、Quick、Widgets、Gui、Network、WebSockets、QuickControls2、Concurrent。
+- CMake 3.20 或更新版本。
+- ADB/Fastboot 已安装，并加入 `PATH`。
+- Android 设备开启 USB 调试或无线调试。
+- macOS 投屏相关依赖建议安装 FFmpeg：
 
-#### 设置
-
-- [x] 持久化存储
-- [x] 深浅色切换
-- [x] 壁纸的模糊和透明度
-- [ ] ADB检测间隔
-- [x] 元素透明度
-
-#### 其他
-
-- [ ] 系统托盘的设备电池图标
-- [ ] exe包支持
-- [ ] deb包支持
-- [ ] github action的自动化构建和发布
+```bash
+brew install ffmpeg
+```
 
 ## 编译
 
-前提条件
-
-- Qt6
-
-## 拉取子模块
-
 ```bash
-git submodule init
-git submodule update --remote
+git clone --recursive https://github.com/mhduiy/AndroidTools-qml.git
+cd AndroidTools-qml
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
 ```
 
-或者
+如果没有拉取子模块：
 
 ```bash
-git clone --recurse-submodules https://github.com/mhduiy/AndroidTools-qml.git
+git submodule update --init --recursive
 ```
 
-## 如何使用
+## 使用
 
-1. 安装ADB => https://developer.android.com/tools/releases/platform-tools?hl=zh-cn
-2. 将ADB工具的bin目录添加到PATH环境变量
-3. 待连接设备需要开启开发者模式中的USB调试或无线调试
-4. 打开本软件即可自动检测设备进行连接
-5. 可以开始使用啦
+1. 安装 Android Platform Tools，确保 `adb` 和 `fastboot` 在 `PATH` 中。
+2. 在 Android 设备上开启 USB 调试或无线调试。
+3. 启动 AndroidTools。
+4. 连接设备，应用会在需要时自动启动设备侧辅助服务。
+5. 在控制台中进行投屏、设备控制、应用管理、文件传输、刷机和日志查看。
 
-## 其他展示图
+## 项目结构
 
-![](doc/1.png)
-![](doc/2.png)
-![](doc/5.png)
-![](doc/3.png)
-![](doc/4.png)
+```text
+src/cpp/adb                 ADB 设备模型、命令执行、设备侧服务桥接
+src/cpp/controlPageTool     设备控制、电池伪装、文件和输入工具
+src/cpp/AppPageTool         应用列表、应用详情、图标加载、应用操作
+src/cpp/flashPageTool       Fastboot 和刷机工具
+src/cpp/components          实时系统信息提供器
+src/cpp/imagePageTool       scrcpy / 投屏集成
+src/qml2                    QML 用户界面
+doc                         截图和文档资源
+```
 
 ## 致谢
 
-开发本项目参考了以下项目，谢谢大佬们
+- [QtScrcpy](https://github.com/barry-ran/QtScrcpy)
+- [QmlScrcpy](https://github.com/mahdi-cpp/QmlScrcpy)
+- [FluentUI](https://github.com/zhuzichu520/FluentUI)
+- [awesome-adb](https://github.com/mzlogin/awesome-adb)
 
-[QmlScrcpy](https://github.com/mahdi-cpp/QmlScrcpy)
+## 许可证
 
-[QtScrcpy](https://github.com/barry-ran/QtScrcpy)
-
-[FluentUI](https://github.com/zhuzichu520/FluentUI)
-
-[awesome](https://github.com/mzlogin/awesome-adb)
+[MIT](LICENSE)

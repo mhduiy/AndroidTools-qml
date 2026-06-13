@@ -16,6 +16,12 @@ FluContentPage {
     id: page
     title: "设备控制"
     property var device: ConnectManager.cutADBDevice
+    function localPath(url) {
+        var path = String(url)
+        if (path.indexOf("file://") === 0)
+            return decodeURIComponent(path.substring(Qt.platform.os === "windows" ? 8 : 7))
+        return path
+    }
 
     ScrollView {
         anchors.fill: parent
@@ -41,10 +47,12 @@ FluContentPage {
 
             FluFrame {
                 Layout.fillWidth: true
+                Layout.preferredHeight: mediaContent.implicitHeight + 32
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 visible: !!device
                 ColumnLayout {
+                    id: mediaContent
                     anchors { left: parent.left; top: parent.top; right: parent.right; margins: 16 }
                     spacing: 8
                     FluText { text: "媒体控制"; font: FluTextStyle.Subtitle }
@@ -67,10 +75,12 @@ FluContentPage {
 
             FluFrame {
                 Layout.fillWidth: true
+                Layout.preferredHeight: keyContent.implicitHeight + 32
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 visible: !!device
                 ColumnLayout {
+                    id: keyContent
                     anchors { left: parent.left; top: parent.top; right: parent.right; margins: 16 }
                     spacing: 8
                     FluText { text: "按键模拟"; font: FluTextStyle.Subtitle }
@@ -224,5 +234,5 @@ FluContentPage {
         }
     }
 
-    FileDialog { id: fd; title: "选择文件"; fileMode: FileDialog.OpenFile; onAccepted: fs.text = String(currentFile) }
+    FileDialog { id: fd; title: "选择文件"; fileMode: FileDialog.OpenFile; onAccepted: fs.text = localPath(currentFile) }
 }

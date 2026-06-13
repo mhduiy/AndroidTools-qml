@@ -61,7 +61,11 @@ QVariant FlashLinkModel::data(const QModelIndex &index, int role) const
 
 void FlashLinkModel::clearData()
 {
-    beginRemoveRows(QModelIndex(), 0, rowCount());
+    if (m_deviceInfos.isEmpty()) {
+        return;
+    }
+
+    beginRemoveRows(QModelIndex(), 0, m_deviceInfos.size() - 1);
     m_deviceInfos.clear();
     endRemoveRows();
 }
