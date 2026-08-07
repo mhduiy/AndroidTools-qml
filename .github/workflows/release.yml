@@ -49,7 +49,7 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_INSTALL_PREFIX=/usr -DCPACK_PACKAGE_VERSION="$PACKAGE_VERSION"
 
       - name: Build
-        run: cmake --build build --parallel
+        run: cmake --build build --parallel 2
 
       - name: Package
         run: |
@@ -98,7 +98,7 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCPACK_PACKAGE_VERSION="$PACKAGE_VERSION"
 
       - name: Build
-        run: cmake --build build --parallel
+        run: cmake --build build --parallel 2
 
       - name: Create DMG
         run: |
