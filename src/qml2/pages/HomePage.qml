@@ -286,8 +286,8 @@ FluContentPage {
 
             RowLayout {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 382
-                Layout.maximumHeight: 382
+                Layout.fillHeight: true
+                Layout.minimumHeight: 382
                 spacing: 8
 
                 Panel {
@@ -348,6 +348,7 @@ FluContentPage {
 
                 Panel {
                     Layout.preferredWidth: 454
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
                     ColumnLayout {
                         anchors { fill: parent; margins: 12 }
@@ -727,7 +728,7 @@ FluContentPage {
 
                         Item {
                             RowLayout {
-                                anchors { fill: parent; margins: 8 }
+                                anchors { fill: parent; margins: 6 }
                                 spacing: 8
 
                                 ColumnLayout {

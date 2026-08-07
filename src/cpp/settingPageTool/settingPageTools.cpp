@@ -55,9 +55,14 @@ QVariant WallPaperModel::data(const QModelIndex &index, int role) const
 
 void WallPaperModel::appendRow(WallPaperInfo info)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+    const int row = rowCount();
+    beginInsertRows(QModelIndex(), row, row);
     m_wallPaperInfo.append(info);
     endInsertRows();
+    if (info.url == WallpaperHelper::instance()->getWallpaper()) {
+        m_currentIndex = row;
+        emit currentIndexChanged(row);
+    }
 }
 
 void WallPaperModel::insertRow(int row, WallPaperInfo info)
@@ -96,17 +101,16 @@ QModelIndex WallPaperModel::index(int row, int column, const QModelIndex &parent
 
 void WallPaperModel::setCurrentIndex(int index)
 {
-    const QString url = m_wallPaperInfo.value(index).url;
-    if (url.isEmpty()) {
-        NotificationController::instance()->send("设置失败", "请联系开发者", NotificationController::Error);
+    if (index < 0 || index >= m_wallPaperInfo.size() || index == m_currentIndex) {
         return;
     }
+    const QString url = m_wallPaperInfo[index].url;
     m_currentIndex = index;
     emit currentItemChanged(url);
     emit currentIndexChanged(index);
     WallpaperHelper::instance()->setWallPaper(url);
     AppSettings->writeConfig(Wallpaper_Section, Url_Key, url);
-    AppSettings->writeConfig(Wallpaper_Section, Index_key, QString::number(index));
+    AppSettings->writeConfig(Wallpaper_Section, Index_key, index);
 }
 
 QHash<int, QByteArray> WallPaperModel::roleNames() const
@@ -122,7 +126,9 @@ void WallPaperModel::clearData()
 {
     beginResetModel();
     m_wallPaperInfo.clear();
+    m_currentIndex = -1;
     endResetModel();
+    emit currentIndexChanged(-1);
 }
 
 SettingPageTools::SettingPageTools(QObject *parent)
@@ -134,8 +140,6 @@ SettingPageTools::SettingPageTools(QObject *parent)
     qmlRegisterSingletonInstance("WallpaperHelper", 1, 0, "WallpaperHelper", WallpaperHelper::instance(this));
     qmlRegisterSingletonInstance("OtherSettingsHandler", 1, 0, "OtherSettingsHandler", OtherSettingsHandler::instance(this));
 
-    int configWallpaperIndex = AppSettings->readConfig(Wallpaper_Section, Index_key, 0).toInt();
-    m_wallpaperModel->setCurrentIndex(configWallpaperIndex);
 
     // 默认壁纸和每日bing壁纸
     connect(m_bingWallpaperHander, &BingWallPaperHander::workFinish, this, &SettingPageTools::onBingWallPaperWorkFinish);

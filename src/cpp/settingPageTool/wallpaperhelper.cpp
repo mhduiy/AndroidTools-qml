@@ -34,6 +34,9 @@ WallpaperHelper::WallpaperHelper(QObject *parent)
 
 void WallpaperHelper::setWallPaper(const QString &url)
 {
+    if (m_wallpaperUrl == url) {
+        return;
+    }
     m_wallpaperUrl = url;
     emit wallpaperChanged(url);
 }
@@ -45,6 +48,9 @@ QString WallpaperHelper::getWallpaper() const
 
 void WallpaperHelper::setOpacity(const qreal &value)
 {
+    if (qFuzzyCompare(m_opacity, value)) {
+        return;
+    }
     m_opacity = value;
     emit opacityChanged(value);
     m_triggerTimer->start(100);
@@ -57,6 +63,9 @@ qreal WallpaperHelper::getOpacity() const
 
 void WallpaperHelper::setBlurRadius(const int &value)
 {
+    if (m_blurRadius == value) {
+        return;
+    }
     m_blurRadius = value;
     emit blurRadiusChanged(value);
     m_triggerTimer->start(100);
@@ -75,9 +84,11 @@ void WallpaperHelper::writeValueToConfig()
 
 void WallpaperHelper::requestAddCustomWallpaper()
 {
-    QStringList filePaths = QFileDialog::getOpenFileNames();
+    const QStringList filePaths = QFileDialog::getOpenFileNames(nullptr, "添加壁纸", {}, "图片 (*.png *.jpg *.jpeg *.webp *.bmp)");
+    if (filePaths.isEmpty()) {
+        return;
+    }
     QFile cacheFile(WALLPAPERCACHEJSONPATH);
-    qWarning() << WALLPAPERCACHEJSONPATH;
     if (!cacheFile.open(QIODevice::ReadWrite | QIODevice::Text)) {
         return;
     }
@@ -91,6 +102,7 @@ void WallpaperHelper::requestAddCustomWallpaper()
     }
     QJsonDocument tempDoc(cacheArray);
     cacheFile.seek(0);
+    cacheFile.resize(0);
     cacheFile.write(tempDoc.toJson());
     cacheFile.close();
 

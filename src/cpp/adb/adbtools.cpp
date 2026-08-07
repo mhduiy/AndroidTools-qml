@@ -86,12 +86,9 @@ CommandResult ADBTools::executeCommandDetailed(APP app, const QStringList &args,
         exitCode = -1;
     }
     
-    // 记录日志
-    if (!output.isEmpty()) {
-        ADBLogModel::instance()->commitLog(ADBLogType::Info, output);
-    }
-    if (!errorOutput.isEmpty()) {
-        ADBLogModel::instance()->commitLog(ADBLogType::Error, errorOutput);
+    if (!success) {
+        const QString detail = errorOutput.isEmpty() ? output : errorOutput;
+        ADBLogModel::instance()->commitLog(ADBLogType::Error, commandStr + "\n" + detail);
     }
     
     return ADT::CommandResult(success, exitCode, output, errorOutput, commandStr, executionTime);

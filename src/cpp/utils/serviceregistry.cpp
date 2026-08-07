@@ -12,7 +12,7 @@
 #include "src/cpp/settingPageTool/othersettingshandler.h"
 #include "src/cpp/settingPageTool/wallpaperhelper.h"
 #include "src/cpp/controlPageTool/controlPageTool.h"
-#include "src/cpp/AppPageTool/AppPageTool.h"
+#include "src/cpp/appPageTool/AppPageTool.h"
 #include "src/cpp/flashPageTool/flashPageTool.h"
 #include "src/cpp/imagePageTool/imagePageTool.h"
 #include "src/cpp/settingPageTool/settingPageTools.h"

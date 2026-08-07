@@ -138,8 +138,6 @@ void FlashTools::executeCommand(const QString &command, const QStringList &args,
     terminalArgs << args;
 #endif
 
-    qDebug() << "Executing command in terminal:" << program << terminalArgs;
-    qDebug() << "Working directory:" << workDir;
     
     NotificationController::instance()->send("执行中", QString("即将在%1中执行命令").arg(program), NotificationController::Info);
     
@@ -249,8 +247,6 @@ void FlashTools::executeCommand(ADBTools::APP appType, const QStringList &args, 
     terminalArgs << args;
 #endif
 
-    qDebug() << "Executing command in terminal:" << program << terminalArgs;
-    qDebug() << "Working directory:" << workingDir;
     
     NotificationController::instance()->send("执行中", QString("即将在%1中执行命令").arg(program), NotificationController::Info);
     

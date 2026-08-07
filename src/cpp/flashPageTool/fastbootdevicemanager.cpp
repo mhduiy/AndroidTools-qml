@@ -37,7 +37,6 @@ void DeviceCheckTool::checkDevice()
     args << "devices";
 
     QStringList retInfos = m_adbTool->executeCommand(ADBTools::FASTBOOT, args).split('\n');
-    qWarning() << retInfos;
     for (QString &lineInfo : retInfos) {
         lineInfo = lineInfo.simplified();
         if (const QStringList &deviceInfoList = lineInfo.split(' '); deviceInfoList.last() == "fastboot") {

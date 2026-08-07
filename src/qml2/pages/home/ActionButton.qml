@@ -24,10 +24,10 @@ Rectangle {
     Behavior on border.color { ColorAnimation { duration: 120 } }
 
     RowLayout {
-        anchors.centerIn: parent
+        anchors { fill: parent; leftMargin: 6; rightMargin: 6 }
         spacing: 5
         FluIcon { iconSource: button.icon; iconSize: button.dense ? 13 : 15; iconColor: button.accent; visible: button.icon > 0 }
-        FluText { text: button.label; font: button.dense ? FluTextStyle.Caption : FluTextStyle.Body; color: FluTheme.fontPrimaryColor }
+        FluText { text: button.label; font: button.dense ? FluTextStyle.Caption : FluTextStyle.Body; color: FluTheme.fontPrimaryColor; Layout.fillWidth: true; Layout.minimumWidth: 0; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter }
     }
 
     MouseArea {

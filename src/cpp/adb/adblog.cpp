@@ -1,6 +1,6 @@
 #include "adblog.h"
-#include <QMutexLocker>
 #include <QDateTime>
+#include <QThread>
 
 static const int MAX_COUNT = 1000;
 
@@ -26,12 +26,12 @@ QVariant ADBLogModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= m_logInfo.size())
         return QVariant();
 
-    const ADBLog *info = m_logInfo[index.row()];
+    const ADBLog &info = m_logInfo[index.row()];
     switch (role) {
     case ADBLogTypeRole:
-        return info->type;
+        return info.type;
     case ADBLogInfoRole:
-        return info->log;
+        return info.log;
     default:
         return QVariant();
     }
@@ -55,22 +55,19 @@ QHash<int, QByteArray> ADBLogModel::roleNames() const
 
 void ADBLogModel::commitLog(ADBLogType type, const QString &logMeg)
 {
-    QMutexLocker locker(&m_commitMutex);
+    if (QThread::currentThread() != thread()) {
+        QMetaObject::invokeMethod(this, [this, type, logMeg]() { commitLog(type, logMeg); }, Qt::QueuedConnection);
+        return;
+    }
+
+    if (m_logInfo.size() == MAX_COUNT) {
+        beginRemoveRows(QModelIndex(), 0, 0);
+        m_logInfo.removeFirst();
+        endRemoveRows();
+    }
+
     beginInsertRows(QModelIndex(), m_logInfo.size(), m_logInfo.size());
     const QString formatLog = QString("[%1][%2]: %3").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")).arg(type).arg(logMeg);
-    m_logInfo.append(new ADBLog{.type = type, .log = formatLog});
+    m_logInfo.append({.type = type, .log = formatLog});
     endInsertRows();
-    arrangeLog();
-}
-
-void ADBLogModel::arrangeLog()
-{
-    if (int deleteCount = m_logInfo.size() - MAX_COUNT; deleteCount > 0) {
-        for (int i = 0; i < deleteCount; i++) {
-            beginRemoveRows(QModelIndex(), 0, 0);
-            auto first = m_logInfo.takeFirst();
-            endRemoveRows();
-            delete first;
-        }
-    }
 }

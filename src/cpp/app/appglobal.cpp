@@ -64,7 +64,6 @@ void AppGlobal::reload()
 void AppGlobal::setThemeType(ThemeType type)
 {
     if (m_themeType != type) {
-        qInfo() << "set themeType: " << type;
         m_themeType = type;
         AppSettings->writeConfig(Other_Section, Theme_Type_Key, type);
         reload();

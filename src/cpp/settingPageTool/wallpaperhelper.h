@@ -36,8 +36,8 @@ signals:
 
 private:
     QString m_wallpaperUrl;
-    qreal m_opacity;
-    int m_blurRadius;
+    qreal m_opacity = 0;
+    int m_blurRadius = -1;
 
     QTimer *m_triggerTimer;
 };

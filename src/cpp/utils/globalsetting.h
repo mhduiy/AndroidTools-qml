@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QSettings>
-#include <QQueue>
 #include <QTimer>
 
 #define AppSettings GlobalSetting::instance()
@@ -24,7 +23,6 @@ private:
     static GlobalSetting *_instance;
     explicit GlobalSetting(QObject *parent = nullptr);
     QSettings *settings = nullptr;
-    QQueue<std::function<void()>> m_peddingTasks;
     QTimer *m_timer = nullptr;
 };
 

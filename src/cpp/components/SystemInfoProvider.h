@@ -92,10 +92,10 @@ private slots:
 
 private:
     explicit SystemInfoProvider(QObject *parent = nullptr);
-    QJsonObject getJson(const QString &path, int timeoutMs = 700);
 
     QNetworkAccessManager *m_nam;
     QTimer *m_timer;
+    int m_pendingRequests = 0;
 
     double m_cpuUsage = 0;
     double m_cpuTemp = 0;

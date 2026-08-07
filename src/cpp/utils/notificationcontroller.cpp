@@ -1,6 +1,6 @@
 #include "notificationcontroller.h"
+#include <QThread>
 #include <QDebug>
-#include <QVariant>
 
 NotificationController::NotificationController(QObject *parent) : QObject(parent)
 {
@@ -9,7 +9,13 @@ NotificationController::NotificationController(QObject *parent) : QObject(parent
 
 void NotificationController::send(const QString &title, const QString &content, NotificationType type, int duration)
 {
-    qInfo () << "发送通知:" << title << content << type << duration;
+    if (QThread::currentThread() != thread()) {
+        QMetaObject::invokeMethod(this, [this, title, content, type, duration]() {
+            send(title, content, type, duration);
+        }, Qt::QueuedConnection);
+        return;
+    }
+
     if (duration < 0) {
         qWarning() << "duration can not less than 0";
         return;

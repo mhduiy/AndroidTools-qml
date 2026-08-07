@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QAbstractListModel>
-#include <QMutex>
 
 #include "src/cpp/utils/defutils.hpp"
 enum ADBLogType {
@@ -37,6 +36,5 @@ private:
     void arrangeLog();
 
 private:
-    QList<ADBLog *> m_logInfo;
-    QMutex m_commitMutex;
+    QList<ADBLog> m_logInfo;
 };

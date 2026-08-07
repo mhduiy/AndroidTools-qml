@@ -18,9 +18,8 @@ ConnectManager::ConnectManager(QObject *parent)
     , m_enableADBCheck(true)
     , m_enableFastbootCheck(true)
 {
-    m_deviceCheckTimer = new QTimer();
+    m_deviceCheckTimer = new QTimer(this);
     m_deviceCheckTimer->setInterval(OtherSettingsHandler::instance()->deviceRefreshInterval());
-    qWarning() << "设备刷新间隔:" << m_deviceCheckTimer->interval() << "ms";
     connect(m_deviceCheckTimer, &QTimer::timeout, this, &ConnectManager::refreshDevice);
     
     // 当设备刷新时间设置改变时，更新定时器间隔
@@ -36,38 +35,54 @@ void ConnectManager::startCheckDevice()
 
 void ConnectManager::startADBServer(std::function<void()> callback)
 {
-    asyncOperator([this, callback](){
-        setadbServerStarting(true);
-        if (!ADBTOOL->startService()) {
-            NotificationController::instance()->send("ADB服务启动失败", "请检查ADB服务是否已启动", NotificationController::Error);
-        }
-        setadbServerStarting(false);
-        if (callback) {
-            callback();
-        }
+    setadbServerStarting(true);
+    asyncOperator([this, callback]() {
+        const bool started = ADBTOOL->startService();
+        QMetaObject::invokeMethod(this, [this, callback, started]() {
+            if (!started) {
+                NotificationController::instance()->send("ADB服务启动失败", "请检查ADB服务是否已启动", NotificationController::Error);
+            }
+            setadbServerStarting(false);
+            if (callback) {
+                callback();
+            }
+        }, Qt::QueuedConnection);
     });
 }
 
 void ConnectManager::killADBServer()
 {
-    asyncOperator([this](){
-        setadbServerStarting(true);
+    setadbServerStarting(true);
+    asyncOperator([this]() {
         ADBTOOL->killService();
-        setadbServerStarting(false);
+        QMetaObject::invokeMethod(this, [this]() { setadbServerStarting(false); }, Qt::QueuedConnection);
+    });
+}
+
+void ConnectManager::restartADBServer()
+{
+    stopCheckDevice();
+    setadbServerStarting(true);
+    asyncOperator([this]() {
+        ADBTOOL->killService();
+        const bool started = ADBTOOL->startService();
+        QMetaObject::invokeMethod(this, [this, started]() {
+            if (!started) {
+                NotificationController::instance()->send("ADB服务启动失败", "请检查ADB服务是否已启动", NotificationController::Error);
+            }
+            setadbServerStarting(false);
+            startCheckDevice();
+        }, Qt::QueuedConnection);
     });
 }
 
 void ConnectManager::stopCheckDevice()
 {
     m_deviceCheckTimer->stop();
-    qInfo() << "等待ADB执行结束";
-    while(ADBTOOL->isRunning());
-    qInfo() << "ADB执行结束";
 }
 
 QVector<QSharedPointer<Device>> ConnectManager::devices(ConnectStatus type) const
 {
-    qWarning() << "获取设备列表";
     if (type == C_ADB) {
         QVector<QSharedPointer<Device>> devices;
         for (const auto &device : m_adbDeviceList) {
@@ -147,18 +162,38 @@ void ConnectManager::requestConnectDevice(const QString &ipPort)
 
 void ConnectManager::refreshDevice()
 {
+    if (m_refreshInProgress) {
+        return;
+    }
+
+    const bool checkADB = enableADBCheck();
+    const bool checkFastboot = enableFastbootCheck();
+    if (!checkADB && !checkFastboot) {
+        emit deviceRefreshFinish();
+        return;
+    }
+
+    m_refreshInProgress = true;
+    asyncOperator([this, checkADB, checkFastboot]() {
+        const QVector<QString> adbDevices = checkADB ? getDeviceList(C_ADB) : QVector<QString>{};
+        const QVector<QString> fastbootDevices = checkFastboot ? getDeviceList(C_Fastboot) : QVector<QString>{};
+        QMetaObject::invokeMethod(this, [this, adbDevices, fastbootDevices]() {
+            updateDevices(adbDevices, fastbootDevices);
+        }, Qt::QueuedConnection);
+    });
+}
+
+void ConnectManager::updateDevices(const QVector<QString> &adbDevices, const QVector<QString> &fastbootDevices)
+{
     if (enableADBCheck()) {
-        QVector<QString> adbDevices = getDeviceList(C_ADB);
-        // 检查是否有新设备连接(ADB)
         for (const QString &deviceCode : adbDevices) {
             if (!deviceCode.isEmpty() && !hasDevice(deviceCode, C_ADB)) {
-                auto &&device = addDevice(deviceCode, C_ADB);
+                const auto device = addDevice(deviceCode, C_ADB);
                 emit deviceConnected(device);
-                NotificationController::instance()->send("发现设备通过adb连接", QString(device->code() + "已连接"));
-                
-                // 如果是第一个ADB设备，设置为当前设备
+                NotificationController::instance()->send("发现设备通过adb连接", device->code() + "已连接");
+
                 if (!cutADBDevice()) {
-                    auto adbDevice = device.dynamicCast<ADBDevice>();
+                    const auto adbDevice = device.dynamicCast<ADBDevice>();
                     if (adbDevice) {
                         setcutADBDevice(adbDevice.get());
                     }
@@ -166,53 +201,44 @@ void ConnectManager::refreshDevice()
             }
         }
 
-        // 检查是否有设备断开连接(ADB)
-        for (int i = m_adbDeviceList.size() - 1; i >= 0; i--) {
-            // 检查是否有设备断开连接
+        for (int i = m_adbDeviceList.size() - 1; i >= 0; --i) {
             bool deviceFound = false;
-            for (const auto &deviceCode : adbDevices) {
+            for (const QString &deviceCode : adbDevices) {
                 if (m_adbDeviceList[i]->code() == deviceCode) {
                     deviceFound = true;
                     break;
                 }
             }
-            if (!deviceFound) {
-                auto disconnectingDevice = m_adbDeviceList[i];
-                emit deviceDisconnected(disconnectingDevice);
-                NotificationController::instance()->send("adb设备已断开", QString(disconnectingDevice->code() + "已断开"));
-                
-                // 如果断开的是当前设备，需要更新cutADBDevice
-                if (cutADBDevice() == disconnectingDevice.get()) {
-                    if (m_adbDeviceList.count() > 1) {
-                        // 有其他设备，切换到第一个不是当前设备的设备
-                        for (const auto &device : m_adbDeviceList) {
-                            if (device.get() != disconnectingDevice.get()) {
-                                setcutADBDevice(device.get());
-                                break;
-                            }
-                        }
-                    } else {
-                        setcutADBDevice(nullptr);
-                    }
-                }
-                
-                m_adbDeviceList.remove(i);
+            if (deviceFound) {
                 continue;
             }
+
+            const auto disconnectingDevice = m_adbDeviceList[i];
+            emit deviceDisconnected(disconnectingDevice);
+            NotificationController::instance()->send("adb设备已断开", disconnectingDevice->code() + "已断开");
+
+            if (cutADBDevice() == disconnectingDevice.get()) {
+                setcutADBDevice(nullptr);
+                for (const auto &device : m_adbDeviceList) {
+                    if (device.get() != disconnectingDevice.get()) {
+                        setcutADBDevice(device.get());
+                        break;
+                    }
+                }
+            }
+            m_adbDeviceList.remove(i);
         }
     }
-    
+
     if (enableFastbootCheck()) {
-        QVector<QString> fastBootDevices = getDeviceList(C_Fastboot);
-        for (QString &deviceCode : fastBootDevices) {
+        for (const QString &deviceCode : fastbootDevices) {
             if (!deviceCode.isEmpty() && !hasDevice(deviceCode, C_Fastboot)) {
-                auto &&device = addDevice(deviceCode, C_Fastboot);
+                const auto device = addDevice(deviceCode, C_Fastboot);
                 emit deviceConnected(device);
-                NotificationController::instance()->send("发现设备通过fastboot连接", QString(device->code() + "已连接"));
-                
-                // 如果是第一个Fastboot设备，设置为当前设备
+                NotificationController::instance()->send("发现设备通过fastboot连接", device->code() + "已连接");
+
                 if (!cutFastbootDevice()) {
-                    auto fastbootDevice = device.dynamicCast<FastbootDevice>();
+                    const auto fastbootDevice = device.dynamicCast<FastbootDevice>();
                     if (fastbootDevice) {
                         setcutFastbootDevice(fastbootDevice.get());
                     }
@@ -220,42 +246,36 @@ void ConnectManager::refreshDevice()
             }
         }
 
-        // 检查是否有设备断开连接(Fastboot)
-        for (int i = m_fastbootDeviceList.size() - 1; i >= 0; i--) {
-            // 检查是否有设备断开连接
+        for (int i = m_fastbootDeviceList.size() - 1; i >= 0; --i) {
             bool deviceFound = false;
-            for (const auto &deviceCode : fastBootDevices) {
+            for (const QString &deviceCode : fastbootDevices) {
                 if (m_fastbootDeviceList[i]->code() == deviceCode) {
                     deviceFound = true;
                     break;
                 }
             }
-            if (!deviceFound) {
-                auto disconnectingDevice = m_fastbootDeviceList[i];
-                NotificationController::instance()->send("fastboot设备已断开", QString(disconnectingDevice->code() + "已断开"));
-                emit deviceDisconnected(disconnectingDevice);
-                
-                // 如果断开的是当前设备，需要更新cutFastbootDevice
-                if (cutFastbootDevice() == disconnectingDevice.get()) {
-                    if (m_fastbootDeviceList.count() > 1) {
-                        // 有其他设备，切换到第一个不是当前设备的设备
-                        for (const auto &device : m_fastbootDeviceList) {
-                            if (device.get() != disconnectingDevice.get()) {
-                                setcutFastbootDevice(device.get());
-                                break;
-                            }
-                        }
-                    } else {
-                        setcutFastbootDevice(nullptr);
-                    }
-                }
-                
-                m_fastbootDeviceList.remove(i);
+            if (deviceFound) {
                 continue;
             }
+
+            const auto disconnectingDevice = m_fastbootDeviceList[i];
+            emit deviceDisconnected(disconnectingDevice);
+            NotificationController::instance()->send("fastboot设备已断开", disconnectingDevice->code() + "已断开");
+
+            if (cutFastbootDevice() == disconnectingDevice.get()) {
+                setcutFastbootDevice(nullptr);
+                for (const auto &device : m_fastbootDeviceList) {
+                    if (device.get() != disconnectingDevice.get()) {
+                        setcutFastbootDevice(device.get());
+                        break;
+                    }
+                }
+            }
+            m_fastbootDeviceList.remove(i);
         }
     }
 
+    m_refreshInProgress = false;
     emit deviceRefreshFinish();
 }
 

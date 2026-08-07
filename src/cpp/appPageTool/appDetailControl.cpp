@@ -165,7 +165,6 @@ void AppDetailControl::onUpdateSoftDetailInfoFinish(const AppDetailInfo &info)
 void AppDetailControl::setSoftListType(SoftListType type)
 {
     m_softListType = type;
-    qWarning() << "======" << m_softListType << "======";
     emit softListTypeChanged(m_softListType);
 }
 

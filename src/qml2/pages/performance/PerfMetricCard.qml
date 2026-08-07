@@ -13,7 +13,8 @@ Rectangle {
     property real level: 0
 
     Layout.fillWidth: true
-    Layout.preferredHeight: 78
+    Layout.preferredHeight: 90
+    Layout.minimumHeight: 90
     radius: 8
     color: FluTheme.dark ? Qt.rgba(0.08, 0.09, 0.11, 0.76) : Qt.rgba(1, 1, 1, 0.78)
     border.width: 1

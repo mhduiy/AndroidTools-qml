@@ -2,9 +2,25 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QNetworkReply>
-#include <QEventLoop>
 
 static SystemInfoProvider *s_instance = nullptr;
+namespace {
+QJsonObject parseJsonReply(QNetworkReply *reply)
+{
+    if (reply->error() != QNetworkReply::NoError) {
+        return {};
+    }
+
+    QJsonParseError error;
+    const QJsonDocument document = QJsonDocument::fromJson(reply->readAll(), &error);
+    if (error.error != QJsonParseError::NoError || !document.isObject()) {
+        return {};
+    }
+
+    const QJsonObject root = document.object();
+    return root.contains("error") ? QJsonObject{} : root;
+}
+}
 
 SystemInfoProvider *SystemInfoProvider::instance()
 {
@@ -44,90 +60,66 @@ bool SystemInfoProvider::polling() const
 
 void SystemInfoProvider::fetchSystemInfo()
 {
-    QJsonObject cpu = getJson("/cpu");
-    if (!cpu.isEmpty()) {
-        m_cpuModel = cpu["model"].toString();
-        m_cpuArchitecture = cpu["architecture"].toString();
-        m_cpuCoreCount = cpu["coreCount"].toInt();
-        m_cpuUsage = cpu["currentUsage"].toDouble(cpu["overall_usage"].toDouble());
-        m_cpuTemp = cpu["temperature"].toDouble();
-        m_cpuMaxFrequency = cpu["maxFrequency"].toInt();
-        m_cpuMinFrequency = cpu["minFrequency"].toInt();
+    if (m_pendingRequests > 0) {
+        return;
     }
 
-    QJsonObject gpu = getJson("/gpu");
-    if (!gpu.isEmpty()) {
-        m_gpuName = gpu["name"].toString();
-        m_gpuVendor = gpu["vendor"].toString();
-        m_gpuUsage = gpu["usage"].toDouble();
-        m_gpuCurrentFrequency = gpu["currentFrequency"].toInt();
-        m_gpuMaxFrequency = gpu["maxFrequency"].toInt();
-        m_gpuTemperature = gpu["temperature"].toInt(-1);
+    const QStringList paths = {"/cpu", "/gpu", "/memory", "/battery", "/current-app"};
+    m_pendingRequests = paths.size();
+
+    for (const QString &path : paths) {
+        QNetworkRequest request(QUrl(QStringLiteral("http://localhost:18888") + path));
+        request.setTransferTimeout(700);
+        QNetworkReply *reply = m_nam->get(request);
+
+        connect(reply, &QNetworkReply::finished, this, [this, reply, path]() {
+            const QJsonObject data = parseJsonReply(reply);
+            reply->deleteLater();
+
+            if (path == "/cpu" && !data.isEmpty()) {
+                m_cpuModel = data["model"].toString();
+                m_cpuArchitecture = data["architecture"].toString();
+                m_cpuCoreCount = data["coreCount"].toInt();
+                m_cpuUsage = data["currentUsage"].toDouble(data["overall_usage"].toDouble());
+                m_cpuTemp = data["temperature"].toDouble();
+                m_cpuMaxFrequency = data["maxFrequency"].toInt();
+                m_cpuMinFrequency = data["minFrequency"].toInt();
+            } else if (path == "/gpu" && !data.isEmpty()) {
+                m_gpuName = data["name"].toString();
+                m_gpuVendor = data["vendor"].toString();
+                m_gpuUsage = data["usage"].toDouble();
+                m_gpuCurrentFrequency = data["currentFrequency"].toInt();
+                m_gpuMaxFrequency = data["maxFrequency"].toInt();
+                m_gpuTemperature = data["temperature"].toInt(-1);
+            } else if (path == "/memory" && !data.isEmpty()) {
+                m_ramTotal = data["totalMemory"].toDouble() / 1024.0 / 1024.0 / 1024.0;
+                m_ramUsage = data["usedMemory"].toDouble() / 1024.0 / 1024.0 / 1024.0;
+                m_memAvailable = data["availableMemory"].toDouble() / 1024.0 / 1024.0 / 1024.0;
+                m_lowMemory = data["lowMemory"].toBool();
+                m_storageTotal = data["totalStorage"].toDouble() / 1024.0 / 1024.0 / 1024.0;
+                m_storageUsed = data["usedStorage"].toDouble() / 1024.0 / 1024.0 / 1024.0;
+            } else if (path == "/battery" && !data.isEmpty()) {
+                m_batteryPower = data["power"].toDouble();
+                m_batteryCapacity = data["capacity"].toVariant().toLongLong();
+                m_batteryChargeCounter = data["chargeCounter"].toInt();
+                m_batteryTechnology = data["technology"].toString();
+            } else if (path == "/current-app" && !data.isEmpty()) {
+                m_foregroundAppName = data["appName"].toString();
+                m_foregroundPackage = data["packageName"].toString();
+                m_foregroundActivity = data["activityName"].toString();
+                m_foregroundVersion = data["version"].toString();
+                m_foregroundPid = data["pid"].toInt();
+                m_foregroundUid = data["uid"].toInt();
+                m_foregroundCpuUsage = data["cpuUsage"].toDouble();
+                m_foregroundMemoryMB = data["memoryUsageMB"].toDouble();
+                m_fps = data["fps"].toInt();
+            }
+
+            if (--m_pendingRequests == 0) {
+                emit systemInfoChanged();
+            }
+        });
     }
-
-    QJsonObject mem = getJson("/memory");
-    if (!mem.isEmpty()) {
-        m_ramTotal = mem["totalMemory"].toDouble() / 1024.0 / 1024.0 / 1024.0;
-        m_ramUsage = mem["usedMemory"].toDouble() / 1024.0 / 1024.0 / 1024.0;
-        m_memAvailable = mem["availableMemory"].toDouble() / 1024.0 / 1024.0 / 1024.0;
-        m_lowMemory = mem["lowMemory"].toBool();
-        m_storageTotal = mem["totalStorage"].toDouble() / 1024.0 / 1024.0 / 1024.0;
-        m_storageUsed = mem["usedStorage"].toDouble() / 1024.0 / 1024.0 / 1024.0;
-    }
-
-    QJsonObject battery = getJson("/battery");
-    if (!battery.isEmpty()) {
-        m_batteryPower = battery["power"].toDouble();
-        m_batteryCapacity = battery["capacity"].toVariant().toLongLong();
-        m_batteryChargeCounter = battery["chargeCounter"].toInt();
-        m_batteryTechnology = battery["technology"].toString();
-    }
-
-    QJsonObject current = getJson("/current-app");
-    if (!current.isEmpty()) {
-        m_foregroundAppName = current["appName"].toString();
-        m_foregroundPackage = current["packageName"].toString();
-        m_foregroundActivity = current["activityName"].toString();
-        m_foregroundVersion = current["version"].toString();
-        m_foregroundPid = current["pid"].toInt();
-        m_foregroundUid = current["uid"].toInt();
-        m_foregroundCpuUsage = current["cpuUsage"].toDouble();
-        m_foregroundMemoryMB = current["memoryUsageMB"].toDouble();
-        m_fps = current["fps"].toInt();
-    }
-
-    emit systemInfoChanged();
-}
-
-QJsonObject SystemInfoProvider::getJson(const QString &path, int timeoutMs)
-{
-    QNetworkRequest req(QUrl(QStringLiteral("http://localhost:18888") + path));
-    req.setTransferTimeout(timeoutMs);
-
-    QNetworkReply *reply = m_nam->get(req);
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-
-    if (reply->error() != QNetworkReply::NoError) {
-        reply->deleteLater();
-        return {};
-    }
-
-    const QByteArray data = reply->readAll();
-    reply->deleteLater();
-
-    QJsonParseError err;
-    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-        return {};
-    }
-
-    QJsonObject root = doc.object();
-    if (root.contains("error")) {
-        return {};
-    }
-    return root;
 }
 
 double SystemInfoProvider::cpuUsage() const   { return m_cpuUsage; }

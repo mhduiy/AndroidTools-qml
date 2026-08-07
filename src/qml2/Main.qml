@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import FluentUI
 import WallpaperHelper 1.0
+import App 1.0
 import "./components"
 
 FluWindow {
@@ -13,11 +14,9 @@ FluWindow {
     title: "AndroidTools"
     launchMode: FluWindowType.Standard
     fitsAppBarWindows: true
-    fixSize: true
+    fixSize: false
     minimumWidth: 1180
     minimumHeight: 760
-    maximumWidth: 1180
-    maximumHeight: 760
 
     appBar: FluAppBar {
         height: 30
@@ -41,7 +40,8 @@ FluWindow {
         FastBlur {
             anchors.fill: parent
             source: wallpaperImage
-            radius: WallpaperHelper.blurRadius || 50
+            radius: WallpaperHelper.blurRadius
+            opacity: WallpaperHelper.opacity
             transparentBorder: true
         }
 
@@ -51,6 +51,17 @@ FluWindow {
             Behavior on color { ColorAnimation { duration: 300 } }
         }
     }
+    function applyTheme() {
+        FluTheme.darkMode = App.themeType === App.Dark ? FluThemeType.Dark : FluThemeType.Light
+    }
+
+    Component.onCompleted: applyTheme()
+
+    Connections {
+        target: App
+        function onThemeTypeChanged() { mainWindow.applyTheme() }
+    }
+
 
     // ---- 导航视图 ----
     FluNavigationView {

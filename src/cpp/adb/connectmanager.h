@@ -31,6 +31,7 @@ public slots:
         
     void startADBServer(std::function<void()> callback = nullptr);
     void killADBServer();
+    void restartADBServer();
 
     void requestSetCutADBDevice(const QString &deviceCode);
     void requestSetCutFastbootDevice(const QString &deviceCode);
@@ -45,6 +46,7 @@ signals:
 
 private:
     void refreshDevice();
+    void updateDevices(const QVector<QString> &adbDevices, const QVector<QString> &fastbootDevices);
 
     QVector<QString> getDeviceList(ConnectStatus type = C_ADB);
     bool hasDevice(const QString &deviceCode, ConnectStatus type = C_ADB);
@@ -54,5 +56,6 @@ private:
     QVector<QSharedPointer<ADBDevice>> m_adbDeviceList;
     QVector<QSharedPointer<FastbootDevice>> m_fastbootDeviceList;
     QTimer *m_deviceCheckTimer;
+    bool m_refreshInProgress = false;
 };
 } // namespace ADT

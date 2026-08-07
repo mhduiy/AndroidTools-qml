@@ -27,7 +27,7 @@ signals:
     void deviceRefreshIntervalChanged(int value);
 
 private:
-    double m_wrapperOpacity;
-    bool m_useOpenGL;
-    int m_deviceRefreshInterval;
+    double m_wrapperOpacity = 0;
+    bool m_useOpenGL = false;
+    int m_deviceRefreshInterval = 0;
 };

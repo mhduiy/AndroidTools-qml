@@ -3,7 +3,6 @@
 #include "globalsetting.h"
 #include <QMutex>
 #include <QMutexLocker>
-#include <QDebug>
 #include <QTimer>
 #include <QCoreApplication>
 
@@ -11,29 +10,22 @@ GlobalSetting* GlobalSetting::_instance = nullptr;
 
 GlobalSetting::GlobalSetting(QObject *parent) : QObject(parent) {
     QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-    m_timer = new QTimer();
+    m_timer = new QTimer(this);
     m_timer->setInterval(1000);
     m_timer->setSingleShot(true);
-    // 创建目录
-    cacheDir = cacheDir + QDir::separator() + QCoreApplication::applicationName();
+    cacheDir += QDir::separator() + QCoreApplication::applicationName();
     QDir dir(cacheDir);
-    if(!dir.exists(cacheDir)) {
+    if (!dir.exists(cacheDir)) {
         dir.mkpath(cacheDir);
     }
 
-    qDebug() << "config file:" << cacheDir + "/config.ini";
-    settings = new QSettings(cacheDir + "/config.ini", QSettings::IniFormat);
-
+    settings = new QSettings(cacheDir + "/config.ini", QSettings::IniFormat, this);
     connect(m_timer, &QTimer::timeout, this, &GlobalSetting::syncConfig);
 }
 
 void GlobalSetting::writeConfig(const QString &title, const QString &key, const QVariant &value) {
-    auto handleFunc = [title, key, value, this](){
-        qWarning() << title << key << value;
-        settings->setValue(QString("%1/%2").arg(title, key), value);
-    };
+    settings->setValue(QString("%1/%2").arg(title, key), value);
     m_timer->start();
-    m_peddingTasks.enqueue(handleFunc);
 }
 
 QVariant GlobalSetting::readConfig(const QString &title, const QString &key, const QVariant &fallback) {
@@ -55,10 +47,7 @@ bool GlobalSetting::checkConfig(const QString &title, const QString &key, const 
 
 void GlobalSetting::syncConfig()
 {
-    while(!m_peddingTasks.isEmpty()) {
-        auto handleFunc = m_peddingTasks.dequeue();
-        handleFunc();
-    }
+    settings->sync();
 }
 
 GlobalSetting *GlobalSetting::instance(QObject *parent) {

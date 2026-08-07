@@ -101,7 +101,7 @@ git submodule update --init --recursive
 ```text
 src/cpp/adb                 ADB device model, commands, and Android helper service bridge
 src/cpp/controlPageTool     Device control, battery spoofing, file/input tools
-src/cpp/AppPageTool         App list, app details, icon loading, app operations
+src/cpp/appPageTool         App list, app details, icon loading, app operations
 src/cpp/flashPageTool       Fastboot and flashing helpers
 src/cpp/components          Runtime system-info provider
 src/cpp/imagePageTool       Scrcpy / mirroring integration

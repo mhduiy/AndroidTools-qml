@@ -12,11 +12,6 @@ FluContentPage {
     id: page
     title: "设置"
 
-    Timer {
-        id: restartTimer
-        interval: 1500
-        onTriggered: ConnectManager.startCheckDevice()
-    }
 
     ScrollView {
         anchors.fill: parent
@@ -29,12 +24,13 @@ FluContentPage {
             // ---- Wallpaper ----
             FluFrame {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 240
+                Layout.preferredHeight: wallpaperLayout.implicitHeight + 32
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 Layout.topMargin: 12
 
                 ColumnLayout {
+                    id: wallpaperLayout
                     anchors.fill: parent
                     anchors.margins: 16
                     spacing: 10
@@ -44,17 +40,21 @@ FluContentPage {
                     ScrollView {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 85
+                        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                        ScrollBar.horizontal.policy: ScrollBar.AsNeeded
                         RowLayout {
                             height: 75
                             spacing: 8
                             Repeater {
                                 model: WallPaperModel
                                 delegate: Rectangle {
-                                    width: 110; height: 75; radius: 8; color: "transparent"
+                                    required property int index
+                                    required property string url
+                                    width: 110; height: 75; radius: 8; color: "transparent"; clip: true
                                     border { color: index === WallPaperModel.currentIndex ? FluTheme.primaryColor : Qt.rgba(0,0,0,0.1); width: 2 }
                                     Image {
                                         anchors { fill: parent; margins: 4 }
-                                        source: model.url; fillMode: Image.PreserveAspectCrop; asynchronous: true
+                                        source: url; fillMode: Image.PreserveAspectCrop; asynchronous: true
                                     }
                                     MouseArea { anchors.fill: parent; onClicked: WallPaperModel.setCurrentIndex(index) }
                                 }
@@ -88,11 +88,12 @@ FluContentPage {
             // ---- Appearance ----
             FluFrame {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 150
+                Layout.preferredHeight: appearanceLayout.implicitHeight + 32
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
 
                 ColumnLayout {
+                    id: appearanceLayout
                     anchors { left: parent.left; top: parent.top; right: parent.right; margins: 16 }
                     spacing: 12
 
@@ -100,7 +101,10 @@ FluContentPage {
 
                     RowLayout {
                         FluText { text: "深色模式"; Layout.preferredWidth: 140 }
-                        FluToggleSwitch { checked: App.themeType === App.Dark; onClicked: App.setThemeType(checked ? App.Dark : App.Light) }
+                        FluToggleSwitch {
+                            checked: App.themeType === App.Dark
+                            clickListener: function() { App.setThemeType(checked ? App.Light : App.Dark) }
+                        }
                     }
 
                     RowLayout {
@@ -118,11 +122,12 @@ FluContentPage {
             // ---- Advanced ----
             FluFrame {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 195
+                Layout.preferredHeight: advancedLayout.implicitHeight + 32
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
 
                 ColumnLayout {
+                    id: advancedLayout
                     anchors { left: parent.left; top: parent.top; right: parent.right; margins: 16 }
                     spacing: 12
 
@@ -130,7 +135,10 @@ FluContentPage {
 
                     RowLayout {
                         FluText { text: "OpenGL"; Layout.preferredWidth: 140 }
-                        FluToggleSwitch { checked: OtherSettingsHandler.useOpenGL; onClicked: OtherSettingsHandler.useOpenGL = !OtherSettingsHandler.useOpenGL }
+                        FluToggleSwitch {
+                            checked: OtherSettingsHandler.useOpenGL
+                            clickListener: function() { OtherSettingsHandler.useOpenGL = !checked }
+                        }
                         FluText { text: "(重启生效)"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
                     }
 
@@ -148,12 +156,9 @@ FluContentPage {
                     RowLayout {
                         FluText { text: "ADB服务"; Layout.preferredWidth: 140 }
                         FluButton {
-                            text: "重启"
-                            onClicked: {
-                                ConnectManager.killADBServer()
-                                ConnectManager.startADBServer()
-                                restartTimer.start()
-                            }
+                            text: ConnectManager.adbServerStarting ? "重启中..." : "重启"
+                            enabled: !ConnectManager.adbServerStarting
+                            onClicked: ConnectManager.restartADBServer()
                         }
                     }
                 }
@@ -162,11 +167,12 @@ FluContentPage {
             // ---- About ----
             FluFrame {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 110
+                Layout.preferredHeight: aboutLayout.implicitHeight + 32
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
 
                 ColumnLayout {
+                    id: aboutLayout
                     anchors { left: parent.left; top: parent.top; right: parent.right; margins: 16 }
                     spacing: 4
 

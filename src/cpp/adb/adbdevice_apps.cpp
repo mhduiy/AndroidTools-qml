@@ -89,13 +89,6 @@ bool ADBDevice::installApp(const QString &path, bool r, bool s, bool d, bool g)
 
     CommandResult result = m_adbTools->executeCommandDetailed(ADBTools::ADB, args, "", INT_MAX);
 
-    qDebug() << "Install App Command:" << result.command;
-    qDebug() << "Success:" << result.success;
-    qDebug() << "Exit Code:" << result.exitCode;
-    qDebug() << "Execution Time:" << result.executionTime << "ms";
-    if (!result.errorOutput.isEmpty()) {
-        qDebug() << "Error Output:" << result.errorOutput;
-    }
 
     return result.isSuccess() && result.output.contains("Success");
 }
@@ -106,11 +99,6 @@ bool ADBDevice::clearData(const QString &packageName)
     args << "-s" << code() << "shell" << "pm" << "clear" << packageName;
     CommandResult result = m_adbTools->executeCommandDetailed(ADBTools::ADB, args, "", INT_MAX);
 
-    qDebug() << "Clear Data Command:" << result.command;
-    qDebug() << "Success:" << result.success << "Exit Code:" << result.exitCode;
-    if (!result.errorOutput.isEmpty()) {
-        qDebug() << "Error Output:" << result.errorOutput;
-    }
 
     return result.isSuccess() && result.output.contains("Success");
 }
@@ -121,11 +109,6 @@ bool ADBDevice::uninstallApp(const QString &packageName)
     args << "-s" << code() << "uninstall" << packageName;
     CommandResult result = m_adbTools->executeCommandDetailed(ADBTools::ADB, args, "", INT_MAX);
 
-    qDebug() << "Uninstall App Command:" << result.command;
-    qDebug() << "Success:" << result.success << "Exit Code:" << result.exitCode;
-    if (!result.errorOutput.isEmpty()) {
-        qDebug() << "Error Output:" << result.errorOutput;
-    }
 
     return result.isSuccess() && result.output.contains("Success");
 }

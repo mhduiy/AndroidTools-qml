@@ -37,10 +37,8 @@ FileTransfer::FileTransfer(QObject *parent)
 
 FileTransfer::~FileTransfer()
 {
-    qInfo() << "FileTransfer Thread exiting";
     m_handleThread->quit();
     m_handleThread->wait();
-    qInfo() << "FileTransfer Thread exited";
 }
 
 void FileTransfer::transmission(const QString &source, const QString &targetDir)
@@ -66,7 +64,6 @@ void FileTransfer::transmission(const QString &source, const QString &targetDir)
     auto device = ConnectManager::instance()->cutADBDevice();
     if (!device) return;
     auto cutDevice = device->code();
-    qWarning() << filePath << url.toLocalFile();
     QMetaObject::invokeMethod(m_handler, "transmission", Q_ARG(QString, cutDevice), Q_ARG(QString, filePath), Q_ARG(QString, targetDir));
 } 
 

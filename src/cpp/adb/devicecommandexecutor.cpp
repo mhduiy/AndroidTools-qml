@@ -288,14 +288,6 @@ ADBCommandExecutor* screenshot(const QString& outputPath)
         .withFailureMessage("截图失败")
         .withProgressMessage("正在截图...");
     
-    if (!outputPath.isEmpty()) {
-        // 如果指定了输出路径，需要额外处理保存文件的逻辑
-        executor->onSuccess([outputPath](const ADBCommandResult& result) {
-            // 这里可以添加保存截图文件的逻辑
-            // 由于截图是二进制数据，可能需要特殊处理
-            qDebug() << "截图数据大小:" << result.output.size() << "字节";
-        });
-    }
     
     return executor;
 }

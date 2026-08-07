@@ -254,7 +254,7 @@ FluContentPage {
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
                 Layout.bottomMargin: 12
-                Layout.preferredHeight: 124
+                Layout.preferredHeight: 164
                 spacing: 10
 
                 Panel {

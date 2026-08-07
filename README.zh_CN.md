@@ -94,7 +94,7 @@ git submodule update --init --recursive
 ```text
 src/cpp/adb                 ADB 设备模型、命令执行、设备侧服务桥接
 src/cpp/controlPageTool     设备控制、电池伪装、文件和输入工具
-src/cpp/AppPageTool         应用列表、应用详情、图标加载、应用操作
+src/cpp/appPageTool         应用列表、应用详情、图标加载、应用操作
 src/cpp/flashPageTool       Fastboot 和刷机工具
 src/cpp/components          实时系统信息提供器
 src/cpp/imagePageTool       scrcpy / 投屏集成

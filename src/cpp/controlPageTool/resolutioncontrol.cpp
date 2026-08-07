@@ -17,7 +17,6 @@ ResolutionControl::ResolutionControl(QObject *parent) : QObject(parent)
 
 ResolutionControl::~ResolutionControl()
 {
-    qInfo() << "ResolutionControl destroyed";
 }
 
 void ResolutionControl::onDeviceInfoChanged()
