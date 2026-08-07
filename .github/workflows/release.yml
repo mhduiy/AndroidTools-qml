@@ -26,7 +26,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            build-essential cmake cpack dpkg-dev extra-cmake-modules \
+            build-essential cmake dpkg-dev extra-cmake-modules \
             qt6-base-dev qt6-base-dev-tools qt6-declarative-dev \
             qt6-declarative-private-dev qt6-tools-dev qt6-tools-dev-tools \
             qt6-5compat-dev libqt6websockets6-dev libopengl-dev libgl-dev \
@@ -80,7 +80,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.9.3'
-          modules: 'qt5compat'
+          modules: 'qt5compat qtwebsockets'
           cache: true
 
       - name: Install FFmpeg
