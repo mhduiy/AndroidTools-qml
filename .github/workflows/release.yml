@@ -1,0 +1,133 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  linux:
+    name: Linux DEB
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential cmake cpack dpkg-dev extra-cmake-modules \
+            qt6-base-dev qt6-base-dev-tools qt6-declarative-dev \
+            qt6-declarative-private-dev qt6-tools-dev qt6-tools-dev-tools \
+            qt6-5compat-dev libqt6websockets6-dev libopengl-dev libgl-dev \
+            libxkbcommon-dev libxkbfile-dev libx11-dev libgl1-mesa-dev \
+            libglu1-mesa-dev mesa-common-dev libvulkan-dev \
+            qml6-module-qt5compat-graphicaleffects qml6-module-qtquick-controls \
+            qml6-module-qtquick-dialogs qml6-module-qtquick-layouts \
+            qml6-module-qtquick-window qml6-module-qt-labs-platform \
+            adb fastboot
+
+      - name: Set package version
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            echo "PACKAGE_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          else
+            echo "PACKAGE_VERSION=0.1.0-dev.${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_INSTALL_PREFIX=/usr -DCPACK_PACKAGE_VERSION="$PACKAGE_VERSION"
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Package
+        run: |
+          cpack --config build/CPackConfig.cmake
+          mkdir -p dist
+          mv build/*.deb "dist/AndroidTools-${PACKAGE_VERSION}-linux-x86_64.deb"
+
+      - name: Upload Linux package
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-tools-linux
+          path: dist/*.deb
+
+  macos:
+    name: macOS DMG (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15-intel, macos-14]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.9.3'
+          modules: 'qt5compat'
+          cache: true
+
+      - name: Install FFmpeg
+        run: brew install ffmpeg
+
+      - name: Set package version
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            echo "PACKAGE_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          else
+            echo "PACKAGE_VERSION=0.1.0-dev.${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCPACK_PACKAGE_VERSION="$PACKAGE_VERSION"
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Create DMG
+        run: |
+          macdeployqt build/AndroidTools.app -qmldir=src/qml2
+          codesign --force --deep --sign - build/AndroidTools.app
+          mkdir -p dist
+          hdiutil create -volname AndroidTools -srcfolder build/AndroidTools.app -ov -format UDZO "dist/AndroidTools-${PACKAGE_VERSION}-macos-$(uname -m).dmg"
+
+      - name: Upload macOS package
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-tools-${{ matrix.os }}
+          path: dist/*.dmg
+
+  publish:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [linux, macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: android-tools-*
+          merge-multiple: true
+          path: dist
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: dist/*

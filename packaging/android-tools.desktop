@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=AndroidTools
+Comment=Android device toolbox
+Exec=AndroidTools
+Terminal=false
+Categories=Development;Utility;

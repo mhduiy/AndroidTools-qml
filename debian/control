@@ -12,13 +12,18 @@ Build-Depends:
  qt6-declarative-private-dev,
  qt6-base-dev-tools,
  qt6-tools-dev,
- qtquickcontrols2-5-dev,
+ qt6-tools-dev-tools,
+ qt6-5compat-dev,
+ qml6-module-qt5compat-graphicaleffects,
+ qml6-module-qtquick-controls,
+ qml6-module-qtquick-dialogs,
  qml6-module-qtquick-layouts,
  qml6-module-qtquick-window,
  qml6-module-qt-labs-platform,
  libopengl-dev,
  libgl-dev,
  libxkbcommon-dev,
+ libx11-dev,
  libxkbfile-dev,
  libgl1-mesa-dev,
  libglu1-mesa-dev,
@@ -29,7 +34,15 @@ Standards-Version: 0.0.1
 
 Package: android-tools
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Multi-Arch: same
-Description: AndroidTools
- A cross platform Android toolbox developed using Qt based on ADB tools
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ adb,
+ fastboot,
+ qml6-module-qt5compat-graphicaleffects,
+ qml6-module-qtquick-controls,
+ qml6-module-qtquick-dialogs,
+ qml6-module-qtquick-layouts,
+ qml6-module-qtquick-window
+Description: Qt toolbox for Android devices
+ Android device information, mirroring, control, app management and flash tools.

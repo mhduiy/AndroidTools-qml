@@ -81,6 +81,10 @@ cmake --build build --parallel
 git submodule update --init --recursive
 ```
 
+## 发布包
+
+从 [GitHub Releases](https://github.com/mhduiy/AndroidTools-qml/releases) 下载最新的 Linux `.deb` 或 macOS `.dmg`。推送 `v*` 标签后，GitHub Actions 会自动构建并发布两个平台的安装包。
+
 ## 使用
 
 1. 安装 Android Platform Tools，确保 `adb` 和 `fastboot` 在 `PATH` 中。

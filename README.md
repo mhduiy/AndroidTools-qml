@@ -88,6 +88,11 @@ If submodules were not cloned:
 git submodule update --init --recursive
 ```
 
+## Releases
+
+Download the latest Linux `.deb` or macOS `.dmg` from [GitHub Releases](https://github.com/mhduiy/AndroidTools-qml/releases). Push a `v*` tag to build and publish both platforms automatically.
+
+
 ## Usage
 
 1. Install Android Platform Tools and make sure `adb` and `fastboot` are in `PATH`.

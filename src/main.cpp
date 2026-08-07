@@ -5,7 +5,9 @@
 #include <QElapsedTimer>
 #include <QQuickStyle>
 #include <QQuickWindow>
-#include <QProcess>
+#include <QDir>
+#include <QFileInfo>
+#include <QStandardPaths>
 
 #include "cpp/adb/connectmanager.h"
 #include "cpp/adb/adblog.h"
@@ -22,30 +24,37 @@
 
 bool checkADB()
 {
-    QProcess process;
-    QString trueADBPath;
+#ifdef Q_OS_WIN
+    const QString executable = "adb.exe";
+#else
+    const QString executable = "adb";
+#endif
+    const QString appDir = QCoreApplication::applicationDirPath();
+    QString adbPath = QStandardPaths::findExecutable(executable);
+    const QStringList bundledPaths = {
+        appDir + "/tools/" + executable,
+        appDir + "/../Resources/tools/" + executable,
+        appDir + "/../lib/android-tools/tools/" + executable,
+        appDir + "/lib/" + executable,
+        appDir + "/../../../lib/" + executable
+    };
 
-    if (QSysInfo::productType() == "windows") {
-        process.start("powershell", {"-Command", "Get-Command adb | Select-Object -ExpandProperty Source"});
-    } else {
-        process.start("which", {"adb"});
+    for (const QString &path : bundledPaths) {
+        if (adbPath.isEmpty() && QFileInfo::exists(path)) {
+            adbPath = QDir::cleanPath(path);
+        }
     }
 
-    process.waitForFinished();
-    QString output = process.readAll().simplified();
-
-    if (!output.isEmpty() && QFile::exists(output)) {
-        trueADBPath = output;
+    if (adbPath.isEmpty()) {
+        qWarning() << "can not find adb";
+        return false;
     }
 
-    if (!trueADBPath.isEmpty()) {
-        qInfo() << "find adb:" << trueADBPath;
-        qputenv("QTSCRCPY_ADB_PATH", trueADBPath.toLocal8Bit());
-        return true;
-    }
-
-    qWarning() << "can not found adb!";
-    return false;
+    const QString path = QFileInfo(adbPath).absolutePath()
+        + QDir::listSeparator() + QString::fromLocal8Bit(qgetenv("PATH"));
+    qputenv("PATH", path.toLocal8Bit());
+    qputenv("QTSCRCPY_ADB_PATH", adbPath.toLocal8Bit());
+    return true;
 }
 
 void forceOpenGL()
@@ -104,10 +113,11 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
-    // TODO: Make FluentUI QML import path cross-platform (CMake install step)
-#ifdef Q_OS_MACOS
-    engine.addImportPath("/opt/homebrew/qml");
-#endif
+    const QString appDir = QCoreApplication::applicationDirPath();
+    engine.addImportPath(appDir + "/qml");
+    engine.addImportPath(appDir + "/../Resources/qml");
+    engine.addImportPath(appDir + "/../share/android-tools/qml");
+    engine.addImportPath(appDir + "/../../../qml");
     const QUrl url("qrc:/qml2/Main.qml");
     engine.load(url);
     qInfo() << "QML界面加载完成，用时(ms):" << loaderTimer.elapsed();

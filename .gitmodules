@@ -1,3 +1,6 @@
 [submodule "src/cpp/imagePageTool/scrcpy/core"]
 	path = src/cpp/imagePageTool/scrcpy/core
 	url = https://github.com/mhduiy/QtScrcpyCore.git
+[submodule "third_party/FluentUI"]
+	path = third_party/FluentUI
+	url = https://github.com/zhuzichu520/FluentUI.git
