@@ -104,8 +104,10 @@ jobs:
         run: |
           macdeployqt build/AndroidTools.app -qmldir=src/qml2
           codesign --force --deep --sign - build/AndroidTools.app
-          mkdir -p dist
-          hdiutil create -volname AndroidTools -srcfolder build/AndroidTools.app -ov -format UDZO "dist/AndroidTools-${PACKAGE_VERSION}-macos-$(uname -m).dmg"
+          mkdir -p dist/dmg
+          mv build/AndroidTools.app dist/dmg/
+          ln -s /Applications dist/dmg/Applications
+          hdiutil create -volname AndroidTools -srcfolder dist/dmg -ov -format UDZO "dist/AndroidTools-${PACKAGE_VERSION}-macos-$(uname -m).dmg"
 
       - name: Upload macOS package
         uses: actions/upload-artifact@v4
