@@ -21,7 +21,7 @@ set(SRC_PATHS
 )
 
 set(QT_VERSION_MAJOR 6)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Network WebSockets QuickControls2 Concurrent DBus)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Network WebSockets QuickControls2 Concurrent DBus ShaderTools)
 
 include_directories(.)
 
@@ -74,7 +74,7 @@ target_link_libraries(${EXE_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::WebSockets
     Qt${QT_VERSION_MAJOR}::QuickControls2
     Qt${QT_VERSION_MAJOR}::Concurrent
-
+    Qt${QT_VERSION_MAJOR}::ShaderTools
     # QtScrcpyCore
 )
 
