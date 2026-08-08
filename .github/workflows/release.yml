@@ -80,7 +80,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.9.3'
-          modules: 'qt5compat qtwebsockets'
+          modules: 'qt5compat qtwebsockets qtshadertools'
           cache: true
 
       - name: Install FFmpeg
