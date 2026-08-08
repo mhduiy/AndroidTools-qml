@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import FluentUI
 import ConnectManager 1.0
+import DeviceHelper 1.0
 import DeviceControl 1.0
 import BatteryDisguise 1.0
 import ResolutionControl 1.0
@@ -21,6 +22,7 @@ import FastBootDeviceManager 1.0
 import FlashTools 1.0
 import ADBLog 1.0
 import ADT 1.0
+import NotificationController 1.0
 import SystemInfo 1.0
 import "qrc:/qml2/components"
 import "qrc:/qml2/pages/home"
@@ -42,6 +44,9 @@ FluContentPage {
     property real ramPct: SystemInfo.ramTotal > 0 ? Math.round(SystemInfo.ramUsage / SystemInfo.ramTotal * 100) : 0
     property real storagePct: SystemInfo.storageTotal > 0 ? Math.round(SystemInfo.storageUsed / SystemInfo.storageTotal * 100) : 0
     property real batteryTemp: device ? device.batteryTemperature : 0
+    property var devices: DeviceHelper.adbDeviceList
+    property string connectionTitle: ConnectManager.adbServerStarting ? "ADB 服务启动中" : (page.device ? ((page.device.manufacturer || "") + " " + (page.device.model || page.device.code || "Android 设备")) : "等待设备连接")
+    property string connectionHint: page.device ? ((page.device.currentPackage || "未读取前台应用") + "  /  " + (page.device.code || "-")) : (ConnectManager.adbStateMessage + "；可使用 USB 或无线连接")
 
     Timer {
         id: initTimer
@@ -52,9 +57,15 @@ FluContentPage {
     Connections {
         target: ConnectManager
         function onCutADBDeviceChanged() {
+            page.syncDeviceSelector()
             if (page.device) initTimer.start()
             else SystemInfo.stopPolling()
         }
+    }
+
+    Connections {
+        target: DeviceHelper
+        function onAdbDeviceListChanged() { page.syncDeviceSelector() }
     }
 
     Connections {
@@ -73,7 +84,10 @@ FluContentPage {
         }
     }
 
-    Component.onCompleted: if (page.device) initTimer.start()
+    Component.onCompleted: {
+        page.syncDeviceSelector()
+        if (page.device) initTimer.start()
+    }
     Component.onDestruction: {
         SystemInfo.stopPolling()
         if (page.mirrorActive) Resource.qmlRequest("REQUEST_MIRROR_FINISH", "")
@@ -84,6 +98,30 @@ FluContentPage {
         if (path.indexOf("file://") === 0)
             return decodeURIComponent(path.substring(Qt.platform.os === "windows" ? 8 : 7))
         return path
+    }
+
+    function installApk(path) {
+        if (!page.device) {
+            NotificationController.send("安装失败", "请先连接设备", NotificationController.Warning)
+            return
+        }
+        if (!path || !String(path).toLowerCase().endsWith(".apk")) {
+            NotificationController.send("无法安装", "请拖入 APK 文件", NotificationController.Warning)
+            return
+        }
+        page.workbenchIndex = 3
+        AppDetailControl.installApp(path)
+    }
+
+    function syncDeviceSelector() {
+        if (!page.device || !page.devices)
+            return
+        for (var i = 0; i < page.devices.length; ++i) {
+            if (page.devices[i] && page.devices[i].code === page.device.code) {
+                deviceSelector.currentIndex = i
+                return
+            }
+        }
     }
 
     function toggleMirror() {
@@ -226,6 +264,50 @@ FluContentPage {
         }
     }
 
+    Popup {
+        id: wirelessPopup
+        width: 430
+        height: 250
+        x: parent ? (parent.width - width) / 2 : 0
+        y: parent ? (parent.height - height) / 2 : 0
+        padding: 16
+        modal: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        background: Panel {}
+        contentItem: ColumnLayout {
+            spacing: 10
+            Header { title: "无线 ADB"; subtitle: "Android 11+ 可使用配对码" }
+            RowLayout {
+                Layout.fillWidth: true
+                FluTextBox { id: pairAddress; placeholderText: "配对地址，例如 192.168.1.20:37123"; Layout.fillWidth: true }
+                FluTextBox { id: pairCode; placeholderText: "配对码"; Layout.preferredWidth: 100 }
+                ActionButton {
+                    label: ConnectManager.wirelessOperationRunning ? "配对中" : "配对"
+                    dense: true
+                    Layout.preferredWidth: 76
+                    enabled: !ConnectManager.wirelessOperationRunning
+                    onPressed: ConnectManager.requestPairDevice(pairAddress.text.trim(), pairCode.text.trim())
+                }
+            }
+            Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: FluTheme.dividerColor }
+            RowLayout {
+                Layout.fillWidth: true
+                FluTextBox { id: connectAddress; placeholderText: "连接地址，例如 192.168.1.20:5555"; Layout.fillWidth: true }
+                ActionButton {
+                    label: ConnectManager.wirelessOperationRunning ? "连接中" : "连接"
+                    icon: FluentIcons.Connect
+                    dense: true
+                    Layout.preferredWidth: 92
+                    enabled: !ConnectManager.wirelessOperationRunning
+                    accent: "#0f7b6c"
+                    onPressed: ConnectManager.requestConnectDevice(connectAddress.text.trim())
+                }
+            }
+            Item { Layout.fillHeight: true }
+            FluText { text: "手机和电脑需位于同一局域网"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor }
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "transparent"
@@ -263,13 +345,13 @@ FluContentPage {
                             spacing: 0
                             Layout.fillWidth: true
                             FluText {
-                                text: page.device ? ((page.device.manufacturer || "") + " " + (page.device.model || page.device.deviceCode || "Android 设备")) : "等待设备连接"
+                                text: page.connectionTitle
                                 font: FluTextStyle.BodyStrong
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
                             }
                             FluText {
-                                text: page.device ? ((page.device.currentPackage || "未读取前台应用") + "  /  " + (page.device.serialNumber || page.device.deviceCode || "-")) : "连接设备后会自动汇总投屏、性能、应用和调试入口"
+                                text: page.connectionHint
                                 font: FluTextStyle.Caption
                                 color: FluTheme.fontSecondaryColor
                                 elide: Text.ElideRight
@@ -277,9 +359,21 @@ FluContentPage {
                             }
                         }
 
-                        ActionButton { label: "刷新"; icon: FluentIcons.Refresh; dense: true; Layout.preferredWidth: 76; onPressed: ConnectManager.startCheckDevice() }
+                        FluComboBox {
+                            id: deviceSelector
+                            visible: page.devices && page.devices.length > 1
+                            model: page.devices || []
+                            textRole: "code"
+                            Layout.preferredWidth: visible ? 160 : 0
+                            onActivated: {
+                                var selected = page.devices[currentIndex]
+                                if (selected) ConnectManager.requestSetCutADBDevice(selected.code)
+                            }
+                        }
+                        ActionButton { label: "无线"; icon: FluentIcons.Wifi; dense: true; Layout.preferredWidth: 76; onPressed: wirelessPopup.open() }
+                        ActionButton { label: ConnectManager.refreshInProgress ? "刷新中" : "刷新"; icon: FluentIcons.Refresh; dense: true; Layout.preferredWidth: 82; enabled: !ConnectManager.refreshInProgress; onPressed: ConnectManager.startCheckDevice() }
                         ActionButton { label: page.mirrorActive ? "停止投屏" : "投屏"; icon: FluentIcons.Video; dense: true; Layout.preferredWidth: 96; enabled: !!page.device; accent: "#0f7b6c"; onPressed: page.toggleMirror() }
-                        ActionButton { label: "截图"; icon: FluentIcons.Camera; dense: true; Layout.preferredWidth: 76; enabled: !!page.device; onPressed: ImageDetailTools.shotScreen("") }
+                        ActionButton { label: "截图"; icon: FluentIcons.Camera; dense: true; Layout.preferredWidth: 76; enabled: !!page.device; visible: page.width >= 1080; onPressed: ImageDetailTools.shotScreen("") }
                     }
                 }
             }
@@ -287,11 +381,12 @@ FluContentPage {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.minimumHeight: 382
+                Layout.minimumHeight: 360
                 spacing: 8
 
                 Panel {
-                    Layout.preferredWidth: 276
+                    Layout.preferredWidth: 250
+                    Layout.minimumWidth: 230
                     Layout.fillHeight: true
                     ColumnLayout {
                         anchors { fill: parent; margins: 10 }
@@ -347,7 +442,8 @@ FluContentPage {
                 }
 
                 Panel {
-                    Layout.preferredWidth: 454
+                    Layout.preferredWidth: 420
+                    Layout.minimumWidth: 380
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     ColumnLayout {
@@ -363,13 +459,14 @@ FluContentPage {
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 288
+                            Layout.fillHeight: true
                             spacing: 8
                             layoutDirection: Qt.LeftToRight
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.minimumWidth: 240
-                                Layout.preferredWidth: Math.max(260, parent.width - 140)
+                                Layout.minimumWidth: 220
+                                Layout.preferredWidth: Math.max(240, parent.width - 128)
                                 Layout.fillHeight: true
                                 radius: 10
                                 color: "#050608"
@@ -412,9 +509,9 @@ FluContentPage {
                             }
 
                             ColumnLayout {
-                                Layout.preferredWidth: 132
-                                Layout.minimumWidth: 132
-                                Layout.maximumWidth: 132
+                                Layout.preferredWidth: 120
+                                Layout.minimumWidth: 120
+                                Layout.maximumWidth: 120
                                 Layout.fillHeight: true
                                 spacing: 6
 
@@ -493,7 +590,8 @@ FluContentPage {
                 }
 
                 Panel {
-                    Layout.preferredWidth: 330
+                    Layout.preferredWidth: 300
+                    Layout.minimumWidth: 270
                     Layout.fillHeight: true
                     ColumnLayout {
                         anchors { fill: parent; margins: 10 }
@@ -732,8 +830,8 @@ FluContentPage {
                                 spacing: 8
 
                                 ColumnLayout {
-                                    Layout.preferredWidth: 420
-                                    Layout.minimumWidth: 420
+                                    Layout.preferredWidth: 400
+                                    Layout.minimumWidth: 350
                                     Layout.maximumWidth: 420
                                     Layout.fillHeight: true
                                     spacing: 6
@@ -750,7 +848,7 @@ FluContentPage {
                                             }
                                         }
                                         FluText { text: homeAppList.count + " 个应用"; font: FluTextStyle.Caption; color: FluTheme.fontSecondaryColor; Layout.fillWidth: true }
-                                        ActionButton { label: "安装 APK"; icon: FluentIcons.Add; dense: true; Layout.preferredWidth: 104; onPressed: apkDialog.open() }
+                                        ActionButton { label: AppDetailControl.busy ? "处理中" : "安装 APK"; icon: FluentIcons.Add; dense: true; Layout.preferredWidth: 104; enabled: !!page.device && !AppDetailControl.busy; onPressed: apkDialog.open() }
                                     }
                                     ListView {
                                         id: homeAppList
@@ -840,7 +938,7 @@ FluContentPage {
                                                 elide: Text.ElideRight
                                             }
                                             FluText {
-                                                text: page.selectedPackage.length > 0 ? page.selectedPackage : "从左侧列表选择应用后管理"
+                                                text: AppDetailControl.busy ? "应用操作进行中，请稍候" : (page.selectedPackage.length > 0 ? page.selectedPackage : "从左侧列表选择应用，或直接拖入 APK")
                                                 font: FluTextStyle.Caption
                                                 color: FluTheme.fontSecondaryColor
                                                 Layout.fillWidth: true
@@ -855,12 +953,12 @@ FluContentPage {
                                         columns: 6
                                         columnSpacing: 6
                                         rowSpacing: 6
-                                        ActionButton { label: "启动"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage; onPressed: AppDetailControl.startApp(page.selectedPackage) }
-                                        ActionButton { label: "停止"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage; onPressed: AppDetailControl.stopApp(page.selectedPackage) }
-                                        ActionButton { label: "提取"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage; onPressed: extractDialog.open() }
-                                        ActionButton { label: "冻结"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage; onPressed: AppDetailControl.freezeApp(page.selectedPackage) }
-                                        ActionButton { label: "清数据"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage; accent: "#ca8a04"; onPressed: AppDetailControl.clearData(page.selectedPackage) }
-                                        ActionButton { label: "卸载"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage; accent: "#d83b01"; onPressed: AppDetailControl.uninstallApp(page.selectedPackage) }
+                                        ActionButton { label: "启动"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage && !AppDetailControl.busy; onPressed: AppDetailControl.startApp(page.selectedPackage) }
+                                        ActionButton { label: "停止"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage && !AppDetailControl.busy; onPressed: AppDetailControl.stopApp(page.selectedPackage) }
+                                        ActionButton { label: "提取"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage && !AppDetailControl.busy; onPressed: extractDialog.open() }
+                                        ActionButton { label: "冻结"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage && !AppDetailControl.busy; onPressed: AppDetailControl.freezeApp(page.selectedPackage) }
+                                        ActionButton { label: "清数据"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage && !AppDetailControl.busy; accent: "#ca8a04"; onPressed: AppDetailControl.clearData(page.selectedPackage) }
+                                        ActionButton { label: "卸载"; dense: true; Layout.fillWidth: true; enabled: !!page.selectedPackage && !AppDetailControl.busy; accent: "#d83b01"; onPressed: AppDetailControl.uninstallApp(page.selectedPackage) }
                                     }
 
                                     GridLayout {
@@ -919,12 +1017,17 @@ FluContentPage {
                             ColumnLayout {
                                 anchors { fill: parent; margins: 10 }
                                 spacing: 6
-                                Header { title: "ADB 日志"; subtitle: ADBLog.rowCount() + " 条" }
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Header { title: "ADB 错误记录"; subtitle: ADBLog.rowCount() + " 条"; Layout.fillWidth: true }
+                                    ActionButton { label: "清空"; dense: true; Layout.preferredWidth: 64; enabled: ADBLog.rowCount() > 0; onPressed: ADBLog.clear() }
+                                }
                                 ListView {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     clip: true
                                     model: ADBLog
+                                    onCountChanged: if (count > 0) positionViewAtEnd()
                                     delegate: Rectangle {
                                         width: ListView.view.width
                                         height: Math.max(22, logText.implicitHeight + 5)
@@ -932,10 +1035,11 @@ FluContentPage {
                                         FluText {
                                             id: logText
                                             anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; margins: 6 }
-                                            text: model.display || ""
+                                            text: model.log || ""
                                             font.pixelSize: 12
                                             font.family: "Menlo"
                                             wrapMode: Text.WrapAnywhere
+                                            color: model.type === 1 ? "#ef4444" : FluTheme.fontPrimaryColor
                                         }
                                     }
                                 }
@@ -947,8 +1051,39 @@ FluContentPage {
         }
     }
 
+    DropArea {
+        id: apkDropArea
+        anchors.fill: parent
+        z: 100
+        onDropped: function(drop) {
+            for (var i = 0; i < drop.urls.length; ++i) {
+                var path = page.localPath(drop.urls[i])
+                if (String(path).toLowerCase().endsWith(".apk")) {
+                    page.installApk(path)
+                    drop.acceptProposedAction()
+                    return
+                }
+            }
+            NotificationController.send("无法安装", "请拖入 APK 文件", NotificationController.Warning)
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            visible: apkDropArea.containsDrag
+            color: FluTheme.dark ? Qt.rgba(0.06, 0.48, 0.42, 0.32) : Qt.rgba(0.06, 0.48, 0.42, 0.18)
+            border.width: 2
+            border.color: "#0f7b6c"
+            radius: 10
+            ColumnLayout {
+                anchors.centerIn: parent
+                FluIcon { iconSource: FluentIcons.Download; iconSize: 42; iconColor: "#0f7b6c"; Layout.alignment: Qt.AlignHCenter }
+                FluText { text: "释放以安装 APK"; font: FluTextStyle.Subtitle; Layout.alignment: Qt.AlignHCenter }
+            }
+        }
+    }
+
     FileDialog { id: fileDialog; title: "选择文件"; fileMode: FileDialog.OpenFile; onAccepted: page.transferLocalPath = page.localPath(currentFile) }
-    FileDialog { id: apkDialog; title: "选择 APK"; nameFilters: ["APK files (*.apk)"]; onAccepted: AppDetailControl.installApp(page.localPath(currentFile)) }
+    FileDialog { id: apkDialog; title: "选择 APK"; nameFilters: ["APK files (*.apk)"]; onAccepted: page.installApk(page.localPath(currentFile)) }
     FileDialog { id: imageDialog; title: "选择镜像"; onAccepted: page.fastbootImagePath = page.localPath(currentFile) }
     FileDialog { id: zipDialog; title: "选择压缩包"; onAccepted: page.flashZipPath = page.localPath(currentFile) }
     FolderDialog { id: extractDialog; title: "选择 APK 保存目录"; onAccepted: AppDetailControl.extractApp(page.selectedPackage, page.localPath(selectedFolder)) }

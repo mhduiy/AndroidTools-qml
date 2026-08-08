@@ -22,8 +22,12 @@ class ConnectManager : public QObject
     DECLARE_PROPERTY(bool, enableADBCheck)
     DECLARE_PROPERTY(bool, enableFastbootCheck)
     DECLARE_PROPERTY(bool, adbServerStarting)
+    DECLARE_PROPERTY(bool, refreshInProgress)
+    DECLARE_PROPERTY(bool, wirelessOperationRunning)
+    DECLARE_PROPERTY(QString, adbStateMessage)
 public:
     QVector<QSharedPointer<Device>> devices(ConnectStatus type = C_ADB) const;    
+    QSharedPointer<ADBDevice> selectedADBDevice() const;
 
 public slots:
     void startCheckDevice();
@@ -48,7 +52,7 @@ private:
     void refreshDevice();
     void updateDevices(const QVector<QString> &adbDevices, const QVector<QString> &fastbootDevices);
 
-    QVector<QString> getDeviceList(ConnectStatus type = C_ADB);
+    QVector<QString> getDeviceList(ConnectStatus type = C_ADB, QString *statusMessage = nullptr);
     bool hasDevice(const QString &deviceCode, ConnectStatus type = C_ADB);
     QSharedPointer<Device> addDevice(const QString &deviceCode, ConnectStatus type = C_ADB);
 
@@ -56,6 +60,5 @@ private:
     QVector<QSharedPointer<ADBDevice>> m_adbDeviceList;
     QVector<QSharedPointer<FastbootDevice>> m_fastbootDeviceList;
     QTimer *m_deviceCheckTimer;
-    bool m_refreshInProgress = false;
 };
 } // namespace ADT

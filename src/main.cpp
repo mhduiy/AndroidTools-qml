@@ -83,7 +83,6 @@ int main(int argc, char *argv[])
     QElapsedTimer loaderTimer;
     loaderTimer.start();
 
-    qInfo() << "mainThread:" << QThread::currentThreadId();
 
     ServiceRegistry registry(&app);
     registry.initialize();

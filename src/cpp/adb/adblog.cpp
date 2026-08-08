@@ -2,7 +2,7 @@
 #include <QDateTime>
 #include <QThread>
 
-static const int MAX_COUNT = 1000;
+static const int MAX_COUNT = 300;
 
 ADBLogModel::ADBLogModel(QObject *parent)
 : QAbstractListModel(parent)
@@ -67,7 +67,17 @@ void ADBLogModel::commitLog(ADBLogType type, const QString &logMeg)
     }
 
     beginInsertRows(QModelIndex(), m_logInfo.size(), m_logInfo.size());
-    const QString formatLog = QString("[%1][%2]: %3").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")).arg(type).arg(logMeg);
+    const QString formatLog = QString("[%1] %2").arg(QDateTime::currentDateTime().toString("HH:mm:ss"), logMeg.trimmed());
     m_logInfo.append({.type = type, .log = formatLog});
     endInsertRows();
+}
+
+void ADBLogModel::clear()
+{
+    if (m_logInfo.isEmpty()) {
+        return;
+    }
+    beginResetModel();
+    m_logInfo.clear();
+    endResetModel();
 }

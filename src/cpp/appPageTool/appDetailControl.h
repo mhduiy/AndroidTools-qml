@@ -22,6 +22,7 @@ class AppDetailControl : public QObject
     Q_PROPERTY(QVariant minSdk READ getMinSdk NOTIFY valueChanged)
     Q_PROPERTY(QVariant appId READ getAppId NOTIFY valueChanged)
     Q_PROPERTY(SoftListType softListType READ getSoftListType WRITE setSoftListType NOTIFY softListTypeChanged)
+    DECLARE_PROPERTY(bool, busy)
 public:
 
     ~AppDetailControl();
@@ -58,6 +59,8 @@ private slots:
     void onUpdateSoftDetailInfoFinish(const AppDetailInfo &info);
 
 private:
+    bool beginOperation(const QSharedPointer<ADBDevice> &device);
+    void finishOperation();
     AppDetailInfo m_info;
     SoftListType m_softListType = SoftListType::ThirdParty;
 };

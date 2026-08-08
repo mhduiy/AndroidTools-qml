@@ -3,8 +3,6 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <QNetworkAccessManager>
 #include <QThread>
-#include <qlogging.h>
-#include "src/cpp/utils/notificationcontroller.h"
 #include "wallpaperhelper.h"
 #include "../utils/globalsetting.h"
 #include "../utils/constants.h"
@@ -155,7 +153,6 @@ SettingPageTools::~SettingPageTools()
 void SettingPageTools::onBingWallPaperWorkFinish(const QString &url)
 {
     if (url.isEmpty()) {
-        qWarning() << "bing wallpaper url is empty, skiping ...";
         return;
     }
     m_wallpaperModel->appendRow(WallPaperInfo(url, "Bing 每日壁纸", false));

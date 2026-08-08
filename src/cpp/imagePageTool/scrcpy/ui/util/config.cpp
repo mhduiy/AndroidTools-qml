@@ -118,7 +118,6 @@ Config::Config(QObject *parent) : QObject(parent) {
     m_settings = new QSettings(configDir + "/config.ini", QSettings::IniFormat);
     m_userData = new QSettings(configDir + "/userdata.ini", QSettings::IniFormat);
 
-    qDebug() << m_userData->childGroups();
 }
 
 void Config::initConfig()

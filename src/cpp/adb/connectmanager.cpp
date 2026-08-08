@@ -17,6 +17,9 @@ ConnectManager::ConnectManager(QObject *parent)
     , m_deviceCheckTimer(nullptr)
     , m_enableADBCheck(true)
     , m_enableFastbootCheck(true)
+    , m_refreshInProgress(false)
+    , m_wirelessOperationRunning(false)
+    , m_adbStateMessage("等待扫描")
 {
     m_deviceCheckTimer = new QTimer(this);
     m_deviceCheckTimer->setInterval(OtherSettingsHandler::instance()->deviceRefreshInterval());
@@ -31,6 +34,7 @@ ConnectManager::ConnectManager(QObject *parent)
 void ConnectManager::startCheckDevice()
 {
     m_deviceCheckTimer->start();
+    refreshDevice();
 }
 
 void ConnectManager::startADBServer(std::function<void()> callback)
@@ -99,6 +103,16 @@ QVector<QSharedPointer<Device>> ConnectManager::devices(ConnectStatus type) cons
     return {};
 }
 
+QSharedPointer<ADBDevice> ConnectManager::selectedADBDevice() const
+{
+    for (const auto &device : m_adbDeviceList) {
+        if (device.get() == cutADBDevice()) {
+            return device;
+        }
+    }
+    return {};
+}
+
 void ConnectManager::requestSetCutADBDevice(const QString &deviceCode)
 {
     for (const auto &device : m_adbDeviceList) {
@@ -121,48 +135,53 @@ void ConnectManager::requestSetCutFastbootDevice(const QString &deviceCode)
 
 void ConnectManager::requestPairDevice(const QString &ipPort, const QString &pairCode)
 {
-    if (ipPort.isEmpty()) {
-        NotificationController::instance()->send("配对失败", "ip和端口不能为空");
+    if (wirelessOperationRunning()) {
+        NotificationController::instance()->send("操作进行中", "请等待当前无线任务完成", NotificationController::Warning);
         return;
     }
-    if (pairCode.isEmpty()) {
-        NotificationController::instance()->send("配对失败", "请输入配对码");
+    if (ipPort.isEmpty() || pairCode.isEmpty()) {
+        NotificationController::instance()->send("配对失败", "请输入配对地址和配对码", NotificationController::Warning);
         return;
     }
 
-    NotificationController::instance()->send("配对中", "请耐心等待", NotificationController::Info);
-
+    setwirelessOperationRunning(true);
+    NotificationController::instance()->send("配对中", ipPort, NotificationController::Info);
     asyncOperator([ipPort, pairCode, this](){
-        auto retStr = ADBTOOL->executeCommand(ADBTools::ADB, {"pair", ipPort}, pairCode).simplified();
-        if (retStr.contains("Success")) {
-            NotificationController::instance()->send("配对成功", "请进行下一步");
-        } else {
-            NotificationController::instance()->send("配对失败", "配对失败，请检查信息是否填写正确", NotificationController::Error);
-        }
+        const auto result = ADBTOOL->executeCommand(ADBTools::ADB, {"pair", ipPort}, pairCode).simplified();
+        NotificationController::instance()->send(result.contains("Success") ? "配对成功" : "配对失败", result,
+            result.contains("Success") ? NotificationController::Info : NotificationController::Error);
+        QMetaObject::invokeMethod(this, [this]() { setwirelessOperationRunning(false); }, Qt::QueuedConnection);
     });
 }
 
 void ConnectManager::requestConnectDevice(const QString &ipPort)
 {
+    if (wirelessOperationRunning()) {
+        NotificationController::instance()->send("操作进行中", "请等待当前无线任务完成", NotificationController::Warning);
+        return;
+    }
     if (ipPort.isEmpty()) {
-        NotificationController::instance()->send("连接失败", "ip和端口不能为空", NotificationController::Warning);
+        NotificationController::instance()->send("连接失败", "请输入设备地址和端口", NotificationController::Warning);
         return;
     }
 
-    NotificationController::instance()->send("连接中", "请耐心等待", NotificationController::Info);
-
+    setwirelessOperationRunning(true);
+    NotificationController::instance()->send("连接中", ipPort, NotificationController::Info);
     asyncOperator([ipPort, this](){
-        auto retStr = ADBTOOL->executeCommand(ADBTools::ADB, {"connect", ipPort}).simplified();
-        NotificationController::instance()->send("返回信息", retStr);
-        if (!retStr.contains("connected")) {
-            NotificationController::instance()->send("连接失败", "请检查信息是否填写正确", NotificationController::Error);
-        }
+        const auto result = ADBTOOL->executeCommand(ADBTools::ADB, {"connect", ipPort}).simplified();
+        const bool connected = result.contains("connected");
+        NotificationController::instance()->send(connected ? "连接成功" : "连接失败", result,
+            connected ? NotificationController::Info : NotificationController::Error);
+        QMetaObject::invokeMethod(this, [this, connected]() {
+            setwirelessOperationRunning(false);
+            if (connected) startCheckDevice();
+        }, Qt::QueuedConnection);
     });
 }
 
 void ConnectManager::refreshDevice()
 {
-    if (m_refreshInProgress) {
+    if (refreshInProgress()) {
         return;
     }
 
@@ -173,11 +192,13 @@ void ConnectManager::refreshDevice()
         return;
     }
 
-    m_refreshInProgress = true;
+    setrefreshInProgress(true);
     asyncOperator([this, checkADB, checkFastboot]() {
-        const QVector<QString> adbDevices = checkADB ? getDeviceList(C_ADB) : QVector<QString>{};
+        QString adbState = checkADB ? QString() : QStringLiteral("ADB 检查已关闭");
+        const QVector<QString> adbDevices = checkADB ? getDeviceList(C_ADB, &adbState) : QVector<QString>{};
         const QVector<QString> fastbootDevices = checkFastboot ? getDeviceList(C_Fastboot) : QVector<QString>{};
-        QMetaObject::invokeMethod(this, [this, adbDevices, fastbootDevices]() {
+        QMetaObject::invokeMethod(this, [this, adbDevices, fastbootDevices, adbState]() {
+            setadbStateMessage(adbState);
             updateDevices(adbDevices, fastbootDevices);
         }, Qt::QueuedConnection);
     });
@@ -275,35 +296,44 @@ void ConnectManager::updateDevices(const QVector<QString> &adbDevices, const QVe
         }
     }
 
-    m_refreshInProgress = false;
+    setrefreshInProgress(false);
     emit deviceRefreshFinish();
 }
 
-QVector<QString> ConnectManager::getDeviceList(ConnectStatus type)
+QVector<QString> ConnectManager::getDeviceList(ConnectStatus type, QString *statusMessage)
 {
     QVector<QString> deviceList;
-    QStringList retStrList;
-    
+
     if (type == C_ADB) {
-        retStrList = ADBTOOL->executeCommand(ADBTools::ADB, {"devices"}).split('\n');
-        for (QString &lineInfo : retStrList) {
+        const auto result = ADBTOOL->executeCommandDetailed(ADBTools::ADB, {"devices"});
+        if (!result.isSuccess()) {
+            if (statusMessage) *statusMessage = "ADB 不可用，请查看错误记录";
+            return deviceList;
+        }
+
+        QString issue;
+        for (QString lineInfo : result.output.split('\n')) {
             lineInfo = lineInfo.simplified();
-            if (QStringList &&blockInfo = lineInfo.split(' '); blockInfo.size() == 2 && blockInfo.last() == "device") {
-                QString deviceCode = blockInfo.first().simplified();
-                deviceList.push_back(deviceCode);
-            }
+            const QStringList parts = lineInfo.split(' ');
+            if (parts.size() != 2) continue;
+            if (parts.last() == "device") deviceList.push_back(parts.first());
+            else if (parts.last() == "unauthorized") issue = "设备等待 USB 调试授权";
+            else if (parts.last() == "offline") issue = "设备离线，请重新连接";
+        }
+        if (statusMessage) {
+            *statusMessage = !deviceList.isEmpty() ? QString("%1 台设备已连接").arg(deviceList.size())
+                                                   : (issue.isEmpty() ? QStringLiteral("未发现设备") : issue);
         }
     } else if (type == C_Fastboot) {
-        retStrList = ADBTOOL->executeCommand(ADBTools::FASTBOOT, {"devices"}).split('\n');
-        for (QString &lineInfo : retStrList) {
+        const auto output = ADBTOOL->executeCommand(ADBTools::FASTBOOT, {"devices"});
+        for (QString lineInfo : output.split('\n')) {
             lineInfo = lineInfo.simplified();
-            if (QStringList &&blockInfo = lineInfo.split('\t'); blockInfo.size() == 2 && blockInfo.last() == "fastboot") {
-                QString deviceCode = blockInfo.first().simplified();
-                deviceList.push_back(deviceCode);
+            if (const QStringList parts = lineInfo.split('\t'); parts.size() == 2 && parts.last() == "fastboot") {
+                deviceList.push_back(parts.first());
             }
         }
     }
-    
+
     return deviceList;
 }
 

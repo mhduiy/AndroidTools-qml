@@ -15,8 +15,8 @@ FluWindow {
     launchMode: FluWindowType.Standard
     fitsAppBarWindows: true
     fixSize: false
-    minimumWidth: 1180
-    minimumHeight: 760
+    minimumWidth: 980
+    minimumHeight: 720
 
     appBar: FluAppBar {
         height: 30

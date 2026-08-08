@@ -28,6 +28,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QModelIndex index(int row, int column = 1, const QModelIndex &parent = QModelIndex()) const override;
     void commitLog(ADBLogType type, const QString &logMeg);
+    Q_INVOKABLE void clear();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
