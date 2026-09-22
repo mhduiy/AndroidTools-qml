@@ -1,9 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include <QThread>
-#include <QSharedPointer>
-#include <QVariantList>
 #include "adbdevice.h"
 
 #include "src/cpp/utils/defutils.hpp"
@@ -24,9 +21,6 @@ public:
 
 private:
     void initConnectManager();
-    void updateDeviceInfo(QSharedPointer<Device> device);
-
-    QThread *m_connectionManagerThread = nullptr;
 };
 
 } // namespace ADT

@@ -6,7 +6,7 @@
 #include "src/cpp/utils/defutils.hpp"
 
 enum ConnectStatus {
-    C_ADB, C_Fastboot, C_DisConnected, C_Unknown
+    C_ADB, C_Fastboot
 };
 
 // 设备唯一code
@@ -37,11 +37,4 @@ public:
 
     // 请求断开连接
     virtual void requestDisConnect() = 0;
-
-    bool operator==(const Device &other) const
-    {
-        return code() == other.code();
-    }
-
-protected:
 };

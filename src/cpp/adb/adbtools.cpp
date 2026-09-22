@@ -1,5 +1,5 @@
 #include "adbtools.h"
-#include "adbdevice.h" // 包含 ADBCommandResult 定义
+#include "adbtypes.h" // 包含 CommandResult 定义
 #include <QMutex>
 #include <QProcess>
 #include <QDebug>
@@ -7,17 +7,10 @@
 #include <QElapsedTimer>
 #include "adblog.h"
 
-#define PREFIX ""
-
 #ifdef Q_OS_WIN
 
 #define ADBPATH "adb.exe"
 #define FASTBOOTPATH "fastboot.exe"
-
-#elif defined(Q_OS_LINUX)
-
-#define ADBPATH "adb"
-#define FASTBOOTPATH "fastboot"
 
 #else
 
@@ -59,15 +52,12 @@ CommandResult ADBTools::executeCommandDetailed(APP app, const QStringList &args,
         return ADT::CommandResult(false, -1, "", "Failed to start program", commandStr, timer.elapsed());
     }
 
-    m_isRunning.storeRelease(m_isRunning.loadRelaxed() + 1);
-
     if (!writeStr.isEmpty()) {
         pro.write(writeStr.toLocal8Bit());
         pro.closeWriteChannel(); // 关闭写入通道，表示数据写入完毕
     }
 
     bool finished = pro.waitForFinished(timeout);
-    m_isRunning.storeRelease(m_isRunning.loadRelaxed() - 1);
     
     int executionTime = timer.elapsed();
     int exitCode = pro.exitCode();
@@ -116,11 +106,6 @@ ADBTools *ADBTools::instance(QObject *parent)
         instance = new ADBTools(parent);
     }
     return instance;
-}
-
-bool ADBTools::isRunning()
-{
-    return m_isRunning.loadRelaxed();
 }
 
 bool ADBTools::startService()

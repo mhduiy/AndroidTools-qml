@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include <qobject.h>
-#include <qtmetamacros.h>
 #include "../utils/defutils.hpp"
 
 #include "service/ResourceService.h"
@@ -15,9 +13,6 @@ class ImageDetailTools : public QObject
     SINGLETON(ImageDetailTools)
 public:
     Q_INVOKABLE void shotScreen(const QString &outPath);
-
-private:
-    ResourceService *resourceService = nullptr;
 };
 
 class ImagePageTool : public QObject

@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <qthread.h>
-#include <qtmetamacros.h>
 #include "../utils/defutils.hpp"
 
 namespace ADT {
@@ -15,9 +14,6 @@ public:
     explicit FileTransferHandler(QObject *parent = nullptr);
 public slots:
     void transmission(QString deviceCode, QString source, QString targetDir);
-
-signals:
-    void workFinish();
 };
 
 class FileTransfer : public QObject
@@ -34,4 +30,4 @@ private:
 
 } // namespace ADT
 
-#endif // FILETRANSFER_H
+#endif

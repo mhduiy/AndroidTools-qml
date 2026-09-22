@@ -3,14 +3,12 @@ import QtQuick.Layouts
 import FluentUI
 
 Canvas {
-    id: chart
-
     property var fpsSamples: []
     property var cpuSamples: []
     property var gpuSamples: []
     property var ramSamples: []
     property var tempSamples: []
-    property int sampleCount: 92
+    readonly property int sampleCount: 92
 
     Layout.fillWidth: true
     Layout.fillHeight: true

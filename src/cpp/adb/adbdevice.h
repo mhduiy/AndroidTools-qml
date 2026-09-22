@@ -6,19 +6,11 @@
 #include <QTimer>
 #include <QThread>
 #include <QProcess>
-#include <QPointer>
 #include <QNetworkAccessManager>
 
 namespace ADT {
 
 Q_NAMESPACE
-
-enum AppState {
-    Enable,
-    Disable,
-    Unknown
-};
-Q_ENUM_NS(AppState)
 
 enum ControlType {
     Music,
@@ -55,32 +47,6 @@ enum KeyControl {
     CursorToEnd
 };
 Q_ENUM_NS(KeyControl)
-
-enum BroadcastControl {
-    NetworkChanged = 0,
-    ScreenOpened,
-    ScreenClosed,
-    LowPower,
-    PowerRecovered,
-    BootFinish,
-    StorageLow,
-    StorageRecovered,
-    InstallApp,
-    WifiChanged1,
-    WifiChanged2,
-    BatteryLevelChanged,
-    InputMethodChanged,
-    PowerConnected,
-    PowerDisconnected,
-    SystemSleep,
-    StopSleep,
-    WallpaperChanged,
-    EarphoneConnected,
-    UninstallMedia,
-    InstallMedia,
-    EnablePowerSave
-};
-Q_ENUM_NS(BroadcastControl)
 
 enum ChargingType {
     AC,
@@ -188,7 +154,6 @@ public:
     ~ADBDevice();
 
     bool startAndroidService();
-    bool killAndroidService();
 
     // === 设备详细信息访问器 ===
     QString manufacturer() const;
@@ -411,7 +376,6 @@ private:
     QThread *m_workerThread;
     ADBTools *m_adbTools;
     QProcess *m_serverPro;
-    QPointer<QNetworkAccessManager> m_networkManager;
 
     // === 设备详细信息成员变量 ===
     QString m_manufacturer;

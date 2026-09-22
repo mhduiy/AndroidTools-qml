@@ -2,9 +2,7 @@
 #define APPPAGETOOL_H
 
 #include <QObject>
-#include <QThread>
 #include "src/cpp/utils/defutils.hpp"
-#include "src/cpp/adb/adbdevice.h"
 #include "softlistmodel.h"
 
 namespace ADT {
@@ -14,9 +12,6 @@ class AppPageTool : public QObject
     SINGLETON(AppPageTool)
 public:
     ~AppPageTool();
-
-private:
-    void initData();
 
 private slots:
     void onADBDeviceChanged();

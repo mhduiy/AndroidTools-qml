@@ -1,9 +1,9 @@
 Source: android-tools
-Section: libs
+Section: utils
 Priority: optional
-Maintainer: mhduiy
+Maintainer: mhduiy <mhduiy@qq.com>
 Build-Depends:
- debhelper-compat ( =12),
+ debhelper-compat (= 12),
  cmake,
  extra-cmake-modules,
  build-essential,
@@ -31,7 +31,8 @@ Build-Depends:
  mesa-common-dev,
  libvulkan-dev,
  libqt6websockets6-dev
-Standards-Version: 0.0.1
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
 
 Package: android-tools
 Architecture: any

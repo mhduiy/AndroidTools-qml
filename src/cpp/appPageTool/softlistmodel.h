@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QAbstractListModel>
-#include "../adb/adbdevice.h"
+#include "../adb/adbtypes.h"
 
 namespace ADT {
 
@@ -31,16 +31,8 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE void appendRow(AppDetailInfo info);
-    Q_INVOKABLE void removeRow(const QString &packageName);
     Q_INVOKABLE void setIcon(const QString &packageName, const QString &iconBase64);
-    QModelIndex index(int row, int column = 1, const QModelIndex &parent = QModelIndex()) const override;
-    bool hasPackage(const QString &packageName);
     void clearData();
-
-    Q_INVOKABLE void setCurrentIndex(int index);
-
-signals:
-    void currentItemChanged(const QString &code);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

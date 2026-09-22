@@ -5,6 +5,22 @@
 
 namespace ADT {
 
+namespace {
+
+void runBatteryCmd(const QStringList &tail)
+{
+    asyncOperator([tail](){
+        auto device = ConnectManager::instance()->cutADBDevice();
+        if (!device) return;
+        QStringList args;
+        args << "-s" << device->code() << "shell"
+             << "dumpsys" << "battery" << tail;
+        ADBTools::instance()->executeCommand(ADBTools::ADB, args);
+    });
+}
+
+} // namespace
+
 BatteryDisguise::BatteryDisguise(QObject *parent) : QObject(parent)
 {
 
@@ -12,77 +28,27 @@ BatteryDisguise::BatteryDisguise(QObject *parent) : QObject(parent)
 
 void BatteryDisguise::setBatteryLevel(quint8 level)
 {
-    auto operatorFunc = [level](){
-        auto device = ConnectManager::instance()->cutADBDevice();
-        if (!device) return;
-        const QString cutDevice = device->code();
-        QStringList args;
-        args << "-s" << cutDevice << "shell"
-             << "dumpsys" << "battery" << "set" << "level" << QString::number(level);
-        ADBTools::instance()->executeCommand(ADBTools::ADB, args);
-    };
-
-    asyncOperator(operatorFunc);
+    runBatteryCmd({"set", "level", QString::number(level)});
 }
 
 void BatteryDisguise::stopCharge()
 {
-    auto operatorFunc = [](){
-        auto device = ConnectManager::instance()->cutADBDevice();
-        if (!device) return;
-        const QString cutDevice = device->code();
-        QStringList args;
-        args << "-s" << cutDevice << "shell"
-             << "dumpsys" << "battery" << "set" << "status" << "2";
-        ADBTools::instance()->executeCommand(ADBTools::ADB, args);
-    };
-
-    asyncOperator(operatorFunc);
+    runBatteryCmd({"set", "status", "2"});
 }
 
 void BatteryDisguise::restoreCharge()
 {
-    auto operatorFunc = [](){
-        auto device = ConnectManager::instance()->cutADBDevice();
-        if (!device) return;
-        const QString cutDevice = device->code();
-        QStringList args;
-        args << "-s" << cutDevice << "shell"
-             << "dumpsys" << "battery" << "set" << "status" << "1";
-        ADBTools::instance()->executeCommand(ADBTools::ADB, args);
-    };
-
-    asyncOperator(operatorFunc);
+    runBatteryCmd({"set", "status", "1"});
 }
 
 void BatteryDisguise::connectButNoCharge()
 {
-    auto operatorFunc = [](){
-        auto device = ConnectManager::instance()->cutADBDevice();
-        if (!device) return;
-        const QString cutDevice = device->code();
-        QStringList args;
-        args << "-s" << cutDevice << "shell"
-             << "dumpsys" << "battery" << "unplug";
-        ADBTools::instance()->executeCommand(ADBTools::ADB, args);
-    };
-
-    asyncOperator(operatorFunc);
+    runBatteryCmd({"unplug"});
 }
 
 void BatteryDisguise::restoreAll()
 {
-    auto operatorFunc = [](){
-        auto device = ConnectManager::instance()->cutADBDevice();
-        if (!device) return;
-        const QString cutDevice = device->code();
-        QStringList args;
-        args << "-s" << cutDevice << "shell"
-             << "dumpsys" << "battery" << "reset";
-        ADBTools::instance()->executeCommand(ADBTools::ADB, args);
-    };
-
-    asyncOperator(operatorFunc);
-} 
+    runBatteryCmd({"reset"});
+}
 
 } // namespace ADT

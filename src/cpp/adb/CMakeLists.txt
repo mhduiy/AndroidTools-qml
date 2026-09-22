@@ -1,6 +1,6 @@
 set(ADB_SRC
-    adbtypes.h
-    adbtools.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/adbtypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/adbtools.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/adbtools.h
     ${CMAKE_CURRENT_SOURCE_DIR}/connectmanager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/connectmanager.h
@@ -21,4 +21,3 @@ set(ADB_SRC
 
 target_sources(${EXE_NAME} PRIVATE ${ADB_SRC})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

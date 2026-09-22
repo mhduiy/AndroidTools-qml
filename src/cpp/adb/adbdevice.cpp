@@ -1,12 +1,9 @@
 #include "adbdevice.h"
 #include "src/cpp/utils/utils.hpp"
-#include "src/cpp/adb/adbtools.h"
 #include "src/cpp/utils/constants.h"
 #include <algorithm>
 #include <QDebug>
-#include <QProcess>
 #include <QFile>
-#include <QTimer>
 #include <QRegularExpression>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -262,17 +259,6 @@ bool ADBDevice::startAndroidService()
     // 启动服务
     m_serverPro->start("adb", {"-s", code(), "shell", "CLASSPATH=/data/local/tmp/androidtools-server.dex app_process / com.mhduiy.androidtoolsserver.SystemInfoServer 18888"});
     m_serverPro->waitForStarted(3000);
-    return true;
-}
-
-bool ADBDevice::killAndroidService()
-{
-    m_serverPro->terminate();
-    m_serverPro->waitForFinished(1000);
-    if (m_serverPro->state() != QProcess::NotRunning) {
-        m_serverPro->kill();
-        m_serverPro->waitForFinished(1000);
-    }
     return true;
 }
 
@@ -625,7 +611,6 @@ QString ADBDevice::getDeviceProp(const QString &deviceCode, const QString &prop)
 
 void ADBDevice::initData()
 {
-    m_networkManager = new QNetworkAccessManager(this);
     // 匹配 IPv4:端口
     QRegularExpression ipv4PortRegex(
         R"(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):[0-9]{1,5}$)"

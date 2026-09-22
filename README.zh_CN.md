@@ -15,7 +15,7 @@ AndroidTools-qml 是一个基于 Qt 6、QML、FluentUI、ADB/Fastboot 和 scrcpy
 - 投屏能力：启动/停止投屏、截图、FPS/码率质量预设、基础按键控制。
 - 设备控制：主页、返回、电源、菜单、音量、静音、重启、媒体控制。
 - 调试工具：电池伪装、分辨率/DPI 修改、文件推送、键盘输入转发、Activity 启动。
-- 刷机工具：Fastboot 设备管理、临时启动镜像、刷入/擦除分区、维护操作入口。
+- 刷机工具：Fastboot 设备管理、临时启动镜像、刷入/擦除分区。
 - 设置：深浅色切换、壁纸、模糊和透明度等持久化配置。
 
 ## 功能概览
@@ -50,7 +50,7 @@ AndroidTools-qml 是一个基于 Qt 6、QML、FluentUI、ADB/Fastboot 和 scrcpy
 ### 刷机工具
 
 - Fastboot 设备刷新。
-- 重启到系统、Fastboot、Recovery 或关机。
+- 重启到系统或关机。
 - 临时启动镜像。
 - 刷入或擦除指定分区。
 

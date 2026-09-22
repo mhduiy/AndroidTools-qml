@@ -3,7 +3,6 @@ import FluentUI
 import OtherSettingsHandler 1.0
 
 Rectangle {
-    id: panel
     default property alias content: body.data
 
     radius: 8

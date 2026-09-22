@@ -1,8 +1,5 @@
 #include "settingPageTools.h"
 #include <QtQml>
-#include <QtConcurrent/QtConcurrentRun>
-#include <QNetworkAccessManager>
-#include <QThread>
 #include "wallpaperhelper.h"
 #include "../utils/globalsetting.h"
 #include "../utils/constants.h"
@@ -63,32 +60,6 @@ void WallPaperModel::appendRow(WallPaperInfo info)
     }
 }
 
-void WallPaperModel::insertRow(int row, WallPaperInfo info)
-{
-    beginInsertRows(QModelIndex(), row, row);
-    m_wallPaperInfo.insert(row, info);
-    endInsertRows();
-}
-
-void WallPaperModel::removeRow(const QString &code)
-{
-    return;
-}
-
-void WallPaperModel::setInfo(const WallPaperInfo &info)
-{
-    int _index = 0;
-    for (auto &it : m_wallPaperInfo) {
-        if (it.url == info.url) {
-            it.isLoading = info.isLoading;
-            it.title = info.title;
-            emit dataChanged(index(_index, 0), index(_index, 0));
-            break;
-        }
-        _index++;
-    }
-}
-
 QModelIndex WallPaperModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (!hasIndex(row, column, parent))
@@ -132,15 +103,11 @@ void WallPaperModel::clearData()
 SettingPageTools::SettingPageTools(QObject *parent)
     : QObject(parent)
     , m_wallpaperModel(new WallPaperModel)
-    , m_bingWallpaperHander(new BingWallPaperHander)
 {
     qmlRegisterSingletonInstance("WallPaperModel", 1, 0, "WallPaperModel", m_wallpaperModel);
     qmlRegisterSingletonInstance("WallpaperHelper", 1, 0, "WallpaperHelper", WallpaperHelper::instance(this));
     qmlRegisterSingletonInstance("OtherSettingsHandler", 1, 0, "OtherSettingsHandler", OtherSettingsHandler::instance(this));
 
-
-    // 默认壁纸和每日bing壁纸
-    connect(m_bingWallpaperHander, &BingWallPaperHander::workFinish, this, &SettingPageTools::onBingWallPaperWorkFinish);
     connect(WallpaperHelper::instance(), &WallpaperHelper::requestRefreshWallpaperList, this, &SettingPageTools::onRequestRefreshWallpaperList);
     onRequestRefreshWallpaperList();
 }
@@ -150,19 +117,10 @@ SettingPageTools::~SettingPageTools()
 
 }
 
-void SettingPageTools::onBingWallPaperWorkFinish(const QString &url)
-{
-    if (url.isEmpty()) {
-        return;
-    }
-    m_wallpaperModel->appendRow(WallPaperInfo(url, "Bing 每日壁纸", false));
-}
-
 void SettingPageTools::onRequestRefreshWallpaperList()
 {
     m_wallpaperModel->clearData();
     m_wallpaperModel->appendRow(WallPaperInfo("qrc:/res/backgroundImage.jpeg", "默认壁纸", false));
-    m_bingWallpaperHander->doWork();
 
     QFile cacheFile(WALLPAPERCACHEJSONPATH);
     if (!cacheFile.open(QIODevice::ReadOnly | QIODevice::Text)) {

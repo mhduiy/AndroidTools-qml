@@ -3,11 +3,8 @@
 #include "src/cpp/utils/notificationcontroller.h"
 #include "src/cpp/utils/utils.hpp"
 #include <QVariant>
-#include <QStandardPaths>
-#include <QDir>
 #include <QFileInfo>
 #include <QMetaObject>
-#include <QDebug>
 
 namespace ADT {
 

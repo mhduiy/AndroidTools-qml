@@ -1,5 +1,4 @@
 #include "serviceregistry.h"
-#include "taskthread.h"
 
 #include "src/cpp/adb/adbtools.h"
 #include "src/cpp/adb/connectmanager.h"
@@ -32,8 +31,6 @@ ServiceRegistry::~ServiceRegistry()
 void ServiceRegistry::initialize()
 {
     qInfo() << "ServiceRegistry initializing...";
-
-    m_taskThread = new TaskThread(this);
 
     initLeafServices();
     initADBInfrastructure();

@@ -1,12 +1,8 @@
 #include <QStandardPaths>
 #include <QDir>
 #include "globalsetting.h"
-#include <QMutex>
-#include <QMutexLocker>
 #include <QTimer>
 #include <QCoreApplication>
-
-GlobalSetting* GlobalSetting::_instance = nullptr;
 
 GlobalSetting::GlobalSetting(QObject *parent) : QObject(parent) {
     QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
@@ -48,13 +44,4 @@ bool GlobalSetting::checkConfig(const QString &title, const QString &key, const 
 void GlobalSetting::syncConfig()
 {
     settings->sync();
-}
-
-GlobalSetting *GlobalSetting::instance(QObject *parent) {
-    static QMutex mutex;
-    QMutexLocker mutexLocker(&mutex);
-    if(_instance == nullptr) {
-        _instance = new GlobalSetting(parent);
-    }
-    return _instance;
 }

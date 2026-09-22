@@ -19,7 +19,7 @@ AndroidTools is a cross-platform desktop toolbox for Android devices, built with
 - App manager with icon loading, package details, install, launch, stop, clear data, freeze, uninstall, and APK extraction.
 - Screen mirroring powered by scrcpy with quality presets, screenshots, and basic device key controls.
 - File transfer, keyboard input forwarding, manual Activity launcher, resolution/DPI tools, and battery spoofing.
-- Fastboot helpers for rebooting, temporary boot, flashing, erasing, and firmware maintenance.
+- Fastboot helpers for rebooting, temporary boot, flashing, and erasing.
 - Fluent-style QML UI with light/dark theme, wallpaper blur, and persistent settings.
 
 ## Features
@@ -56,10 +56,9 @@ AndroidTools is a cross-platform desktop toolbox for Android devices, built with
 ### Flash Tools
 
 - Fastboot device refresh and state management.
-- Reboot to system, recovery, fastboot, or power off.
+- Reboot to system or power off.
 - Temporary boot image.
 - Flash or erase partitions.
-- Firmware package workflow entry points.
 
 ## Requirements
 

@@ -2,13 +2,8 @@
 #include "../adb/adbtools.h"
 #include "../adb/connectmanager.h"
 #include "../utils/notificationcontroller.h"
-#include "../utils/utils.hpp"
 #include <QFile>
 #include <QUrl>
-#include <qobject.h>
-#include <qobjectdefs.h>
-#include <qthread.h>
-#include <QDebug>
 
 namespace ADT {
 
@@ -23,7 +18,6 @@ void FileTransferHandler::transmission(QString deviceCode, QString source, QStri
     NotificationController::instance()->send("开始传输", "文件很大可能传输失败", NotificationController::Info);
     ADBTools::instance()->executeCommand(ADBTools::ADB, {"-s", deviceCode, "push", source, targetDir}, "", INT32_MAX);
     NotificationController::instance()->send("传输完成", "传输完成", NotificationController::Info);
-    emit workFinish();
 }
 
 FileTransfer::FileTransfer(QObject *parent)

@@ -130,7 +130,6 @@ Rectangle {
     }
 
     Rectangle {
-        id: closeButton
         width: 26
         height: 26
         radius: 7

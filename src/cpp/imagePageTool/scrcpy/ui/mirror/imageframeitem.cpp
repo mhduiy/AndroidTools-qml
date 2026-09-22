@@ -30,6 +30,16 @@ QSGNode *ImageFrameItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     return node;
 }
 
+QImage ImageFrameItem::imageFrame() const
+{
+    return m_imageFrame;
+}
+
+bool ImageFrameItem::hasAlphaChannel() const
+{
+    return m_hasAlphaChannel;
+}
+
 void ImageFrameItem::setImageFrame(const QImage& newImageFrame)
 {
     if (newImageFrame == m_imageFrame) return;

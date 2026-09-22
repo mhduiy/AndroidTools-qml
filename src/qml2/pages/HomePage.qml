@@ -39,7 +39,6 @@ FluContentPage {
     property string selectedAppIcon: ""
     property string transferLocalPath: ""
     property string fastbootImagePath: ""
-    property string flashZipPath: ""
     property int workbenchIndex: 0
     property real ramPct: SystemInfo.ramTotal > 0 ? Math.round(SystemInfo.ramUsage / SystemInfo.ramTotal * 100) : 0
     property real storagePct: SystemInfo.storageTotal > 0 ? Math.round(SystemInfo.storageUsed / SystemInfo.storageTotal * 100) : 0
@@ -217,7 +216,6 @@ FluContentPage {
             border.color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(0, 0, 0, 0.28)
         }
         contentItem: Loader {
-            id: mirrorPopupLoader
             active: mirrorPopup.visible
             onLoaded: item.frameRatio = Qt.binding(function() { return page.mirrorFrameRatio() })
             sourceComponent: Component {
@@ -228,7 +226,6 @@ FluContentPage {
                     clip: true
 
                     Item {
-                        id: popupMirrorSurface
                         width: parent.width / parent.height > parent.frameRatio ? parent.height * parent.frameRatio : parent.width
                         height: parent.width / parent.height > parent.frameRatio ? parent.height : parent.width / parent.frameRatio
                         anchors.centerIn: parent
@@ -240,7 +237,6 @@ FluContentPage {
                         }
 
                         MirrorScene {
-                            id: popupMirrorView
                             anchors.fill: parent
                         }
                     }
@@ -475,7 +471,6 @@ FluContentPage {
                                 clip: true
 
                                 Item {
-                                    id: mirrorSurface
                                     property real frameRatio: page.mirrorFrameRatio()
                                     width: parent.width / parent.height > frameRatio ? parent.height * frameRatio : parent.width
                                     height: parent.width / parent.height > frameRatio ? parent.height : parent.width / frameRatio
@@ -670,7 +665,6 @@ FluContentPage {
                     }
 
                     StackLayout {
-                        id: workbench
                         currentIndex: page.workbenchIndex
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -998,8 +992,8 @@ FluContentPage {
                                     RowLayout { Layout.fillWidth: true; FluTextBox { id: partitionName; text: "boot"; placeholderText: "分区"; Layout.fillWidth: true } }
                                     RowLayout {
                                         Layout.fillWidth: true
-                                        ActionButton { label: "临时启动"; dense: true; Layout.fillWidth: true; enabled: !!FastBootDeviceManager.currentDeviceCode; onPressed: FlashTools.startBoot("", page.fastbootImagePath) }
-                                        ActionButton { label: "刷入"; dense: true; Layout.fillWidth: true; enabled: !!FastBootDeviceManager.currentDeviceCode; accent: "#ca8a04"; onPressed: FlashTools.flash("", partitionName.text, page.fastbootImagePath) }
+                                        ActionButton { label: "临时启动"; dense: true; Layout.fillWidth: true; enabled: !!FastBootDeviceManager.currentDeviceCode; onPressed: FlashTools.startBoot(page.fastbootImagePath) }
+                                        ActionButton { label: "刷入"; dense: true; Layout.fillWidth: true; enabled: !!FastBootDeviceManager.currentDeviceCode; accent: "#ca8a04"; onPressed: FlashTools.flash(partitionName.text, page.fastbootImagePath) }
                                     }
                                 }
 
@@ -1007,8 +1001,7 @@ FluContentPage {
                                     Layout.fillWidth: true
                                     spacing: 7
                                     Header { title: "维护"; subtitle: "危险操作" }
-                                    RowLayout { Layout.fillWidth: true; FluTextBox { id: erasePart; text: "cache"; placeholderText: "分区"; Layout.fillWidth: true } ActionButton { label: "擦除"; dense: true; Layout.preferredWidth: 70; enabled: !!FastBootDeviceManager.currentDeviceCode; accent: "#d83b01"; onPressed: FlashTools.clear("", erasePart.text) } }
-                                    RowLayout { Layout.fillWidth: true; FluTextBox { text: page.flashZipPath; placeholderText: "压缩包"; Layout.fillWidth: true; onTextChanged: page.flashZipPath = text } ActionButton { label: "..."; dense: true; Layout.preferredWidth: 44; onPressed: zipDialog.open() } }
+                                    RowLayout { Layout.fillWidth: true; FluTextBox { id: erasePart; text: "cache"; placeholderText: "分区"; Layout.fillWidth: true } ActionButton { label: "擦除"; dense: true; Layout.preferredWidth: 70; enabled: !!FastBootDeviceManager.currentDeviceCode; accent: "#d83b01"; onPressed: FlashTools.clear(erasePart.text) } }
                                 }
                             }
                         }
@@ -1085,6 +1078,5 @@ FluContentPage {
     FileDialog { id: fileDialog; title: "选择文件"; fileMode: FileDialog.OpenFile; onAccepted: page.transferLocalPath = page.localPath(currentFile) }
     FileDialog { id: apkDialog; title: "选择 APK"; nameFilters: ["APK files (*.apk)"]; onAccepted: page.installApk(page.localPath(currentFile)) }
     FileDialog { id: imageDialog; title: "选择镜像"; onAccepted: page.fastbootImagePath = page.localPath(currentFile) }
-    FileDialog { id: zipDialog; title: "选择压缩包"; onAccepted: page.flashZipPath = page.localPath(currentFile) }
     FolderDialog { id: extractDialog; title: "选择 APK 保存目录"; onAccepted: AppDetailControl.extractApp(page.selectedPackage, page.localPath(selectedFolder)) }
 }

@@ -1,7 +1,6 @@
 set(CONTROL_PAGE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/batterydisguise.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/batterydisguise.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/controlPageTool.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/controlPageTool.h
     ${CMAKE_CURRENT_SOURCE_DIR}/devicecontrol.cpp
@@ -17,5 +16,3 @@ set(CONTROL_PAGE_SRC
 )
 
 target_sources(${EXE_NAME} PRIVATE ${CONTROL_PAGE_SRC})
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

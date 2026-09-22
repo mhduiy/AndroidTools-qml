@@ -3,7 +3,6 @@
 #include <QObject>
 #include <QTimer>
 #include <QNetworkAccessManager>
-#include <QJsonObject>
 
 class SystemInfoProvider : public QObject
 {
@@ -26,7 +25,6 @@ class SystemInfoProvider : public QObject
     Q_PROPERTY(QString gpuName READ gpuName NOTIFY systemInfoChanged)
     Q_PROPERTY(QString gpuVendor READ gpuVendor NOTIFY systemInfoChanged)
     Q_PROPERTY(int gpuCurrentFrequency READ gpuCurrentFrequency NOTIFY systemInfoChanged)
-    Q_PROPERTY(int gpuMaxFrequency READ gpuMaxFrequency NOTIFY systemInfoChanged)
     Q_PROPERTY(int gpuTemperature READ gpuTemperature NOTIFY systemInfoChanged)
     Q_PROPERTY(int fps READ fps NOTIFY systemInfoChanged)
     Q_PROPERTY(QString foregroundAppName READ foregroundAppName NOTIFY systemInfoChanged)
@@ -37,9 +35,6 @@ class SystemInfoProvider : public QObject
     Q_PROPERTY(int foregroundUid READ foregroundUid NOTIFY systemInfoChanged)
     Q_PROPERTY(double foregroundCpuUsage READ foregroundCpuUsage NOTIFY systemInfoChanged)
     Q_PROPERTY(double foregroundMemoryMB READ foregroundMemoryMB NOTIFY systemInfoChanged)
-    Q_PROPERTY(double batteryPower READ batteryPower NOTIFY systemInfoChanged)
-    Q_PROPERTY(long long batteryCapacity READ batteryCapacity NOTIFY systemInfoChanged)
-    Q_PROPERTY(int batteryChargeCounter READ batteryChargeCounter NOTIFY systemInfoChanged)
     Q_PROPERTY(QString batteryTechnology READ batteryTechnology NOTIFY systemInfoChanged)
     Q_PROPERTY(bool   polling    READ polling    NOTIFY pollingChanged)
 
@@ -66,7 +61,6 @@ public:
     QString gpuName() const;
     QString gpuVendor() const;
     int gpuCurrentFrequency() const;
-    int gpuMaxFrequency() const;
     int gpuTemperature() const;
     int fps() const;
     QString foregroundAppName() const;
@@ -77,9 +71,6 @@ public:
     int foregroundUid() const;
     double foregroundCpuUsage() const;
     double foregroundMemoryMB() const;
-    double batteryPower() const;
-    long long batteryCapacity() const;
-    int batteryChargeCounter() const;
     QString batteryTechnology() const;
     bool polling() const;
 
@@ -114,7 +105,6 @@ private:
     QString m_gpuName;
     QString m_gpuVendor;
     int m_gpuCurrentFrequency = 0;
-    int m_gpuMaxFrequency = 0;
     int m_gpuTemperature = -1;
     int m_fps = 0;
     QString m_foregroundAppName;
@@ -125,8 +115,5 @@ private:
     int m_foregroundUid = 0;
     double m_foregroundCpuUsage = 0;
     double m_foregroundMemoryMB = 0;
-    double m_batteryPower = 0;
-    long long m_batteryCapacity = 0;
-    int m_batteryChargeCounter = 0;
     QString m_batteryTechnology;
 };

@@ -68,16 +68,6 @@ FastBootDeviceManager::~FastBootDeviceManager()
     qInfo() << "FastBootDeviceManager Thread exited";
 }
 
-void FastBootDeviceManager::setCurrentDevice(const QString &deviceCode)
-{
-    Q_UNUSED(deviceCode)
-}
-
-void FastBootDeviceManager::setCurrentDevice(int deviceIndex)
-{
-    Q_UNUSED(deviceIndex)
-}
-
 QString FastBootDeviceManager::currentDeviceCode()
 {
     return m_currentDeviceCode;
@@ -97,89 +87,30 @@ void FastBootDeviceManager::updateDevices()
     m_deviceCheckTool->startCheck();
 }
 
-void FastBootDeviceManager::rebootToFastBoot(const QString &deviceCode)
-{
-    QString tarDevice = deviceCode;
-    if (deviceCode.isEmpty()) {
-        tarDevice = m_currentDeviceCode;
-    }
-    if (m_currentDeviceCode.isEmpty()) {
-        NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Warning, 3000);
-        return;
-    }
-
-    QStringList args;
-    args << "-s"  << tarDevice << "reboot" << "fastboot";
-
-    auto operatorFunc = [tarDevice, args](){
-        ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
-    };
-
-    asyncOperator(operatorFunc);
-}
-
 void FastBootDeviceManager::rebootToSystem(const QString &deviceCode)
 {
-    QString tarDevice = deviceCode;
-    if (deviceCode.isEmpty()) {
-        tarDevice = m_currentDeviceCode;
-    }
-    if (m_currentDeviceCode.isEmpty()) {
-        NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Warning, 3000);
-        return;
-    }
-
-    QStringList args;
-    args << "-s" << tarDevice << "reboot";
-
-    auto operatorFunc = [tarDevice, args](){
-        ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
-    };
-
-    asyncOperator(operatorFunc);
-}
-
-void FastBootDeviceManager::rebootToRecovery(const QString &deviceCode)
-{
-    QString tarDevice = deviceCode;
-    if (deviceCode.isEmpty()) {
-        tarDevice = m_currentDeviceCode;
-    }
-    if (m_currentDeviceCode.isEmpty()) {
-        NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Warning, 3000);
-        return;
-    }
-
-    QStringList args;
-    args << "-s" << tarDevice << "reboot" << "recovery";
-
-    auto operatorFunc = [tarDevice, args](){
-        ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
-    };
-
-    asyncOperator(operatorFunc);
+    runFastboot(deviceCode, {"reboot"});
 }
 
 void FastBootDeviceManager::powerOff(const QString &deviceCode)
 {
-    QString tarDevice = deviceCode;
-    if (deviceCode.isEmpty()) {
-        tarDevice = m_currentDeviceCode;
-    }
+    runFastboot(deviceCode, {"poweroff"});
+}
+
+void FastBootDeviceManager::runFastboot(const QString &deviceCode, const QStringList &args)
+{
     if (m_currentDeviceCode.isEmpty()) {
         NotificationController::instance()->send("执行失败", "当前无设备连接", NotificationController::Warning, 3000);
         return;
     }
+    const QString tarDevice = deviceCode.isEmpty() ? m_currentDeviceCode : deviceCode;
 
-    QStringList args;
-    args << "-s" << tarDevice << "poweroff";
+    QStringList fullArgs;
+    fullArgs << "-s" << tarDevice << args;
 
-
-    auto operatorFunc = [tarDevice, args](){
-        ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, args);
-    };
-
-    asyncOperator(operatorFunc);
+    asyncOperator([fullArgs](){
+        ADBTools::instance()->executeCommand(ADBTools::FASTBOOT, fullArgs);
+    });
 }
 
 } // namespace ADT

@@ -1,11 +1,8 @@
 #include "MirrorScene.h"
 #include <QImage>
-#include <QTimerEvent>
 #include <QMouseEvent>
-#include <QDebug>
 #include "service/ServiceManager.h"
-#include <QBuffer>
-#include <QElapsedTimer>
+#include "core/include/QtScrcpyCore.h"
 #include <QtConcurrent/QtConcurrent>
 
 MirrorScene::MirrorScene(QQuickItem *parent)
@@ -77,10 +74,6 @@ void MirrorScene::onYuvFrame(int width, int height, uint8_t *dataY, uint8_t *dat
     emit imageChanged();
 }
 
-void MirrorScene::timerEvent(QTimerEvent *event) {
-    Q_UNUSED(event);
-}
-
 void MirrorScene::mouseProcess(QMouseEvent *event) {
     auto device = qsc::IDeviceManage::getInstance().getDevice(m_resourceService->serial());
     if (!device) {
@@ -88,11 +81,7 @@ void MirrorScene::mouseProcess(QMouseEvent *event) {
     }
     event->accept();
     const QSize showSize(qMax(1, qRound(width())), qMax(1, qRound(height())));
-    if (m_resourceService->orientation() == 0) {
-        emit device->mouseEvent(event, m_resourceService->frameSize(), showSize);
-    } else {
-        emit device->mouseEvent(event, m_resourceService->frameSize(), showSize);
-    }
+    emit device->mouseEvent(event, m_resourceService->frameSize(), showSize);
 }
 
 void MirrorScene::mousePressEvent(QMouseEvent *event) {
@@ -109,8 +98,4 @@ void MirrorScene::mouseMoveEvent(QMouseEvent *event) {
 
 void MirrorScene::mouseDoubleClickEvent(QMouseEvent *event) {
     mouseProcess(event);
-}
-
-void MirrorScene::wheelEvent(QWheelEvent *event) {
-    // 这里可根据需要实现wheel事件处理
 }

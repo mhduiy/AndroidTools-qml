@@ -2,29 +2,6 @@
 
 #include <QObject>
 #include <QPointer>
-#include <QRect>
-#include <qtmetamacros.h>
-#include "src/cpp/utils/globalsetting.h"
-
-struct UserBootConfig {
-
-    QString recordPath = "";
-
-    quint32 bitRate = 500000;
-    int maxSizeIndex = 0;
-    int recordFormatIndex = 0;
-    int lockOrientationIndex = 0;
-    bool recordScreen = false;
-    bool recordBackground = false;
-    bool reverseConnect = true;
-    bool showFPS = false;
-    bool windowOnTop = false;
-    bool autoOffScreen = false;
-    bool framelessWindow = false;
-    bool keepAlive = false;
-    bool simpleMode = false;
-    bool autoUpdateDevice = true;
-};
 
 class QSettings;
 
@@ -38,10 +15,7 @@ public:
     static Config &getInstance();
 
     // config
-    QString getTitle();
     QString getServerVersion();
-    int getDesktopOpenGL();
-    int getSkin();
     int getRenderExpiredFrames();
     QString getPushFilePath();
     QString getServerPath();
@@ -49,20 +23,6 @@ public:
     QString getLogLevel();
     QString getCodecOptions();
     QString getCodecName();
-    QStringList getConnectedGroups();
-
-    // user data:common
-    void setUserBootConfig(const UserBootConfig &config);
-
-    UserBootConfig getUserBootConfig();
-
-    // user data:device
-    void setNickName(const QString &serial, const QString &name);
-    QString getNickName(const QString &serial);
-    void setRect(const QString &serial, const QRect &rc);
-    QRect getRect(const QString &serial);
-
-    void deleteGroup(const QString &serial);
 
     static void declareQml();
 
@@ -86,11 +46,7 @@ signals:
 private:
     explicit Config(QObject *parent = nullptr);
 
-    void initConfig();
-
 private:
-    static QString s_configPath;
     QPointer<QSettings> m_settings;
-    QPointer<QSettings> m_userData;
     QString projectPath;
 };

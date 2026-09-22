@@ -1,12 +1,10 @@
 import QtQuick
-import QtQuick.Controls
 import FluentUI
 
 Canvas {
     id: control
     property int level: 0
     property bool charging: false
-    property bool showPercentText: true
     property bool showChargingText: true
 
     property color fillColor: {
@@ -103,13 +101,11 @@ Canvas {
         ctx.restore()
 
         // 百分比文字
-        if (showPercentText) {
-            ctx.fillStyle = dark ? "#fff" : "#222"
-            ctx.font = "bold " + Math.max(10, Math.min(Math.round(bh * 0.24), Math.round(bw * 0.28))) + "px sans-serif"
-            ctx.textAlign = "center"
-            ctx.textBaseline = "middle"
-            ctx.fillText(level + "%", w / 2, by + bh / 2)
-        }
+        ctx.fillStyle = dark ? "#fff" : "#222"
+        ctx.font = "bold " + Math.max(10, Math.min(Math.round(bh * 0.24), Math.round(bw * 0.28))) + "px sans-serif"
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.fillText(level + "%", w / 2, by + bh / 2)
 
         // 充电标记
         if (charging && showChargingText) {

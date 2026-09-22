@@ -8,29 +8,18 @@ set(CMAKE_AUTOMOC ON)
 
 set(EXE_NAME ${PROJECT_NAME})
 
-file(GLOB_RECURSE SRC_PATHS src/cpp/*.cpp src/cpp/*.hpp)
-file(GLOB_RECURSE HEAD_PATHS src/cpp/*.h)
-file(GLOB_RECURSE QML_PATHS src/qml2/*.qml)
-
-set(RES_PATHS
-    src/main.qrc
-)
-
 set(SRC_PATHS
     src/main.cpp
 )
 
-set(QT_VERSION_MAJOR 6)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets Gui Network WebSockets QuickControls2 Concurrent DBus ShaderTools)
-
-include_directories(.)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Widgets Gui Network WebSockets QuickControls2 Concurrent DBus ShaderTools)
 
 add_executable(${EXE_NAME}
-    ${QRC_SOURCES}
     ${SRC_PATHS}
-    ${QML_PATHS}
-    ${RES_PATHS}
+    src/main.qrc
 )
+
+target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/third_party/FluentUI/CMakeLists.txt")
     message(FATAL_ERROR "FluentUI submodule is missing; run git submodule update --init --recursive")
 endif()
@@ -65,17 +54,16 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 target_link_libraries(${EXE_NAME} PRIVATE
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::DBus
-    Qt${QT_VERSION_MAJOR}::Quick
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Gui
-    Qt${QT_VERSION_MAJOR}::Network
-    Qt${QT_VERSION_MAJOR}::WebSockets
-    Qt${QT_VERSION_MAJOR}::QuickControls2
-    Qt${QT_VERSION_MAJOR}::Concurrent
-    Qt${QT_VERSION_MAJOR}::ShaderTools
-    # QtScrcpyCore
+    Qt6::Core
+    Qt6::DBus
+    Qt6::Quick
+    Qt6::Widgets
+    Qt6::Gui
+    Qt6::Network
+    Qt6::WebSockets
+    Qt6::QuickControls2
+    Qt6::Concurrent
+    Qt6::ShaderTools
 )
 
 set(BUNDLED_ADB_DIR "${CMAKE_SOURCE_DIR}/src/cpp/imagePageTool/scrcpy/core/src/third_party/adb")

@@ -4,12 +4,8 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QList>
-#include <QNetworkAccessManager>
-#include <QPointer>
 
 #include "../utils/defutils.hpp"
-
-#include "bingwallpaperhander.h"
 
 namespace ADT {
 
@@ -38,9 +34,6 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE void appendRow(WallPaperInfo info);
-    Q_INVOKABLE void insertRow(int row, WallPaperInfo info);
-    Q_INVOKABLE void removeRow(const QString &code);
-    Q_INVOKABLE void setInfo(const WallPaperInfo &info);
     QModelIndex index(int row, int column = 1, const QModelIndex &parent = QModelIndex()) const override;
 
     Q_INVOKABLE void setCurrentIndex(int index);
@@ -66,14 +59,12 @@ class SettingPageTools : public QObject
     ~SettingPageTools();
 
 private slots:
-    void onBingWallPaperWorkFinish(const QString &url);
     void onRequestRefreshWallpaperList();
 
 private:
     WallPaperModel *m_wallpaperModel;
-    BingWallPaperHander *m_bingWallpaperHander;
 };
 
-#endif
-
 } // namespace ADT
+
+#endif

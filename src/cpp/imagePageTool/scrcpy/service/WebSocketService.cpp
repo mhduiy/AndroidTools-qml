@@ -1,10 +1,12 @@
 #include "WebSocketService.h"
 #include "service/include/server.h"
+#include "core/include/QtScrcpyCore.h"
 #include "src/cpp/utils/constants.h"
 #include "src/cpp/utils/notificationcontroller.h"
 #include "ui/util/config.h"
 #include "src/cpp/adb/connectmanager.h"
 #include <qlogging.h>
+#include <utility>
 
 WebSocketService::WebSocketService(quint16 port, QObject *parent) : QObject(parent) {
 
@@ -156,7 +158,7 @@ void WebSocketService::responseToClents(int result) {
     QJsonDocument doc(rootObject);
     QString jsonString(doc.toJson(QJsonDocument::Compact));
 
-    for (QWebSocket *pClient: qAsConst(m_clients)) { // send server responseToClents to all androi clients
+    for (QWebSocket *pClient: std::as_const(m_clients)) { // send server responseToClents to all androi clients
         pClient->sendTextMessage(jsonString);
     }
 }

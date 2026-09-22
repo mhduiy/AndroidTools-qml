@@ -1,8 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>res/backgroundImage.jpeg</file>
-        <file>res/shaders/fragment.fsh</file>
-        <file>res/shaders/vertex.vsh</file>
         <file>res/scrcpy-server</file>
         <file>res/androidtools-server</file>
 
@@ -22,12 +20,9 @@
         <file>qml2/pages/home/MiniGauge.qml</file>
         <file>qml2/pages/home/MultiLineChart.qml</file>
         <file>qml2/pages/home/Panel.qml</file>
-        <file>qml2/pages/home/Sparkline.qml</file>
-        <file>qml2/pages/home/SpecRow.qml</file>
         <file>qml2/pages/home/WorkbenchTab.qml</file>
         <file>qml2/pages/performance/PerfChart.qml</file>
         <file>qml2/pages/performance/PerfMetricCard.qml</file>
-        <file>qml2/components/CircleGauge.qml</file>
         <file>qml2/components/BatteryCanvas.qml</file>
         <file>qml2/components/NotificationOverlay.qml</file>
         <file>qml2/components/NotifItem.qml</file>

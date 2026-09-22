@@ -14,6 +14,9 @@ Rectangle {
     radius: 7
     color: FluTheme.dark ? Qt.rgba(1, 1, 1, 0.045) : Qt.rgba(0, 0, 0, 0.028)
 
+    onValueChanged: miniCanvas.requestPaint()
+    onAccentChanged: miniCanvas.requestPaint()
+
     RowLayout {
         anchors { fill: parent; margins: 7 }
         spacing: 8
@@ -37,11 +40,6 @@ Rectangle {
                 ctx.beginPath()
                 ctx.arc(cx, cy, r, -Math.PI * 0.82, -Math.PI * 0.82 + Math.PI * 1.64 * Math.max(0, Math.min(100, mini.value)) / 100)
                 ctx.stroke()
-            }
-            Connections {
-                target: mini
-                function onValueChanged() { miniCanvas.requestPaint() }
-                function onAccentChanged() { miniCanvas.requestPaint() }
             }
         }
         ColumnLayout {

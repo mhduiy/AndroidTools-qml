@@ -29,12 +29,3 @@ explicit className(QObject *parent = nullptr);
         void name##Changed(type val); \
     private: \
         type m_##name;
-
-#define DECLARE_READONLY_PROPERTY(type, name) \
-    Q_PROPERTY(type name READ name NOTIFY name##Changed) \
-    public: \
-        type name() const { return m_##name; } \
-    Q_SIGNALS: \
-        void name##Changed(type val); \
-    private: \
-        type m_##name;

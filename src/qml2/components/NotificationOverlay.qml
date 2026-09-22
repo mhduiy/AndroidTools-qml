@@ -61,10 +61,8 @@ Item {
         relayout()
         item.show()
 
-        while (notifications.length > maxVisible) {
+        if (notifications.length > maxVisible)
             notifications[notifications.length - 1].dismiss()
-            break
-        }
     }
 
     Connections {

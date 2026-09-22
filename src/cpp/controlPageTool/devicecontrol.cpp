@@ -1,4 +1,3 @@
-#include <QDebug>
 #include "devicecontrol.h"
 
 #include "src/cpp/adb/connectmanager.h"
@@ -9,7 +8,6 @@ namespace ADT {
 
 DeviceControl::DeviceControl(QObject *parent) : QObject(parent)
 {
-    m_adbtools = ADBTools::instance();
 }
 
 void DeviceControl::control(ControlType controlType, int controlItem)

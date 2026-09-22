@@ -1,5 +1,4 @@
 #include "imagePageTool.h"
-#include <qobject.h>
 #include "src/cpp/adb/connectmanager.h"
 #include "src/cpp/utils/notificationcontroller.h"
 #include "src/cpp/utils/utils.hpp"
@@ -47,7 +46,6 @@ ImagePageTool::ImagePageTool(QObject *parent)
 
     new WebSocketService(8097, this);
 
-    ResourceService::declareQml();
     MirrorScene::declareQml();
     Config::declareQml();
 

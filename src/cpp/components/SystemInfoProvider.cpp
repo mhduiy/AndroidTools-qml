@@ -89,7 +89,6 @@ void SystemInfoProvider::fetchSystemInfo()
                 m_gpuVendor = data["vendor"].toString();
                 m_gpuUsage = data["usage"].toDouble();
                 m_gpuCurrentFrequency = data["currentFrequency"].toInt();
-                m_gpuMaxFrequency = data["maxFrequency"].toInt();
                 m_gpuTemperature = data["temperature"].toInt(-1);
             } else if (path == "/memory" && !data.isEmpty()) {
                 m_ramTotal = data["totalMemory"].toDouble() / 1024.0 / 1024.0 / 1024.0;
@@ -99,9 +98,6 @@ void SystemInfoProvider::fetchSystemInfo()
                 m_storageTotal = data["totalStorage"].toDouble() / 1024.0 / 1024.0 / 1024.0;
                 m_storageUsed = data["usedStorage"].toDouble() / 1024.0 / 1024.0 / 1024.0;
             } else if (path == "/battery" && !data.isEmpty()) {
-                m_batteryPower = data["power"].toDouble();
-                m_batteryCapacity = data["capacity"].toVariant().toLongLong();
-                m_batteryChargeCounter = data["chargeCounter"].toInt();
                 m_batteryTechnology = data["technology"].toString();
             } else if (path == "/current-app" && !data.isEmpty()) {
                 m_foregroundAppName = data["appName"].toString();
@@ -139,7 +135,6 @@ int SystemInfoProvider::cpuMinFrequency() const { return m_cpuMinFrequency; }
 QString SystemInfoProvider::gpuName() const { return m_gpuName; }
 QString SystemInfoProvider::gpuVendor() const { return m_gpuVendor; }
 int SystemInfoProvider::gpuCurrentFrequency() const { return m_gpuCurrentFrequency; }
-int SystemInfoProvider::gpuMaxFrequency() const { return m_gpuMaxFrequency; }
 int SystemInfoProvider::gpuTemperature() const { return m_gpuTemperature; }
 int SystemInfoProvider::fps() const { return m_fps; }
 QString SystemInfoProvider::foregroundAppName() const { return m_foregroundAppName; }
@@ -150,7 +145,4 @@ int SystemInfoProvider::foregroundPid() const { return m_foregroundPid; }
 int SystemInfoProvider::foregroundUid() const { return m_foregroundUid; }
 double SystemInfoProvider::foregroundCpuUsage() const { return m_foregroundCpuUsage; }
 double SystemInfoProvider::foregroundMemoryMB() const { return m_foregroundMemoryMB; }
-double SystemInfoProvider::batteryPower() const { return m_batteryPower; }
-long long SystemInfoProvider::batteryCapacity() const { return m_batteryCapacity; }
-int SystemInfoProvider::batteryChargeCounter() const { return m_batteryChargeCounter; }
 QString SystemInfoProvider::batteryTechnology() const { return m_batteryTechnology; }

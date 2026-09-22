@@ -65,18 +65,6 @@ void SoftListModel::appendRow(AppDetailInfo info)
     endInsertRows();
 }
 
-void SoftListModel::removeRow(const QString &packageName)
-{
-    if (packageName.isEmpty()) return;
-    for (int i = 0; i < m_appListInfo.size(); i++) {
-        if (m_appListInfo[i].packageName == packageName) {
-            beginRemoveRows(QModelIndex(), i, i);
-            m_appListInfo.remove(i);
-            endRemoveRows();
-        }
-    }
-}
-
 void SoftListModel::setIcon(const QString &packageName, const QString &iconBase64)
 {
     if (packageName.isEmpty()) return;
@@ -89,25 +77,6 @@ void SoftListModel::setIcon(const QString &packageName, const QString &iconBase6
     }
 }
 
-QModelIndex SoftListModel::index(int row, int column, const QModelIndex &parent) const
-{
-    if (!hasIndex(row, column, parent))
-        return QModelIndex();
-
-    // 在这里根据行号和列号创建索引
-    return createIndex(row, column);
-}
-
-bool SoftListModel::hasPackage(const QString &packageName)
-{
-    for (const auto &info : m_appListInfo) {
-        if (info.packageName == packageName) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void SoftListModel::clearData()
 {
     if (m_appListInfo.isEmpty()) {
@@ -117,11 +86,6 @@ void SoftListModel::clearData()
     beginRemoveRows(QModelIndex(), 0, m_appListInfo.size() - 1);
     m_appListInfo.clear();
     endRemoveRows();
-}
-
-void SoftListModel::setCurrentIndex(int index)
-{
-    emit currentItemChanged(m_appListInfo.value(index).packageName);
 }
 
 QHash<int, QByteArray> SoftListModel::roleNames() const

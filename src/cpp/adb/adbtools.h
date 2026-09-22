@@ -1,14 +1,12 @@
 #pragma once
 
 #include <QObject>
-#include <QAtomicInt>
 #include <QMutex>
 
 #define ADBTOOL ADBTools::instance()
 
 namespace ADT {
 
-// 前向声明 ADBCommandResult
 struct CommandResult;
 
 class ADBTools : public QObject
@@ -26,8 +24,6 @@ public:
     CommandResult executeCommandDetailed(APP app = ADB, const QStringList &args = QStringList(), const QString &writeStr = "", const int timeout = 3000);
     CommandResult executeShellCommand(const QString &command, const int timeout = 5000);
     
-    bool isRunning();
-
     static ADBTools *instance(QObject *parent = nullptr);
 
     bool startService();
@@ -36,7 +32,6 @@ private:
     explicit ADBTools(QObject *parent = nullptr);
     ADBTools() = delete;
     QMutex *m_mutex;
-    QAtomicInt m_isRunning = 0;
 };
 
 } // namespace ADT

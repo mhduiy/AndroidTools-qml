@@ -7,7 +7,6 @@ namespace ADT {
 
 DeviceHelper::DeviceHelper(QObject *parent)
     : QObject(parent)
-    , m_connectionManagerThread(new QThread(this))
 {
 
 }

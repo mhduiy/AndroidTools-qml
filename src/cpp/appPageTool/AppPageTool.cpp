@@ -5,7 +5,6 @@
 #include "src/cpp/adb/connectmanager.h"
 
 #include <QtQml>
-#include <QDebug>
 #include <QMetaObject>
 
 namespace ADT {
@@ -23,17 +22,12 @@ AppPageTool::AppPageTool(QObject *parent)
     connect(AppDetailControl::instance(), &AppDetailControl::iconLoaded, this, [this](const QString &packageName, const QString &iconBase64) {
         m_softListModel->setIcon(packageName, iconBase64);
     });
-    initData();
+    updateAppListInfo();
 }
 
 AppPageTool::~AppPageTool()
 {
 
-}
-
-void AppPageTool::initData()
-{
-    updateAppListInfo();
 }
 
 void AppPageTool::onADBDeviceChanged()

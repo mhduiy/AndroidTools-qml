@@ -37,13 +37,9 @@ class FastBootDeviceManager : public QObject
 
 public:
     ~FastBootDeviceManager();
-    void setCurrentDevice(const QString &deviceCode);
-    void setCurrentDevice(int deviceIndex);
 
     Q_INVOKABLE void updateDevices();
-    Q_INVOKABLE void rebootToFastBoot(const QString &deviceCode);
     Q_INVOKABLE void rebootToSystem(const QString &deviceCode);
-    Q_INVOKABLE void rebootToRecovery(const QString &deviceCode);
     Q_INVOKABLE void powerOff(const QString &deviceCode);
 
     QString currentDeviceCode();
@@ -52,6 +48,7 @@ signals:
 
 private:
     void handleDeviceChanged();
+    void runFastboot(const QString &deviceCode, const QStringList &args);
 
 private:
     QThread *m_deviceCheckThread;

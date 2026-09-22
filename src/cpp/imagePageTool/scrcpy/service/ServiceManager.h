@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ui/sceneprovider/SceneProviderRenderer.h"
-
 #include "ResourceService.h"
 
 //!
@@ -15,13 +13,7 @@ public:
         return instance;
     }
 
-    static ServiceManager* getInstancePtr() { return &ServiceManager::getInstance(); }
-
     ResourceService* resourceService() const;
-    SceneProviderRenderer* renderer() const;
-
-
-    void addRenderer(SceneProviderRenderer* renderer);
     void setResourceService(ResourceService* resourceService);
 
 private:
@@ -32,9 +24,6 @@ private:
     ServiceManager(const ServiceManager&&)            = delete;
     ServiceManager& operator=(const ServiceManager&&) = delete;
 
-    void generateObjects(QThread* thread);
-
 private:
     ResourceService* m_resourceService = nullptr;
-    QMap<QThread*, SceneProviderRenderer*> m_renderers;
 };

@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QVariant>
-#include <QThread>
 
 #include "src/cpp/adb/adbdevice.h"
 #include "src/cpp/utils/defutils.hpp"
@@ -14,25 +13,19 @@ class AppDetailControl : public QObject
 {
     Q_OBJECT
     SINGLETON(AppDetailControl)
-    Q_PROPERTY(QVariant packageName READ getPackageName NOTIFY valueChanged)
     Q_PROPERTY(QVariant versionCode READ getVersionCode NOTIFY valueChanged)
     Q_PROPERTY(QVariant installDate READ getInstallDate NOTIFY valueChanged)
-    Q_PROPERTY(QVariant installUser READ getInstallUser NOTIFY valueChanged)
     Q_PROPERTY(QVariant targetSdk READ getTargetSdk NOTIFY valueChanged)
     Q_PROPERTY(QVariant minSdk READ getMinSdk NOTIFY valueChanged)
-    Q_PROPERTY(QVariant appId READ getAppId NOTIFY valueChanged)
     Q_PROPERTY(SoftListType softListType READ getSoftListType WRITE setSoftListType NOTIFY softListTypeChanged)
     DECLARE_PROPERTY(bool, busy)
 public:
 
     ~AppDetailControl();
-    QVariant getPackageName() { return m_info.packageName; };
     QVariant getVersionCode() { return m_info.versionCode; } ;
     QVariant getInstallDate()  { return m_info.firstInstallTime; };
-    QVariant getInstallUser() { return ""; } ;
     QVariant getTargetSdk() { return m_info.targetsdk; } ;
     QVariant getMinSdk() { return m_info.minsdk; } ;
-    QVariant getAppId() {return m_info.appid;} ;
     SoftListType getSoftListType() { return m_softListType; }
     void setSoftListType(SoftListType type);
 

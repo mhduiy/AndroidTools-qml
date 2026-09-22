@@ -13,8 +13,6 @@ WallpaperHelper::WallpaperHelper(QObject *parent)
     , m_triggerTimer(new QTimer(this))
 {
     GlobalSetting::instance()->checkConfig("wallpaper", "url", "qrc:/res/backgroundImage.jpeg");
-    GlobalSetting::instance()->checkConfig("wallpaper", "opacity", DEFAULT_WALLPAPER_OPACITY);
-    GlobalSetting::instance()->checkConfig("wallpaper", "blurRadius", DEFAULT_WALLPAPER_BLUR_RADIUS);
     // 获取壁纸配置
     QString cutWallpaperUrl = GlobalSetting::instance()->readConfig("wallpaper", "url").toString();
     if (cutWallpaperUrl.isEmpty()) {

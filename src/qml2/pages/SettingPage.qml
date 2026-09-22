@@ -9,7 +9,6 @@ import App 1.0
 import ConnectManager 1.0
 
 FluContentPage {
-    id: page
     title: "设置"
 
 

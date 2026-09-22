@@ -6,7 +6,7 @@
 #include <QRunnable>
 #include <functional>
 
-static QMap<QString, QString> serializationInformation(const QString &info)
+inline QMap<QString, QString> serializationInformation(const QString &info)
 {
     QMap<QString, QString> res;
     QStringList l = info.split('\n');
